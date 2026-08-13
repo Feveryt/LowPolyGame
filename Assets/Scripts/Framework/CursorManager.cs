@@ -1,8 +1,10 @@
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 /// <summary>
 /// 鼠标光标管理器
 /// 职责：锁定/解锁鼠标，Esc 解锁、点击画面重新锁定
+/// 基于 Input System（项目已切换为新输入系统，禁止使用旧 Input 类）
 /// </summary>
 public class CursorManager : MonoBehaviour
 {
@@ -35,16 +37,19 @@ public class CursorManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Esc 解锁，左键点击重新锁定
+    /// Esc 解锁，左键点击重新锁定（Input System 版）
     /// </summary>
     private void HandleInput()
     {
-        if (Input.GetKeyDown(KeyCode.Escape))
+        // Esc 解锁
+        if (Keyboard.current != null && Keyboard.current.escapeKey.wasPressedThisFrame)
         {
             UnlockCursor();
         }
 
-        if (Input.GetMouseButtonDown(0) && Cursor.lockState == CursorLockMode.None)
+        // 左键点击重新锁定
+        if (Mouse.current != null && Mouse.current.leftButton.wasPressedThisFrame &&
+            Cursor.lockState == CursorLockMode.None)
         {
             LockCursor();
         }

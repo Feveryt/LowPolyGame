@@ -1,17 +1,63 @@
 using UnityEngine;
 
 /// <summary>
-/// 玩家动画控制器
-/// 职责：根据战斗/移动状态驱动 Animator 参数，动画事件回调
+/// Drives the locomotion parameters shared by the equipped and unequipped trees.
 /// </summary>
-public class PlayerAnimation : MonoBehaviour
+[DisallowMultipleComponent]
+public sealed class PlayerAnimation : MonoBehaviour
 {
-    // Animator 引用
-    // 动画参数常量：Idle, Walk, Run, LightAttack, HeavyAttack, Dodge, Hit, Die, Skill_1~4
-    // 移动混合树参数：MoveX, MoveY（BlendTree 用于八方向移动）
-    // 攻击速度乘数
-    // 动画事件回调：OnAttackHit()（动画帧事件触发打击检测）
-    // 动画事件回调：OnAttackEnd()（攻击动画结束可取消）
-    // 切换动画层（普通/战斗/骑马等）
-    // 播放一次性动画（如开门、攀爬）：PlayOneShot(string animName)
+    private static readonly int MoveXHash = Animator.StringToHash("MoveX");
+    private static readonly int MoveYHash = Animator.StringToHash("MoveY");
+    private static readonly int MoveAmountHash = Animator.StringToHash("MoveAmount");
+    private static readonly int IsRunningHash = Animator.StringToHash("IsRunning");
+    private static readonly int IsEquippedHash = Animator.StringToHash("IsEquipped");
+    private static readonly int HeavyAttackHash = Animator.StringToHash("HeavyAttack");
+    private static readonly int HeavyAttackComboHash = Animator.StringToHash("HeavyAttackCombo");
+
+    [SerializeField] private Animator animator;
+    [SerializeField, Min(0f)] private float dampTime = 0.1f;
+
+    public bool IsEquipped { get; private set; }
+
+    private void Awake()
+    {
+        if (animator == null)
+            animator = GetComponentInChildren<Animator>();
+    }
+
+    public void SetLocomotion(Vector2 localMove, bool isRunning)
+    {
+        if (animator == null)
+            return;
+
+        Vector2 animationMove = isRunning ? Vector2.up : localMove;
+        animator.SetFloat(MoveXHash, animationMove.x, dampTime, Time.deltaTime);
+        animator.SetFloat(MoveYHash, animationMove.y, dampTime, Time.deltaTime);
+        animator.SetFloat(MoveAmountHash, animationMove.magnitude, dampTime, Time.deltaTime);
+        animator.SetBool(IsRunningHash, isRunning);
+        animator.SetBool(IsEquippedHash, IsEquipped);
+    }
+
+    public void SetEquipped(bool equipped)
+    {
+        IsEquipped = equipped;
+
+        if (animator != null)
+            animator.SetBool(IsEquippedHash, equipped);
+    }
+
+    public void ToggleEquipped()
+    {
+        SetEquipped(!IsEquipped);
+    }
+
+    public void StartHeavyAttack()
+    {
+        animator?.SetTrigger(HeavyAttackHash);
+    }
+
+    public void ContinueHeavyAttack()
+    {
+        animator?.SetTrigger(HeavyAttackComboHash);
+    }
 }

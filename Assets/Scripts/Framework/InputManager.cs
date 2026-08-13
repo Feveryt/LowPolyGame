@@ -1,22 +1,117 @@
+using System;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 /// <summary>
-/// 输入管理器
-/// 职责：封装 Input System / Input Manager，统一提供输入接口，支持键鼠和手柄
+/// Runtime input facade. Gameplay code reads actions here and remains independent
+/// from concrete keyboard or gamepad bindings.
 /// </summary>
-public class InputManager : MonoBehaviour
+[DisallowMultipleComponent]
+public sealed class InputManager : MonoBehaviour
 {
-    // 移动输入：Vector2 Move（WASD / 左摇杆）
-    // 视角旋转：Vector2 Look（鼠标 / 右摇杆）
-    // 攻击键：Attack（左键 / RT / X键）
-    // 技能键：Skill1~Skill4（1~4 / LB+按键）
-    // 闪避键：Dodge（空格 / A键）
-    // 交互键：Interact（E / Y键）
-    // 跳跃键：Jump（Space / A键）
-    // 锁定目标：LockOn（中键 / 右摇杆按下）
-    // 暂停：Pause（Esc / Start）
-    // 是否为手柄模式
+    private const string PlayerMapName = "Player";
 
-    // 输入屏蔽标志（过场/对话时禁止移动输入）
-    // 振动反馈：SetVibration(float leftMotor, float rightMotor, float duration)
+    [Header("Input Actions")]
+    [SerializeField] private InputActionAsset actions;
+    [SerializeField] private float moveDeadZone = 0.15f;
+
+    private InputActionMap playerMap;
+    private InputAction moveAction;
+    private InputAction lookAction;
+    private InputAction sprintAction;
+    private InputAction equipAction;
+    private InputAction heavyAttackAction;
+    private InputAction lockOnAction;
+
+    public Vector2 Move => ApplyDeadZone(moveAction?.ReadValue<Vector2>() ?? Vector2.zero);
+    public Vector2 Look => lookAction?.ReadValue<Vector2>() ?? Vector2.zero;
+    public bool SprintHeld => sprintAction?.IsPressed() ?? false;
+    public bool UsingGamepad => Gamepad.current != null &&
+        (moveAction?.activeControl?.device is Gamepad || lookAction?.activeControl?.device is Gamepad);
+
+    public event Action EquipPressed;
+    public event Action HeavyAttackPressed;
+    public event Action LockOnPressed;
+
+    private void Awake()
+    {
+        ResolveActions();
+    }
+
+    private void OnEnable()
+    {
+        ResolveActions();
+        playerMap?.Enable();
+
+        if (equipAction != null)
+            equipAction.performed += OnEquipPerformed;
+        if (heavyAttackAction != null)
+            heavyAttackAction.performed += OnHeavyAttackPerformed;
+        if (lockOnAction != null)
+            lockOnAction.performed += OnLockOnPerformed;
+    }
+
+    private void OnDisable()
+    {
+        if (equipAction != null)
+            equipAction.performed -= OnEquipPerformed;
+        if (heavyAttackAction != null)
+            heavyAttackAction.performed -= OnHeavyAttackPerformed;
+        if (lockOnAction != null)
+            lockOnAction.performed -= OnLockOnPerformed;
+
+        playerMap?.Disable();
+    }
+
+    private void ResolveActions()
+    {
+        if (actions == null)
+        {
+            Debug.LogError("InputManager requires PlayerAction.inputactions.", this);
+            return;
+        }
+
+        playerMap = actions.FindActionMap(PlayerMapName, false);
+        if (playerMap == null)
+        {
+            Debug.LogError($"Input action map '{PlayerMapName}' was not found.", this);
+            return;
+        }
+
+        moveAction = playerMap.FindAction("Move", false);
+        lookAction = playerMap.FindAction("Look", false);
+        sprintAction = playerMap.FindAction("Sprint", false);
+        equipAction = playerMap.FindAction("Equip", false);
+        heavyAttackAction = playerMap.FindAction("HeavyAttack", false);
+        lockOnAction = playerMap.FindAction("LockOn", false);
+
+        if (lockOnAction == null)
+        {
+            // LockOn 涓哄彲閫夊姩浣滐細缂哄け鏃朵粎绂佺敤閿佸畾鍔熻兘锛屼笉褰卞搷鍏朵粬杈撳叆
+            Debug.LogWarning("Input map 'Player' has no 'LockOn' action. Lock-on targeting is disabled.", this);
+        }
+    }
+
+    private Vector2 ApplyDeadZone(Vector2 value)
+    {
+        if (value.sqrMagnitude < moveDeadZone * moveDeadZone)
+            return Vector2.zero;
+
+        return Vector2.ClampMagnitude(value, 1f);
+    }
+
+    private void OnEquipPerformed(InputAction.CallbackContext context)
+    {
+        EquipPressed?.Invoke();
+    }
+
+    private void OnHeavyAttackPerformed(InputAction.CallbackContext context)
+    {
+        HeavyAttackPressed?.Invoke();
+    }
+
+    private void OnLockOnPerformed(InputAction.CallbackContext context)
+    {
+        LockOnPressed?.Invoke();
+    }
 }

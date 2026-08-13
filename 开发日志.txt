@@ -51,3 +51,52 @@ LowPoly ARPG 开发日志
 - 项目遵循低耦合原则开发，优先实现事件总线
 - 所有框架脚本目前为注释骨架，待逐步填充
 - 使用 GitHub Copilot 辅助开发
+
+====================================
+日期：2026年8月13日
+------------------------------------
+今日完成内容
+------------------------------------
+
+1. QFramework 架构整合
+   - 引入 QFramework.cs 官方核心（724 行，MIT）
+   - GameArchitecture 架构入口 + GameStateModel/GameStateSystem/ChangeGameStateCommand
+   - 完整事件流：表现层 -> Command -> Model -> System -> 事件广播
+   - PlayerController 实现 IController，监听暂停事件禁用输入
+
+2. Input System 整合
+   - 安装 Input System 1.7.0，切换纯新输入系统
+   - PlayerAction.inputactions：Move/Look/Sprint/Equip/HeavyAttack/LockOn
+   - 键鼠 + 手柄双控制方案（带摇杆死区）
+   - InputManager 输入门面 + 编辑器工具一键配置预制体
+   - 修复 CursorManager 旧 Input API 兼容问题
+
+3. 双相机模式系统（借鉴开源项目）
+   - 探索模式（未持武器）：FreeLook 自由环绕 + SpringArm 防穿墙
+     （SphereCast 遮挡检测，按比例收缩三环半径；参考 dbrizov/Unity-CharacterController）
+   - 战斗模式（持武器）：锁定环绕相机 + Tab 锁定最近敌人
+     （相机位于"玩家-目标"连线玩家后方；参考 mishanyaqq/Erbium）
+   - CameraModeController（模式切换 + 运行时自动创建战斗相机）
+   - LockOnController（角度优先锁定 + 死亡/摘武器自动解锁）
+   - 相机模式随 R 键装备切换，与双动画树（装备/未装备）对应
+
+4. 重攻击三段连击
+   - PlayerCombat：Attack_17 -> Attack_18 -> Attack_14
+   - 输入缓冲 + 连击窗口（comboInputStart/End）
+   - 攻击期间禁用移动与装备切换
+
+------------------------------------
+待完成（优先级排序）
+------------------------------------
+[ ] 轻攻击连段（与重攻击共用连击系统）
+[ ] 锁定战斗的敌人命中检测（Hitbox/Hurtbox）
+[ ] EnemyAI + EnemyBase 基础敌人循环
+[ ] 场景搭建（Demo 1 地牢场景放置敌人）
+[ ] UIHUD 基础实现（血条 + 技能栏 + 锁定指示）
+
+------------------------------------
+备注
+------------------------------------
+- 双相机切换依据：EquipmentChangedEvent 事件驱动，无直接引用
+- 战斗相机为运行时自动创建（无需场景接线），FreeLook 自动查找
+- 编辑器工具 SetupVersion 已升至 v4（新增 LockOn 动作）
