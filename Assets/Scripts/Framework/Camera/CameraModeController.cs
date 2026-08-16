@@ -31,7 +31,8 @@ public enum CameraMode
 /// 本组件建议挂在 Player 预制体上，所有引用自动查找，无需手动接线。
 /// </summary>
 [RequireComponent(typeof(InputManager))]
-public class CameraModeController : MonoBehaviour, IController, AxisState.IInputAxisProvider
+[DefaultExecutionOrder(-100)]
+public class CameraModeController : MonoBehaviour, IController
 {
     [Header("相机引用（留空自动查找/创建）")]
     [SerializeField] private CinemachineFreeLook explorationCamera;
@@ -39,7 +40,7 @@ public class CameraModeController : MonoBehaviour, IController, AxisState.IInput
 
     [Header("视角输入")]
     [SerializeField] private InputManager input;
-    [SerializeField, Min(0.001f)] private float mouseLookScale = 0.03f;
+    [SerializeField, Min(0.0001f)] private float mouseLookScale = 0.001f;
     [SerializeField, Min(0.01f)] private float gamepadLookScale = 1f;
     [SerializeField] private bool invertHorizontal;
     [SerializeField] private bool invertVertical;
@@ -59,6 +60,7 @@ public class CameraModeController : MonoBehaviour, IController, AxisState.IInput
     [SerializeField, Min(0.01f)] private float positionSmoothTime = 0.12f;
 
     private Transform player;
+    private PlayerController playerController;
     private Transform lockTarget;
     private Transform lookAtDummy;
 
@@ -111,6 +113,38 @@ public class CameraModeController : MonoBehaviour, IController, AxisState.IInput
         }
     }
 
+    private void Update()
+    {
+        if (explorationCamera == null || player == null || isCombatMode)
+            return;
+
+        float previousHeading = explorationCamera.m_XAxis.Value;
+        explorationCamera.m_XAxis.m_InputAxisValue = GetAxisValue(0);
+        explorationCamera.m_XAxis.Update(Time.deltaTime);
+
+        float lookTurnDelta = Mathf.DeltaAngle(
+            previousHeading, explorationCamera.m_XAxis.Value);
+        float runTurnDelta = playerController != null
+            ? playerController.GetExplorationRunTurnDelta(Time.deltaTime)
+            : 0f;
+        float totalTurnDelta = lookTurnDelta + runTurnDelta;
+
+        if (!Mathf.Approximately(runTurnDelta, 0f))
+        {
+            explorationCamera.m_XAxis.Value = WrapHeading(
+                explorationCamera.m_XAxis.Value + runTurnDelta);
+        }
+
+        if (!Mathf.Approximately(totalTurnDelta, 0f))
+        {
+            float nextYaw = WrapHeading(player.eulerAngles.y + totalTurnDelta);
+            player.rotation = Quaternion.Euler(0f, nextYaw, 0f);
+        }
+
+        // Vertical input remains camera-only.
+        explorationCamera.m_YAxis.m_InputAxisValue = GetAxisValue(1);
+    }
+
     // ---------------------------------------------------------------
     // 引用解析与模式切换
     // ---------------------------------------------------------------
@@ -121,12 +155,15 @@ public class CameraModeController : MonoBehaviour, IController, AxisState.IInput
 
         if (player == null)
         {
-            var playerController = GetComponent<PlayerController>();
+            playerController = GetComponent<PlayerController>();
             if (playerController == null)
                 playerController = FindFirstObjectByType<PlayerController>();
             if (playerController != null)
                 player = playerController.transform;
         }
+
+        if (playerController == null && player != null)
+            playerController = player.GetComponent<PlayerController>();
 
         EnsureCinemachineBrain();
 
@@ -184,6 +221,9 @@ public class CameraModeController : MonoBehaviour, IController, AxisState.IInput
     {
         Camera mainCamera = Camera.main;
         if (mainCamera == null)
+            mainCamera = FindFirstObjectByType<Camera>(FindObjectsInactive.Include);
+
+        if (mainCamera == null)
         {
             Debug.LogError("[CameraModeController] 场景中没有标记为 MainCamera 的相机。", this);
             return;
@@ -223,14 +263,24 @@ public class CameraModeController : MonoBehaviour, IController, AxisState.IInput
         explorationCamera.LookAt = player;
         explorationCamera.m_XAxis.m_InputAxisName = string.Empty;
         explorationCamera.m_YAxis.m_InputAxisName = string.Empty;
-        explorationCamera.m_XAxis.m_InvertInput = invertHorizontal;
-        explorationCamera.m_YAxis.m_InvertInput = invertVertical;
+
+        // Input inversion is handled exclusively by GetAxisValue(), including
+        // the user-facing Inspector toggles below.
+        explorationCamera.m_XAxis.m_InvertInput = false;
+
+        // 垂直方向:Input System 的 Mouse.delta.y 向上为正,FreeLook 的
+        // Y 轴"正向 = 相机升高",所以 Y 轴本身不需要反转。
+        // 如需反转请用本组件的 invertVertical 开关,不要再改 FreeLook
+        // 自己的 Invert 复选框,避免两层配置互相打架。
+        explorationCamera.m_YAxis.m_InvertInput = false;
+
         explorationCamera.m_XAxis.m_SpeedMode = AxisState.SpeedMode.InputValueGain;
         explorationCamera.m_YAxis.m_SpeedMode = AxisState.SpeedMode.InputValueGain;
         explorationCamera.m_XAxis.m_MaxSpeed = 180f;
         explorationCamera.m_YAxis.m_MaxSpeed = 0.7f;
-        explorationCamera.m_XAxis.SetInputAxisProvider(0, this);
-        explorationCamera.m_YAxis.SetInputAxisProvider(1, this);
+        explorationCamera.m_RecenterToTargetHeading.m_enabled = false;
+
+        explorationCamera.UpdateInputAxisProvider();
 
         for (int i = 0; i < 3; i++)
         {
@@ -289,6 +339,9 @@ public class CameraModeController : MonoBehaviour, IController, AxisState.IInput
         {
             SnapCombatCamera();
         }
+
+        if (!isCombatMode && (snap || wasCombatMode))
+            AlignExplorationHeading();
     }
 
     // ---------------------------------------------------------------
@@ -337,6 +390,20 @@ public class CameraModeController : MonoBehaviour, IController, AxisState.IInput
             orbit.m_Radius = baseOrbitRadii[i] * orbitScale;
             explorationCamera.m_Orbits[i] = orbit;
         }
+    }
+
+    private void AlignExplorationHeading()
+    {
+        if (explorationCamera == null || player == null)
+            return;
+
+        explorationCamera.m_XAxis.Reset();
+        explorationCamera.m_XAxis.Value = WrapHeading(player.eulerAngles.y);
+    }
+
+    private static float WrapHeading(float heading)
+    {
+        return Mathf.Repeat(heading + 180f, 360f) - 180f;
     }
 
     // ---------------------------------------------------------------
@@ -446,6 +513,7 @@ public class CameraModeController : MonoBehaviour, IController, AxisState.IInput
         Vector2 look = input.Look;
         float scale = input.UsingGamepad ? gamepadLookScale : mouseLookScale;
         float value = axis == 1 ? look.y : look.x;
-        return value * scale;
+        bool inverted = axis == 1 ? invertVertical : invertHorizontal;
+        return value * scale * (inverted ? -1f : 1f);
     }
 }

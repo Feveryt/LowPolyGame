@@ -1866,10 +1866,9 @@ MonoBehaviour:
   input: {fileID: 8891000000000000001}
   playerAnimation: {fileID: 8891000000000000002}
   playerCombat: {fileID: 8891000000000000003}
-  facingReference: {fileID: 0}
   walkSpeed: 2.5
   runSpeed: 5.5
-  runTurnSpeed: 180
+  runTurnSpeed: 360
   runForwardThreshold: 0.15
   gravity: -20
   combatTurnSpeed: 12

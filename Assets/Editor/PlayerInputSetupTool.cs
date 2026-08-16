@@ -14,8 +14,22 @@ public static class PlayerInputSetupTool
     private const string PlayerPrefabPath = "Assets/Resource/Player.prefab";
     private const string AnimatorControllerPath = "Assets/ArtRes/Animator/Player.controller";
     private const string AttackFolderPath = "Assets/ArtRes/Dynamic Sword Animset/Animations/InPlace";
+    private const string DiagonalSetupVersionKey = "LowPolyGame.DiagonalLocomotionSetup.Version";
+    private const int DiagonalSetupVersion = 1;
     private const string SetupVersionKey = "LowPolyGame.PlayerInputSetup.Version";
-    private const int SetupVersion = 5;
+    private const int SetupVersion = 7;
+
+    private static readonly string[] DiagonalLocomotionPaths =
+    {
+        $"{AttackFolderPath}/Walk_Uneqip_Front_Left.FBX",
+        $"{AttackFolderPath}/Walk_Uneqip_Front_Right.FBX",
+        $"{AttackFolderPath}/Walk_Uneqip_Back_Left.FBX",
+        $"{AttackFolderPath}/Walk_Uneqip_Back_Right.FBX",
+        $"{AttackFolderPath}/Walk_Eqip_Front_Left.FBX",
+        $"{AttackFolderPath}/Walk_Eqip_Front_Right.FBX",
+        $"{AttackFolderPath}/Walk_Eqip_Back_Left.FBX",
+        $"{AttackFolderPath}/Walk_Eqip_Back_Right.FBX",
+    };
 
     [DidReloadScripts]
     private static void SetupOnceAfterCompile()
@@ -24,6 +38,19 @@ public static class PlayerInputSetupTool
             return;
 
         EditorApplication.delayCall += SetupPlayerInputAutomatically;
+    }
+
+    [DidReloadScripts]
+    private static void NormalizeDiagonalLocomotionOnceAfterCompile()
+    {
+        if (SessionState.GetInt(DiagonalSetupVersionKey, 0) >= DiagonalSetupVersion)
+            return;
+
+        EditorApplication.delayCall += () =>
+        {
+            NormalizeDiagonalLocomotionRootRotation();
+            SessionState.SetInt(DiagonalSetupVersionKey, DiagonalSetupVersion);
+        };
     }
 
     private static void SetupPlayerInputAutomatically()
@@ -36,12 +63,55 @@ public static class PlayerInputSetupTool
     public static void SetupPlayerInput()
     {
         InputActionAsset asset = BuildInputAsset();
+        NormalizeDiagonalLocomotionRootRotation();
         ConfigureHeavyAttackAnimator();
         ConfigurePlayerPrefab(asset);
         ConfigureCameraInActiveScene();
         AssetDatabase.SaveAssets();
         AssetDatabase.Refresh();
         Debug.Log("Player input configured: WASD/mouse and gamepad bindings are ready.");
+    }
+
+    [MenuItem("Tools/Low Poly Game/Normalize Diagonal Locomotion Rotation")]
+    public static void NormalizeDiagonalLocomotionRootRotation()
+    {
+        int updatedCount = 0;
+
+        foreach (string path in DiagonalLocomotionPaths)
+        {
+            if (AssetImporter.GetAtPath(path) is not ModelImporter importer)
+            {
+                Debug.LogError($"Diagonal locomotion clip was not found: {path}");
+                continue;
+            }
+
+            ModelImporterClipAnimation[] clips = importer.clipAnimations;
+            if (clips == null || clips.Length == 0)
+                clips = importer.defaultClipAnimations;
+
+            bool changed = false;
+            foreach (ModelImporterClipAnimation clip in clips)
+            {
+                if (clip.lockRootRotation || !clip.keepOriginalOrientation ||
+                    !Mathf.Approximately(clip.rotationOffset, 0f))
+                {
+                    clip.lockRootRotation = false;
+                    clip.keepOriginalOrientation = true;
+                    clip.rotationOffset = 0f;
+                    changed = true;
+                }
+            }
+
+            if (!changed)
+                continue;
+
+            importer.clipAnimations = clips;
+            importer.SaveAndReimport();
+            updatedCount++;
+        }
+
+        AssetDatabase.SaveAssets();
+        Debug.Log($"Diagonal locomotion rotation normalized for {updatedCount} animation assets.");
     }
 
     private static InputActionAsset BuildInputAsset()
@@ -200,10 +270,13 @@ public static class PlayerInputSetupTool
         explorationCamera.m_XAxis.m_InvertInput = false;
         explorationCamera.m_XAxis.m_SpeedMode = AxisState.SpeedMode.InputValueGain;
         explorationCamera.m_XAxis.m_MaxSpeed = 180f;
+        explorationCamera.m_RecenterToTargetHeading.m_enabled = false;
         explorationCamera.m_YAxis.m_InputAxisName = string.Empty;
         explorationCamera.m_YAxis.m_InvertInput = false;
         explorationCamera.m_YAxis.m_SpeedMode = AxisState.SpeedMode.InputValueGain;
         explorationCamera.m_YAxis.m_MaxSpeed = 0.7f;
+
+        explorationCamera.UpdateInputAxisProvider();
 
         for (int i = 0; i < 3; i++)
         {

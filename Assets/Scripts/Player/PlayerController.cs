@@ -24,12 +24,11 @@ public sealed class PlayerController : MonoBehaviour, IController, ICanSendEvent
     [SerializeField] private InputManager input;
     [SerializeField] private PlayerAnimation playerAnimation;
     [SerializeField] private PlayerCombat playerCombat;
-    [SerializeField] private Transform facingReference;
 
     [Header("Movement")]
     [SerializeField, Min(0f)] private float walkSpeed = 2.5f;
     [SerializeField, Min(0f)] private float runSpeed = 5.5f;
-    [SerializeField, Min(0f)] private float runTurnSpeed = 180f;
+    [SerializeField, Min(0f)] private float runTurnSpeed = 360f;
     [SerializeField, Range(0f, 1f)] private float runForwardThreshold = 0.15f;
     [SerializeField] private float gravity = -20f;
     [SerializeField] private float combatTurnSpeed = 12f;
@@ -39,6 +38,14 @@ public sealed class PlayerController : MonoBehaviour, IController, ICanSendEvent
     private bool isEquipped;
     private Transform lockTarget;
 
+    public Vector3 ExplorationMoveDirection { get; private set; }
+    public bool IsExplorationMoving { get; private set; }
+    public bool IsExplorationRunning => CanMove && !isEquipped && HasRunInput;
+
+    private bool CanMove => playerCombat == null || !playerCombat.IsAttacking;
+    private bool HasRunInput => inputEnabled && input != null && input.SprintHeld &&
+        input.Move.y > runForwardThreshold;
+
     public IArchitecture GetArchitecture() => GameArchitecture.Interface;
 
     private void Awake()
@@ -47,6 +54,7 @@ public sealed class PlayerController : MonoBehaviour, IController, ICanSendEvent
         input = input != null ? input : GetComponent<InputManager>();
         playerAnimation = playerAnimation != null ? playerAnimation : GetComponent<PlayerAnimation>();
         playerCombat = playerCombat != null ? playerCombat : GetComponent<PlayerCombat>();
+        isEquipped = playerAnimation != null && playerAnimation.IsEquipped;
 
         this.RegisterEvent<GameStateChangedEvent>(OnGameStateChanged)
             .UnRegisterWhenGameObjectDestroyed(gameObject);
@@ -69,10 +77,8 @@ public sealed class PlayerController : MonoBehaviour, IController, ICanSendEvent
     private void Update()
     {
         Vector2 moveInput = inputEnabled && input != null ? input.Move : Vector2.zero;
-        bool isRunning = inputEnabled && input != null && input.SprintHeld &&
-            moveInput.y > runForwardThreshold;
-
-        bool canMove = playerCombat == null || !playerCombat.IsAttacking;
+        bool isRunning = HasRunInput;
+        bool canMove = CanMove;
 
         Vector3 horizontalMotion;
         if (!canMove)
@@ -90,10 +96,17 @@ public sealed class PlayerController : MonoBehaviour, IController, ICanSendEvent
 
         ApplyMovement(horizontalMotion);
 
+        IsExplorationMoving = !isEquipped && canMove && horizontalMotion.sqrMagnitude > 0.0001f;
+        ExplorationMoveDirection = IsExplorationMoving ? horizontalMotion.normalized : Vector3.zero;
+
         if (isEquipped)
             UpdateCombatRotation();
 
-        playerAnimation?.SetLocomotion(canMove ? moveInput : Vector2.zero, canMove && isRunning);
+        Vector2 animationMove = canMove ? moveInput : Vector2.zero;
+        if (IsExplorationMoving && !isRunning)
+            animationMove = GetLocalMoveInput(ExplorationMoveDirection);
+
+        playerAnimation?.SetLocomotion(animationMove, canMove && isRunning);
     }
 
     private Vector3 GetWalkingMotion(Vector2 moveInput)
@@ -101,23 +114,27 @@ public sealed class PlayerController : MonoBehaviour, IController, ICanSendEvent
         if (moveInput == Vector2.zero)
             return Vector3.zero;
 
-        Transform reference = facingReference;
-        if (reference == null && Camera.main != null)
-            reference = Camera.main.transform;
-        if (reference == null)
-            reference = transform;
-
-        Vector3 forward = Vector3.Scale(reference.forward, new Vector3(1f, 0f, 1f)).normalized;
-        Vector3 right = Vector3.Scale(reference.right, new Vector3(1f, 0f, 1f)).normalized;
-        return (right * moveInput.x + forward * moveInput.y) * walkSpeed;
+        Vector3 forward = Vector3.Scale(transform.forward, new Vector3(1f, 0f, 1f)).normalized;
+        Vector3 right = Vector3.Scale(transform.right, new Vector3(1f, 0f, 1f)).normalized;
+        Vector3 direction = right * moveInput.x + forward * moveInput.y;
+        return direction * walkSpeed;
     }
 
     private Vector3 GetRunningMotion(Vector2 moveInput)
     {
-        transform.Rotate(Vector3.up, moveInput.x * runTurnSpeed * Time.deltaTime, Space.World);
+        Vector3 forward = Vector3.Scale(transform.forward, new Vector3(1f, 0f, 1f)).normalized;
+        return forward * (runSpeed * Mathf.Clamp01(moveInput.y));
+    }
 
-        // Running has one forward clip, so sideways input steers instead of strafing.
-        return transform.forward * (runSpeed * Mathf.Clamp01(moveInput.magnitude));
+    public float GetExplorationRunTurnDelta(float deltaTime)
+    {
+        return IsExplorationRunning ? input.Move.x * runTurnSpeed * deltaTime : 0f;
+    }
+
+    private Vector2 GetLocalMoveInput(Vector3 worldDirection)
+    {
+        Vector3 localDirection = transform.InverseTransformDirection(worldDirection);
+        return Vector2.ClampMagnitude(new Vector2(localDirection.x, localDirection.z), 1f);
     }
 
     /// <summary>
