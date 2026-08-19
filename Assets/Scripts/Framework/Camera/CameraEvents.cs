@@ -18,7 +18,7 @@ public struct EquipmentChangedEvent
 /// <summary>
 /// 锁定目标变更事件
 /// 由 LockOnController 广播。Target 为 null 表示解锁。
-/// 监听方：CameraModeController（战斗相机环绕）、PlayerController（朝向目标）。
+/// Listeners: CameraModeController (single-camera lock composition) and PlayerController (target-facing).
 /// </summary>
 public struct LockOnTargetChangedEvent
 {

@@ -5,7 +5,7 @@ using UnityEngine;
 /// Eight-direction character movement plus forward-only running.
 /// Direction bindings are supplied by Input System through InputManager.
 ///
-/// 双模式移动（与 CameraModeController 的相机模式对应）：
+/// Exploration and combat movement rules:
 /// - 未持武器（探索）：八方向行走 + 仅前进奔跑（侧向输入转为转向）
 /// - 持武器（战斗）：相机相对横移（strafe）；有锁定目标时始终面朝目标
 ///
@@ -30,6 +30,7 @@ public sealed class PlayerController : MonoBehaviour, IController, ICanSendEvent
     [SerializeField, Min(0f)] private float runSpeed = 5.5f;
     [SerializeField, Min(0f)] private float runTurnSpeed = 360f;
     [SerializeField, Range(0f, 1f)] private float runForwardThreshold = 0.15f;
+    [SerializeField, Range(0f, 1f)] private float combatRunLateralThreshold = 0.1f;
     [SerializeField] private float gravity = -20f;
     [SerializeField] private float combatTurnSpeed = 12f;
 
@@ -40,11 +41,15 @@ public sealed class PlayerController : MonoBehaviour, IController, ICanSendEvent
 
     public Vector3 ExplorationMoveDirection { get; private set; }
     public bool IsExplorationMoving { get; private set; }
-    public bool IsExplorationRunning => CanMove && !isEquipped && HasRunInput;
+    public bool IsEquipped => isEquipped;
+    public bool IsExplorationRunning => CanMove && !isEquipped && HasExplorationRunInput;
 
     private bool CanMove => playerCombat == null || !playerCombat.IsAttacking;
-    private bool HasRunInput => inputEnabled && input != null && input.SprintHeld &&
-        input.Move.y > runForwardThreshold;
+    private bool HasExplorationRunInput => inputEnabled && input != null && input.SprintHeld &&
+        input.Move.sqrMagnitude > runForwardThreshold * runForwardThreshold;
+    private bool HasCombatRunInput => inputEnabled && input != null && input.SprintHeld &&
+        input.Move.y > runForwardThreshold &&
+        Mathf.Abs(input.Move.x) <= combatRunLateralThreshold;
 
     public IArchitecture GetArchitecture() => GameArchitecture.Interface;
 
@@ -77,8 +82,8 @@ public sealed class PlayerController : MonoBehaviour, IController, ICanSendEvent
     private void Update()
     {
         Vector2 moveInput = inputEnabled && input != null ? input.Move : Vector2.zero;
-        bool isRunning = HasRunInput;
         bool canMove = CanMove;
+        bool isRunning = isEquipped ? HasCombatRunInput : HasExplorationRunInput;
 
         Vector3 horizontalMotion;
         if (!canMove)
@@ -90,51 +95,56 @@ public sealed class PlayerController : MonoBehaviour, IController, ICanSendEvent
             horizontalMotion = GetCombatMotion(moveInput, isRunning);
         }
         else
-        {
-            horizontalMotion = isRunning ? GetRunningMotion(moveInput) : GetWalkingMotion(moveInput);
-        }
+            horizontalMotion = GetExplorationMotion(moveInput, isRunning);
 
         ApplyMovement(horizontalMotion);
 
         IsExplorationMoving = !isEquipped && canMove && horizontalMotion.sqrMagnitude > 0.0001f;
         ExplorationMoveDirection = IsExplorationMoving ? horizontalMotion.normalized : Vector3.zero;
 
+        if (IsExplorationMoving)
+            UpdateExplorationRotation(ExplorationMoveDirection, isRunning);
+
         if (isEquipped)
             UpdateCombatRotation();
 
         Vector2 animationMove = canMove ? moveInput : Vector2.zero;
-        if (IsExplorationMoving && !isRunning)
-            animationMove = GetLocalMoveInput(ExplorationMoveDirection);
+        if (IsExplorationMoving)
+            animationMove = Vector2.up * Mathf.Clamp01(moveInput.magnitude);
 
         playerAnimation?.SetLocomotion(animationMove, canMove && isRunning);
     }
 
-    private Vector3 GetWalkingMotion(Vector2 moveInput)
+    private Vector3 GetExplorationMotion(Vector2 moveInput, bool isRunning)
     {
-        if (moveInput == Vector2.zero)
+        moveInput = Vector2.ClampMagnitude(moveInput, 1f);
+        if (moveInput.sqrMagnitude < 0.0001f)
             return Vector3.zero;
 
-        Vector3 forward = Vector3.Scale(transform.forward, new Vector3(1f, 0f, 1f)).normalized;
-        Vector3 right = Vector3.Scale(transform.right, new Vector3(1f, 0f, 1f)).normalized;
+        Camera cam = Camera.main;
+        Vector3 forward = cam != null
+            ? Vector3.Scale(cam.transform.forward, new Vector3(1f, 0f, 1f)).normalized
+            : Vector3.Scale(transform.forward, new Vector3(1f, 0f, 1f)).normalized;
+        Vector3 right = cam != null
+            ? Vector3.Scale(cam.transform.right, new Vector3(1f, 0f, 1f)).normalized
+            : Vector3.Cross(Vector3.up, forward).normalized;
         Vector3 direction = right * moveInput.x + forward * moveInput.y;
-        return direction * walkSpeed;
+        float speed = isRunning ? runSpeed : walkSpeed;
+        return direction.normalized * (speed * moveInput.magnitude);
     }
 
-    private Vector3 GetRunningMotion(Vector2 moveInput)
+    private void UpdateExplorationRotation(Vector3 direction, bool isRunning)
     {
-        Vector3 forward = Vector3.Scale(transform.forward, new Vector3(1f, 0f, 1f)).normalized;
-        return forward * (runSpeed * Mathf.Clamp01(moveInput.y));
-    }
+        direction.y = 0f;
+        if (direction.sqrMagnitude < 0.0001f)
+            return;
 
-    public float GetExplorationRunTurnDelta(float deltaTime)
-    {
-        return IsExplorationRunning ? input.Move.x * runTurnSpeed * deltaTime : 0f;
-    }
-
-    private Vector2 GetLocalMoveInput(Vector3 worldDirection)
-    {
-        Vector3 localDirection = transform.InverseTransformDirection(worldDirection);
-        return Vector2.ClampMagnitude(new Vector2(localDirection.x, localDirection.z), 1f);
+        Quaternion targetRotation = Quaternion.LookRotation(direction.normalized, Vector3.up);
+        float turnSpeed = isRunning ? runTurnSpeed : 540f;
+        transform.rotation = Quaternion.RotateTowards(
+            Quaternion.Euler(0f, transform.eulerAngles.y, 0f),
+            targetRotation,
+            turnSpeed * Time.deltaTime);
     }
 
     /// <summary>
@@ -201,7 +211,7 @@ public sealed class PlayerController : MonoBehaviour, IController, ICanSendEvent
 
         playerAnimation?.ToggleEquipped();
 
-        // 同步本地状态并广播，驱动相机模式切换（CameraModeController）与锁定解除（LockOnController）
+        // Equipment changes affect animation and lock-on availability. The camera stays on one FreeLook rig.
         isEquipped = playerAnimation != null && playerAnimation.IsEquipped;
         this.SendEvent(new EquipmentChangedEvent(isEquipped));
     }
