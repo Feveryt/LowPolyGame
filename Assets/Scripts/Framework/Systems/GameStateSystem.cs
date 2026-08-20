@@ -1,4 +1,5 @@
 using QFramework;
+using UnityEngine;
 
 /// <summary>
 /// 游戏状态变更事件（跨系统广播用）
@@ -6,9 +7,12 @@ using QFramework;
 /// </summary>
 public struct GameStateChangedEvent
 {
+    /// <summary>切换前的全局游戏状态。</summary>
     public GameState From;
+    /// <summary>切换后的全局游戏状态。</summary>
     public GameState To;
 
+    // 使用前后状态创建状态变化事件数据。
     public GameStateChangedEvent(GameState from, GameState to)
     {
         From = from;
@@ -29,8 +33,10 @@ public struct GameStateChangedEvent
 /// </summary>
 public class GameStateSystem : AbstractSystem
 {
+    // 上一次已广播的游戏状态，用于过滤重复通知。
     private GameState mLastState;
 
+    // 监听状态模型变化并广播跨模块状态事件。
     protected override void OnInit()
     {
         var model = this.GetModel<GameStateModel>();
@@ -43,6 +49,8 @@ public class GameStateSystem : AbstractSystem
 
             var from = mLastState;
             mLastState = state;
+            // 暂停状态冻结世界时间，其他可运行状态恢复正常时间。
+            Time.timeScale = state == GameState.Paused ? 0f : 1f;
             this.SendEvent(new GameStateChangedEvent(from, state));
         });
 

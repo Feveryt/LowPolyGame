@@ -6,7 +6,7 @@ using UnityEngine;
 ///
 /// 借鉴动作游戏（如 Devil May Cry / Erbium）的锁定系统：
 /// - Tab 键锁定/解锁：自动选中相机前方角度最优、距离最近的敌人
-/// - 锁定后广播 LockOnTargetChangedEvent，驱动战斗相机与玩家朝向
+/// - 锁定后广播 LockOnTargetChangedEvent，驱动单相机锁定构图与玩家朝向
 /// - 目标死亡、摘武器时自动解锁
 ///
 /// 敌人判定优先级：挂载 EnemyBase / EnemyStats 组件 > "Enemy" 标签
@@ -19,20 +19,29 @@ using UnityEngine;
 public class LockOnController : MonoBehaviour, IController, ICanSendEvent
 {
     [Header("锁定参数")]
+    // 可搜索锁定目标的最大水平距离，单位为米。
     [SerializeField] private float lockRange = 12f;
+    // 相对相机前方允许选中的最大夹角，单位为度。
     [SerializeField] private float lockAngle = 70f;
+    // 用于搜索候选敌人的物理层。
     [SerializeField] private LayerMask enemyMask = ~0;
 
+    // 接收锁定按键的输入组件。
     private InputManager input;
+    // 用于搜索和评分目标的玩家 Transform。
     private Transform player;
+    // 当前已锁定的敌人目标，空值表示未锁定。
     private Transform currentTarget;
+    // 当前是否持武器，未持武器时禁止锁定。
     private bool isEquipped;
 
+    // 返回本控制器所属的 QFramework 游戏架构。
     public IArchitecture GetArchitecture() => GameArchitecture.Interface;
 
     /// <summary>当前锁定目标（null 表示未锁定）</summary>
     public Transform CurrentTarget => currentTarget;
 
+    // 解析玩家引用并监听装备状态变化。
     private void Awake()
     {
         var playerController = GetComponent<PlayerController>();
@@ -46,6 +55,7 @@ public class LockOnController : MonoBehaviour, IController, ICanSendEvent
             .UnRegisterWhenGameObjectDestroyed(gameObject);
     }
 
+    // 启用时查找输入组件并订阅锁定按键事件。
     private void OnEnable()
     {
         if (input == null)
@@ -56,12 +66,14 @@ public class LockOnController : MonoBehaviour, IController, ICanSendEvent
             input.LockOnPressed += OnLockOnPressed;
     }
 
+    // 禁用时取消订阅锁定按键事件。
     private void OnDisable()
     {
         if (input != null)
             input.LockOnPressed -= OnLockOnPressed;
     }
 
+    // 每帧检查当前目标是否已经死亡或失效。
     private void Update()
     {
         // 目标死亡/被销毁/被禁用 → 自动解锁
@@ -71,6 +83,7 @@ public class LockOnController : MonoBehaviour, IController, ICanSendEvent
         }
     }
 
+    // 持武器状态变化时更新锁定可用性，并在收武器时解除锁定。
     private void OnEquipmentChanged(EquipmentChangedEvent e)
     {
         isEquipped = e.Equipped;
@@ -81,6 +94,7 @@ public class LockOnController : MonoBehaviour, IController, ICanSendEvent
         }
     }
 
+    // 响应锁定输入，在获取目标与解除目标之间切换。
     private void OnLockOnPressed()
     {
         if (!isEquipped)
@@ -153,12 +167,14 @@ public class LockOnController : MonoBehaviour, IController, ICanSendEvent
         return col.gameObject.tag == "Enemy";
     }
 
+    // 保存当前目标并广播锁定目标变化事件。
     private void SetTarget(Transform target)
     {
         currentTarget = target;
         this.SendEvent(new LockOnTargetChangedEvent(target));
     }
 
+    // 清空当前锁定目标。
     private void Unlock()
     {
         SetTarget(null);

@@ -1751,6 +1751,8 @@ GameObject:
   - component: {fileID: 8891000000000000003}
   - component: {fileID: 2000882956414297595}
   - component: {fileID: 7865880879425794305}
+  - component: {fileID: 8891000000000000004}
+  - component: {fileID: 8749028449791592251}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -1866,10 +1868,12 @@ MonoBehaviour:
   input: {fileID: 8891000000000000001}
   playerAnimation: {fileID: 8891000000000000002}
   playerCombat: {fileID: 8891000000000000003}
+  playerStats: {fileID: 8891000000000000004}
   walkSpeed: 2.5
   runSpeed: 5.5
   runTurnSpeed: 360
   runForwardThreshold: 0.15
+  combatRunLateralThreshold: 0.1
   gravity: -20
   combatTurnSpeed: 12
 --- !u!114 &8891000000000000001
@@ -1948,7 +1952,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   explorationCamera: {fileID: 0}
-  combatCamera: {fileID: 0}
   input: {fileID: 8891000000000000001}
   mouseLookScale: 0.03
   gamepadLookScale: 1
@@ -1962,10 +1965,46 @@ MonoBehaviour:
   minScale: 0.3
   shrinkSpeed: 8
   recoverSpeed: 3
-  combatDistance: 2.8
-  combatHeight: 1.5
-  combatLookHeight: 1.4
-  positionSmoothTime: 0.12
+  lockLookHeight: 1.4
+  lockHeadingSpeed: 540
+  lockDistancePadding: 1.5
+  maxLockExtraRadius: 4
+  lockDistanceSmoothSpeed: 6
+--- !u!114 &8891000000000000004
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 162860}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0fe488b54c4b86f49b0473e7aedab9a7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  definition: {fileID: 11400000, guid: 4028d147d9224c048f51a0c583a7ab89, type: 2}
+--- !u!114 &8749028449791592251
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 162860}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fb3ab124bfc1ea946b956c9489c73c72, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  initialItems:
+  - Item: {fileID: 11400000, guid: 1a0c3a8e7d9e4cf5a7a7d1e6f8f7c101, type: 2}
+    Amount: 3
+  - Item: {fileID: 11400000, guid: 2b1d4b9f8eaf4df6b8b8e2f7a9f8d212, type: 2}
+    Amount: 2
+  - Item: {fileID: 11400000, guid: 3c2e5caf9fbe4ef7c9c9f3a8b0a9e323, type: 2}
+    Amount: 10
+  - Item: {fileID: 11400000, guid: 4d3f6db0a0cf4f08d0d0a4b9c1bae434, type: 2}
+    Amount: 1
+  initialGold: 250
 --- !u!1 &165894
 GameObject:
   m_ObjectHideFlags: 0

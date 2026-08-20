@@ -26,6 +26,7 @@ public class GameStateModel : AbstractModel
     /// <summary>当前游戏状态（数据绑定属性，UI 可直接监听）</summary>
     public BindableProperty<GameState> CurrentState { get; } = new(GameState.MainMenu);
 
+    // 保留从存档恢复初始游戏状态的扩展点。
     protected override void OnInit()
     {
         // 初始化钩子：可在这里从存档恢复上次的游戏状态（后续接入 SaveManager 时使用）

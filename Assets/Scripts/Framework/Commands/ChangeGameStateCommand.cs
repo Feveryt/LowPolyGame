@@ -12,13 +12,16 @@ using QFramework;
 /// </summary>
 public class ChangeGameStateCommand : AbstractCommand
 {
+    // 本次命令请求切换到的目标状态。
     private readonly GameState mTargetState;
 
+    // 使用指定的目标状态创建切换命令。
     public ChangeGameStateCommand(GameState targetState)
     {
         mTargetState = targetState;
     }
 
+    // 修改状态模型；状态系统会负责广播后续通知。
     protected override void OnExecute()
     {
         var model = this.GetModel<GameStateModel>();

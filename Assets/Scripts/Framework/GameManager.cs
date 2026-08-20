@@ -19,9 +19,12 @@ public class GameManager : MonoBehaviour
 
     // 角色预制体引用 & 出生点引用
     [Header("玩家设置")]
+    // 场景开始时实例化的玩家预制体。
     [SerializeField] private GameObject playerPrefab;
+    // 玩家生成时使用的位置与朝向。
     [SerializeField] private Transform spawnPoint;
 
+    // 初始化单例、保持跨场景存活，并启动游戏架构。
     private void Awake()
     {
         if (Instance != null && Instance != this)
@@ -37,6 +40,7 @@ public class GameManager : MonoBehaviour
         _ = GameArchitecture.Interface;
     }
 
+    // 首帧前完成玩家生成。
     private void Start()
     {
         SpawnPlayer();
@@ -53,20 +57,26 @@ public class GameManager : MonoBehaviour
 
     // ---- 游戏状态切换（表现层入口 → Command）----
 
+    // 通过命令将游戏切换到进行状态。
     public void StartGame() => SendStateCommand(GameState.Playing);
 
+    // 通过命令将游戏切换到暂停状态。
     public void PauseGame() => SendStateCommand(GameState.Paused);
 
+    // 通过命令将游戏从暂停恢复到进行状态。
     public void ResumeGame() => SendStateCommand(GameState.Playing);
 
+    // 通过命令将游戏切换到结束状态。
     public void GameOver() => SendStateCommand(GameState.GameOver);
 
+    // 创建并发送统一处理状态变更的命令。
     private void SendStateCommand(GameState state) =>
         GameArchitecture.Interface.SendCommand(new ChangeGameStateCommand(state));
 
     /// <summary>返回主菜单（供 UI 调用）</summary>
     public void BackToMainMenu() => SendStateCommand(GameState.MainMenu);
 
+    // 应用退出前保留架构清理扩展点。
     private void OnApplicationQuit()
     {
         // 退出前清理架构（可选）

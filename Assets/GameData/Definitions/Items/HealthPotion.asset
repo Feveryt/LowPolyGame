@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2161c59fbc773454ba41e7dd7188d012, type: 3}
+  m_Name: HealthPotion
+  m_EditorClassIdentifier: 
+  id: 1001
+  displayName: "\u751F\u547D\u836F\u6C34"
+  icon: {fileID: 0}
+  category: 0
+  quality: 0
+  description: "\u6062\u590D 35 \u70B9\u751F\u547D\u503C\u3002"
+  maxStack: 10
+  buyPrice: 15
+  sellPrice: 7
+  effectType: 1
+  effectValue: 35

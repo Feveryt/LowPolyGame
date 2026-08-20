@@ -2,20 +2,102 @@ using UnityEngine;
 using UnityEngine.UI;
 
 /// <summary>
-/// Õ½¶· HUD
-/// Ö°Ôğ£ºÏÔÊ¾ÑªÌõ/À¶Ìõ/ÌåÁ¦Ìõ¡¢¼¼ÄÜÍ¼±êÓëÀäÈ´¡¢Ğ¡µØÍ¼¡¢Buff Í¼±ê¡¢Ëø¶¨Ä¿±êĞÅÏ¢
+/// æœ€å°è§’è‰²æ•°å€¼ HUDã€‚
+/// è®¢é˜… PlayerStats çš„å±€éƒ¨èµ„æºäº‹ä»¶ï¼Œæ˜¾ç¤ºç”Ÿå‘½ã€ä½“åŠ›å’Œè“é‡ï¼›åç»­å®Œæ•´ HUD å¯åœ¨æ­¤åŸºç¡€ä¸Šæ‰©å±•ã€‚
 /// </summary>
 public class UIHUD : UIPanel
 {
-    // ÑªÌõ£¨Slider + ÊıÖµÎÄ±¾£©
-    // À¶Ìõ
-    // ÌåÁ¦Ìõ
-    // ¾­ÑéÌõ
-    // ¼¼ÄÜÍ¼±ê x4£¨ÀäÈ´ÕÚÕÖ + ¿ì½İ¼üÌáÊ¾£©
-    // µ±Ç°Ëø¶¨Ä¿±êµÄÑªÌõÓëÃû×Ö
-    // Buff/Debuff Í¼±êÁĞ±í£¨µ¹¼ÆÊ±ÏÔÊ¾£©
-    // Á¬»÷¼ÆÊıÆ÷
-    // ÈÎÎñ×·×ÙÌáÊ¾
-    // ½»»¥ÌáÊ¾£¨ÏÔÊ¾µ±Ç°¿É½»»¥¶ÔÏóÃû³ÆºÍ°´¼ü£©
-    // Ò¡¸Ë£¨ÒÆ¶¯¶Ë£©/ ÎŞ£¨PC¶ËÖ±½ÓÓÃ¼üÊó£©
+    // HUD ç»‘å®šçš„åœºæ™¯ç©å®¶è¿è¡Œæ—¶å±æ€§ç»„ä»¶ã€‚
+    [SerializeField] private PlayerStats playerStats;
+    // æ˜¾ç¤ºå½“å‰ç”Ÿå‘½æ¯”ä¾‹çš„è¿›åº¦æ¡ã€‚
+    [SerializeField] private Slider healthSlider;
+    // æ˜¾ç¤ºå½“å‰ä½“åŠ›æ¯”ä¾‹çš„è¿›åº¦æ¡ã€‚
+    [SerializeField] private Slider staminaSlider;
+    // æ˜¾ç¤ºå½“å‰è“é‡æ¯”ä¾‹çš„è¿›åº¦æ¡ã€‚
+    [SerializeField] private Slider manaSlider;
+    // æ˜¾ç¤ºå½“å‰ç”Ÿå‘½å’Œä¸Šé™æ•°å€¼çš„æ–‡æœ¬ã€‚
+    [SerializeField] private Text healthValueText;
+    // æ˜¾ç¤ºå½“å‰ä½“åŠ›å’Œä¸Šé™æ•°å€¼çš„æ–‡æœ¬ã€‚
+    [SerializeField] private Text staminaValueText;
+    // æ˜¾ç¤ºå½“å‰è“é‡å’Œä¸Šé™æ•°å€¼çš„æ–‡æœ¬ã€‚
+    [SerializeField] private Text manaValueText;
+
+    // ç¡®è®¤ Inspector å¼•ç”¨å±äºå½“å‰åœºæ™¯ï¼Œå¦åˆ™ç»‘å®šå½“å‰åœºæ™¯ä¸­å”¯ä¸€çš„ç©å®¶å±æ€§ç»„ä»¶ã€‚
+    private void Awake()
+    {
+        if (playerStats == null || !playerStats.gameObject.scene.IsValid())
+            playerStats = FindFirstObjectByType<PlayerStats>();
+    }
+
+    // å¯ç”¨æ—¶è®¢é˜…èµ„æºå˜åŒ–å¹¶åˆ·æ–°åˆå§‹æ˜¾ç¤ºã€‚
+    private void OnEnable()
+    {
+        SubscribeToPlayerStats();
+        RefreshAll();
+    }
+
+    // ç¦ç”¨æ—¶å–æ¶ˆè®¢é˜…ï¼Œé¿å…é‡å¤æ³¨å†Œå’Œæ— æ•ˆå›è°ƒã€‚
+    private void OnDisable()
+    {
+        UnsubscribeFromPlayerStats();
+    }
+
+    // æ³¨å†Œç©å®¶èµ„æºå˜åŒ–äº‹ä»¶ã€‚
+    private void SubscribeToPlayerStats()
+    {
+        if (playerStats != null)
+            playerStats.ResourceChanged += OnResourceChanged;
+    }
+
+    // å–æ¶ˆæ³¨å†Œç©å®¶èµ„æºå˜åŒ–äº‹ä»¶ã€‚
+    private void UnsubscribeFromPlayerStats()
+    {
+        if (playerStats != null)
+            playerStats.ResourceChanged -= OnResourceChanged;
+    }
+
+    // æ ¹æ®å˜æ›´èµ„æºç±»å‹åˆ·æ–°å¯¹åº”è¿›åº¦æ¡ã€‚
+    private void OnResourceChanged(ResourceChangedEvent changeEvent)
+    {
+        if (changeEvent.Source != playerStats)
+            return;
+
+        switch (changeEvent.ResourceType)
+        {
+            case ResourceType.Health:
+                SetResourceView(healthSlider, healthValueText, changeEvent.Current, changeEvent.Maximum);
+                break;
+            case ResourceType.Stamina:
+                SetResourceView(staminaSlider, staminaValueText, changeEvent.Current, changeEvent.Maximum);
+                break;
+            case ResourceType.Mana:
+                SetResourceView(manaSlider, manaValueText, changeEvent.Current, changeEvent.Maximum);
+                break;
+        }
+    }
+
+    // åˆ·æ–°ä¸‰ä¸ªèµ„æºæ¡çš„å®Œæ•´åˆå§‹çŠ¶æ€ã€‚
+    private void RefreshAll()
+    {
+        if (playerStats == null)
+            return;
+
+        SetResourceView(healthSlider, healthValueText, playerStats.CurrentHealth, playerStats.MaxHealth);
+        SetResourceView(staminaSlider, staminaValueText, playerStats.CurrentStamina, playerStats.MaxStamina);
+        SetResourceView(manaSlider, manaValueText, playerStats.CurrentMana, playerStats.MaxMana);
+    }
+
+    // åŒæ­¥èµ„æº Slider çš„å½’ä¸€åŒ–è¿›åº¦ä¸å½“å‰å€¼/ä¸Šé™æ–‡æœ¬ã€‚
+    private static void SetResourceView(Slider slider, Text valueText, float current, float maximum)
+    {
+        if (slider != null)
+        {
+            slider.minValue = 0f;
+            slider.maxValue = 1f;
+            slider.value = maximum <= 0f ? 0f : current / maximum;
+        }
+
+        if (valueText != null)
+            valueText.text = $"{Mathf.RoundToInt(current)} / {Mathf.RoundToInt(maximum)}";
+    }
 }

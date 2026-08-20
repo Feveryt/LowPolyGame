@@ -1,17 +1,26 @@
 using UnityEngine;
 
 /// <summary>
-/// ÉËº¦¼ÆËãÏµÍ³
-/// Ö°Ôğ£ºÍ³Ò»ÉËº¦¹«Ê½¼ÆËã¡¢ÔªËØÊôĞÔ¿ËÖÆ¡¢ÉËº¦ÀàĞÍÅĞ¶¨
+/// åŸºç¡€ä¼¤å®³è®¡ç®—å™¨ã€‚
+/// å½“å‰åªå¤„ç†æ”»å‡»ã€é˜²å¾¡ä¸å€ç‡ï¼Œä¿æŒä¸ºæ— çŠ¶æ€çº¯å‡½æ•°ï¼Œä¾›å‘½ä¸­æ£€æµ‹å’ŒæŠ€èƒ½ç³»ç»Ÿå¤ç”¨ã€‚
 /// </summary>
 public static class DamageSystem
 {
-    // ÉËº¦ÀàĞÍÃ¶¾Ù£ºPhysical, Fire, Ice, Lightning, Poison, Holy, Dark
-    // ÉËº¦ĞÅÏ¢½á¹¹Ìå£ºDamageInfo£¨ÉËº¦Öµ¡¢ÀàĞÍ¡¢À´Ô´¡¢ÊÇ·ñ±©»÷¡¢»÷ÍËÁ¦£©
+    // é˜²å¾¡å‡ä¼¤å…¬å¼çš„å›ºå®šç³»æ•°ï¼›é˜²å¾¡ç­‰äºè¯¥å€¼æ—¶ä¼¤å®³å‡åŠã€‚
+    private const float DefenseScale = 100f;
 
-    // ¼ÆËã×îÖÕÉËº¦£ºCalculateDamage(AttackInfo attacker, DefenseInfo defender)
-    // ¹«Ê½Ê¾Àı£º»ù´¡¹¥»÷Á¦ * ¼¼ÄÜ±¶ÂÊ * (1 - ·ÀÓù¼õÃâ) * ÔªËØ¿ËÖÆÏµÊı * ±©»÷ÏµÊı + Ëæ»ú¸¡¶¯
-    // ÔªËØ¿ËÖÆ±í£º»ğ¿Ë±ù¡¢±ù¿ËÀ×¡¢À×¿Ë»ğµÈ
-    // »ñÈ¡¿ËÖÆÏµÊı£ºGetElementBonus(ElementType attack, ElementType defense)
-    // ÊÇ·ñ´¥·¢±©»÷£ºRollCrit(float critRate)
+    /// <summary>
+    /// ä½¿ç”¨é€’å‡å‡ä¼¤å…¬å¼è®¡ç®—æœ€ç»ˆä¼¤å®³ã€‚
+    /// å…¬å¼ä¸º Round(æ”»å‡» Ã— å€ç‡ Ã— 100 / (100 + é˜²å¾¡))ï¼Œæ­£ä¼¤å®³æœ€å°‘é€ æˆ 1 ç‚¹ã€‚
+    /// </summary>
+    public static DamageResult Calculate(DamageRequest request, int defense)
+    {
+        float rawDamage = Mathf.Max(0f, request.AttackPower) * Mathf.Max(0f, request.Multiplier);
+        if (rawDamage <= 0f)
+            return DamageResult.Ignored;
+
+        float mitigation = DefenseScale / (DefenseScale + Mathf.Max(0, defense));
+        int finalDamage = Mathf.Max(1, Mathf.RoundToInt(rawDamage * mitigation));
+        return new DamageResult(rawDamage, finalDamage, true, false);
+    }
 }

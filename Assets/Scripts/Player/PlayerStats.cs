@@ -1,28 +1,87 @@
 using UnityEngine;
 
 /// <summary>
-/// Íæ¼ÒÊôĞÔ/ÊıÖµÏµÍ³
-/// Ö°Ôğ£ºÉúÃüÖµ¡¢Ä§·¨Öµ¡¢ÌåÁ¦Öµ¡¢µÈ¼¶¾­Ñé¡¢ÊôĞÔµã£¨Á¦Á¿/Ãô½İ/ÖÇÁ¦/ÌåÁ¦£©
+/// ç©å®¶ä¸“ç”¨è¿è¡Œæ—¶å±æ€§ç»„ä»¶ã€‚
+/// åœ¨å…±äº«å±æ€§åŸºç±»ä¸Šå¢åŠ å¥”è·‘ä½“åŠ›çš„è€—å°½é”å®šä¸å»¶è¿Ÿæ¢å¤ï¼Œä¸è´Ÿè´£æŠ€èƒ½è“é‡çš„å…·ä½“æ¶ˆè€—æ—¶æœºã€‚
 /// </summary>
-public class PlayerStats : MonoBehaviour
+[DisallowMultipleComponent]
+public sealed class PlayerStats : CharacterStats
 {
-    // ---- »ù´¡ÊôĞÔ ----
-    // ×î´óÉúÃüÖµ / µ±Ç°ÉúÃüÖµ
-    // ×î´óÄ§·¨Öµ / µ±Ç°Ä§·¨Öµ
-    // ×î´óÌåÁ¦Öµ / µ±Ç°ÌåÁ¦Öµ
-    // ¹¥»÷Á¦ / ·ÀÓùÁ¦ / ±©»÷ÂÊ / ±©»÷ÉËº¦
-    // µÈ¼¶ / µ±Ç°¾­Ñé / Éı¼¶ËùĞè¾­Ñé
+    // ä½“åŠ›å½’é›¶åç”¨äºé˜»æ­¢ç«‹å³åå¤å¥”è·‘çš„çŠ¶æ€æ ‡è®°ã€‚
+    private bool staminaExhausted;
+    // æœ€è¿‘ä¸€æ¬¡å¥”è·‘æ‰£é™¤ä½“åŠ›çš„æ¸¸æˆæ—¶é—´ã€‚
+    private float lastStaminaSpendTime = float.NegativeInfinity;
 
-    // ---- ·½·¨ ----
-    // ÊÜµ½ÉËº¦£ºTakeDamage(float damage, GameObject attacker)
-    // ÖÎÁÆ£ºHeal(float amount)
-    // ÏûºÄÄ§·¨£ºConsumeMana(float amount)
-    // ÏûºÄÌåÁ¦£ºConsumeStamina(float amount)
-    // »ñµÃ¾­Ñé£ºGainExp(int exp)
-    // Éı¼¶£ºLevelUp()£¨´¥·¢ÊôĞÔ³É³¤£©
-    // ËÀÍö£ºDie()
-    // ÊôĞÔ±ä»¯»Øµ÷£¨Í¨Öª UI ¸üĞÂ£©
+    /// <summary>å½“å‰æ˜¯å¦æœ‰è¶³å¤Ÿä½“åŠ›è¿›å…¥æˆ–ç»´æŒå¥”è·‘ã€‚</summary>
+    public bool CanSprint
+    {
+        get
+        {
+            if (!IsAlive || Definition == null || MaxStamina <= 0f)
+                return false;
 
-    // ÌåÁ¦»Ö¸´Ğ­³Ì£¨Î´Ê¹ÓÃÊ±×Ô¶¯»Ø¸´£©
-    // ÊÜ»÷ÎŞµĞÊ±¼ä
+            return !staminaExhausted
+                ? CurrentStamina > Mathf.Epsilon
+                : CurrentStamina >= Definition.StaminaResumeThreshold;
+        }
+    }
+
+    /// <summary>é…ç½®å®šä¹‰çš„æ¯ç§’å¥”è·‘ä½“åŠ›æ¶ˆè€—ã€‚</summary>
+    public float StaminaDrainPerSecond => Definition != null ? Definition.StaminaDrainPerSecond : 0f;
+
+    // åˆå§‹åŒ–å…±äº«èµ„æºå’Œç©å®¶ç‰¹æœ‰çš„ä½“åŠ›çŠ¶æ€ã€‚
+    protected override void Awake()
+    {
+        base.Awake();
+        staminaExhausted = false;
+    }
+
+    // æ¯å¸§å¤„ç†åœæ­¢å¥”è·‘åçš„ä½“åŠ›å»¶è¿Ÿæ¢å¤ã€‚
+    private void Update()
+    {
+        RecoverStamina();
+    }
+
+    /// <summary>ä¸ºæŒç»­å¥”è·‘æ‰£é™¤ä½“åŠ›ï¼Œå…è®¸æœ€åä¸€å¸§æ¶ˆè€—å‰©ä½™ä¸è¶³é¢çš„ä½“åŠ›ã€‚</summary>
+    public bool SpendSprintStamina(float amount)
+    {
+        if (!CanSprint || amount <= 0f)
+            return false;
+
+        if (staminaExhausted && CurrentStamina >= Definition.StaminaResumeThreshold)
+            staminaExhausted = false;
+
+        float spent = SpendResourceUpTo(ResourceType.Stamina, amount);
+        if (spent <= 0f)
+        {
+            staminaExhausted = true;
+            return false;
+        }
+
+        lastStaminaSpendTime = Time.time;
+        if (CurrentStamina <= Mathf.Epsilon)
+            staminaExhausted = true;
+
+        return true;
+    }
+
+    /// <summary>æ¢å¤æ‰€æœ‰èµ„æºæ—¶åŒæ—¶é‡ç½®ä½“åŠ›è€—å°½å’Œæ¢å¤è®¡æ—¶çŠ¶æ€ã€‚</summary>
+    public override void ResetRuntimeStats()
+    {
+        base.ResetRuntimeStats();
+        staminaExhausted = false;
+        lastStaminaSpendTime = float.NegativeInfinity;
+    }
+
+    // åœ¨æ¢å¤å»¶è¿Ÿç»“æŸåæŒ‰é…ç½®é€Ÿç‡è¡¥å……ä½“åŠ›ã€‚
+    private void RecoverStamina()
+    {
+        if (!IsAlive || Definition == null || MaxStamina <= 0f || CurrentStamina >= MaxStamina)
+            return;
+
+        if (Time.time < lastStaminaSpendTime + Definition.StaminaRecoveryDelay)
+            return;
+
+        RestoreStamina(Definition.StaminaRecoveryPerSecond * Time.deltaTime);
+    }
 }

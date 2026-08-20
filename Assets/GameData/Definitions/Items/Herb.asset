@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2161c59fbc773454ba41e7dd7188d012, type: 3}
+  m_Name: Herb
+  m_EditorClassIdentifier: 
+  id: 1003
+  displayName: "\u8349\u836F"
+  icon: {fileID: 0}
+  category: 1
+  quality: 0
+  description: "\u53EF\u4EE5\u7528\u4E8E\u540E\u7EED\u5408\u6210\u3002"
+  maxStack: 20
+  buyPrice: 5
+  sellPrice: 2
+  effectType: 0
+  effectValue: 0

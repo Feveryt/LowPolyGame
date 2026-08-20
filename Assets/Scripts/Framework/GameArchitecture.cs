@@ -22,6 +22,7 @@ public class GameArchitecture : Architecture<GameArchitecture>
     /// <summary>
     /// 架构初始化：注册所有 Model / System / Utility（按依赖顺序）
     /// </summary>
+    // 按依赖顺序注册游戏状态的 Model 与 System。
     protected override void Init()
     {
         // ---- Model 层：游戏数据 ----

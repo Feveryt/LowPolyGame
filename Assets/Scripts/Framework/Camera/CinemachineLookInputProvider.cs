@@ -8,8 +8,10 @@ using UnityEngine;
 [DisallowMultipleComponent]
 public sealed class CinemachineLookInputProvider : MonoBehaviour
 {
+    // 提供 Input System 视角轴数据的单相机控制器。
     [SerializeField] private CameraModeController source;
 
+    // 为运行时创建或重建的相机绑定视角输入来源。
     public void Initialize(CameraModeController sourceController)
     {
         source = sourceController;

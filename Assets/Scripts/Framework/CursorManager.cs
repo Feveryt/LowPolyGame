@@ -8,11 +8,13 @@ using UnityEngine.InputSystem;
 /// </summary>
 public class CursorManager : MonoBehaviour
 {
+    // 场景开始时锁定并隐藏鼠标光标。
     private void Start()
     {
         LockCursor();
     }
 
+    // 每帧检测解锁或重新锁定光标的输入。
     private void Update()
     {
         HandleInput();

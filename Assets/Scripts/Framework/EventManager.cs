@@ -17,6 +17,7 @@ using UnityEngine;
 /// </summary>
 public class EventManager : MonoBehaviour
 {
+    // 全局事件管理器的懒加载单例实例。
     private static EventManager mInstance;
 
     /// <summary>单例（懒加载：首次访问时自动创建常驻对象）</summary>
@@ -90,6 +91,7 @@ public class EventManager : MonoBehaviour
     /// <summary>清空所有事件（场景切换时调用）</summary>
     public void ClearAll() => mEventDict.Clear();
 
+    // 销毁时清理监听列表并释放静态实例引用。
     private void OnDestroy()
     {
         mEventDict.Clear();
