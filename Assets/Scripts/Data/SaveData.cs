@@ -2,37 +2,59 @@ using System;
 using UnityEngine;
 
 /// <summary>
-/// Íæ¼Ò´æµµÊı¾İ½á¹¹
+/// å•æ§½å­˜æ¡£çš„å¯åºåˆ—åŒ–è¿è¡Œæ—¶æ•°æ®ä¼ è¾“å¯¹è±¡ã€‚
+/// é™æ€é…ç½®ä»ç”± ScriptableObject æä¾›ï¼Œæ­¤å¯¹è±¡åªä¿å­˜ä¼šåœ¨æ¸¸ç©è¿‡ç¨‹ä¸­æ”¹å˜çš„çŠ¶æ€ã€‚
 /// </summary>
 [Serializable]
-public class SaveData
+public sealed class SaveData
 {
-    // ´æµµ°æ±¾ºÅ
-    // ´æµµÊ±¼ä´Á
+    // ç”¨äºå…¼å®¹åç»­æ•°æ®ç»“æ„å‡çº§çš„å­˜æ¡£ç‰ˆæœ¬ã€‚
+    public int schemaVersion;
+    // ä½¿ç”¨ UTC Tick è®°å½•çš„æœ€è¿‘ä¿å­˜æ—¶é—´ã€‚
+    public long savedAtUtcTicks;
+    // ä¿å­˜æ—¶æ‰€åœ¨çš„ Unity åœºæ™¯åç§°ã€‚
+    public string sceneName;
 
-    // ---- Íæ¼ÒÊôĞÔ ----
-    // µ±Ç°³¡¾°Ãû³Æ / Î»ÖÃ / Ğı×ª
-    // µÈ¼¶ / ¾­ÑéÖµ
-    // ÉúÃüÖµ / Ä§·¨Öµ
-    // ÊôĞÔµã·ÖÅä¼ÇÂ¼
+    // ç©å®¶ä¸–ç•Œä½ç½®çš„ X åæ ‡ã€‚
+    public float playerPositionX;
+    // ç©å®¶ä¸–ç•Œä½ç½®çš„ Y åæ ‡ã€‚
+    public float playerPositionY;
+    // ç©å®¶ä¸–ç•Œä½ç½®çš„ Z åæ ‡ã€‚
+    public float playerPositionZ;
+    // ç©å®¶æ ¹èŠ‚ç‚¹çš„æ°´å¹³ Yaw æœå‘ã€‚
+    public float playerYaw;
 
-    // ---- ±³°ü ----
-    // ÎïÆ·ÁĞ±í£¨ÎïÆ·ID + ÊıÁ¿£©
-    // ×°±¸²Û¼ÇÂ¼
-    // ½ğ±Ò
+    // ä¿å­˜æ—¶çš„å½“å‰ç”Ÿå‘½å€¼ã€‚
+    public float currentHealth;
+    // ä¿å­˜æ—¶çš„å½“å‰ä½“åŠ›å€¼ã€‚
+    public float currentStamina;
+    // ä¿å­˜æ—¶çš„å½“å‰è“é‡ã€‚
+    public float currentMana;
+    // ä¿å­˜æ—¶æŒæœ‰çš„é‡‘å¸æ•°é‡ã€‚
+    public int gold;
+    // æŒ‰å›ºå®šèƒŒåŒ…æ§½ä½é¡ºåºä¿å­˜çš„ç‰©å“æ•°æ®ã€‚
+    public InventorySlotSaveData[] inventorySlots;
 
-    // ---- ¼¼ÄÜ ----
-    // ÒÑÑ§Ï°¼¼ÄÜIDÁĞ±í
-    // ¼¼ÄÜµÈ¼¶ÁĞ±í
-    // Ê£Óà¼¼ÄÜµã
+    /// <summary>å°†åºåˆ—åŒ–çš„ä½ç½®å­—æ®µè¿˜åŸä¸º Unity å‘é‡ã€‚</summary>
+    public Vector3 PlayerPosition => new Vector3(playerPositionX, playerPositionY, playerPositionZ);
+}
 
-    // ---- ÈÎÎñ ----
-    // ÒÑÍê³ÉÈÎÎñIDÁĞ±í
-    // ½øĞĞÖĞÈÎÎñID + ½ø¶È
+/// <summary>
+/// å•ä¸ªèƒŒåŒ…æ§½ä½çš„è½»é‡å­˜æ¡£æ•°æ®ã€‚
+/// åªä¿å­˜ç‰©å“ç¨³å®š ID å’Œæ•°é‡ï¼Œä¸ç›´æ¥åºåˆ—åŒ– ScriptableObject å¼•ç”¨ã€‚
+/// </summary>
+[Serializable]
+public struct InventorySlotSaveData
+{
+    // å¯¹åº” ItemDefinition çš„ç¨³å®šé…ç½® IDã€‚
+    public int itemId;
+    // æ§½ä½å†…çš„ç‰©å“æ•°é‡ã€‚
+    public int quantity;
 
-    // ---- ÓÎÏ·½ø¶È ----
-    // Ö÷Ïß½ø¶È±ê¼Ç
-    // ÒÑ½âËø´«ËÍµã
-    // ÒÑ»÷°ÜBOSSÁĞ±í
-    // ÓÎÏ·Ê±³¤
+    /// <summary>åˆ›å»ºä¸€æ¡ç‰©å“æ§½ä½å­˜æ¡£è®°å½•ã€‚</summary>
+    public InventorySlotSaveData(int itemId, int quantity)
+    {
+        this.itemId = itemId;
+        this.quantity = quantity;
+    }
 }

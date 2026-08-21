@@ -56,7 +56,7 @@ public sealed class PlayerInventory : MonoBehaviour
         playerStats = GetComponent<PlayerStats>();
         gold = Mathf.Max(0, initialGold);
 
-        if (initialItems != null)
+        if ((SaveManager.Instance == null || !SaveManager.Instance.HasSaveForActiveScene) && initialItems != null)
         {
             for (int i = 0; i < initialItems.Length; i++)
             {
@@ -68,6 +68,15 @@ public sealed class PlayerInventory : MonoBehaviour
 
         initialized = true;
         model.RaiseChanged(new InventoryChangedEvent(InventoryChangeType.Initialized));
+        GoldChanged?.Invoke(gold);
+    }
+
+    /// <summary>从已解析的存档槽位恢复金币和背包内容，并统一刷新订阅者。</summary>
+    public void RestoreFromSave(int savedGold, IReadOnlyList<InventorySlot> savedSlots)
+    {
+        EnsureInitialized();
+        gold = Mathf.Max(0, savedGold);
+        model.RestoreSlots(savedSlots);
         GoldChanged?.Invoke(gold);
     }
 

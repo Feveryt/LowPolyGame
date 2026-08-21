@@ -38,10 +38,16 @@ public sealed class InputManager : MonoBehaviour
     private InputAction lockOnAction;
     // 打开或关闭背包界面的动作。
     private InputAction inventoryAction;
+    // 打开或关闭设置面板的暂停菜单动作。
+    private InputAction settingsAction;
+    // 靠近 NPC 时开始对话的交互动作。
+    private InputAction interactAction;
     // 关闭当前 UI 的取消动作。
     private InputAction uiCancelAction;
     // 当前是否允许相机读取 Look 动作。
     private bool lookInputEnabled = true;
+    // 是否允许 Player 动作映射接收游戏玩法输入。
+    private bool playerInputEnabled = true;
 
     // 读取并应用死区后的移动输入。
     public Vector2 Move => ApplyDeadZone(moveAction?.ReadValue<Vector2>() ?? Vector2.zero);
@@ -54,6 +60,8 @@ public sealed class InputManager : MonoBehaviour
         (moveAction?.activeControl?.device is Gamepad || lookAction?.activeControl?.device is Gamepad);
     /// <summary>当前是否允许鼠标或右摇杆驱动游戏视角。</summary>
     public bool LookInputEnabled => lookInputEnabled;
+    /// <summary>背包、对话等独占界面的 UI 动作映射是否正在接收输入。</summary>
+    public bool IsUiInputEnabled => uiMap != null && uiMap.enabled;
 
     // 装备动作完成时触发。
     public event Action EquipPressed;
@@ -63,6 +71,10 @@ public sealed class InputManager : MonoBehaviour
     public event Action LockOnPressed;
     // 背包动作完成时触发。
     public event Action InventoryPressed;
+    // 设置动作完成时触发。
+    public event Action SettingsPressed;
+    // 靠近可交互 NPC 时按下对话键触发。
+    public event Action InteractPressed;
     // UI 取消动作完成时触发。
     public event Action UiCancelPressed;
     // 视角输入开关变化时触发，供相机立即清空轴输入。
@@ -78,7 +90,8 @@ public sealed class InputManager : MonoBehaviour
     private void OnEnable()
     {
         ResolveActions();
-        playerMap?.Enable();
+        if (playerInputEnabled)
+            playerMap?.Enable();
         uiMap?.Disable();
 
         if (equipAction != null)
@@ -89,6 +102,10 @@ public sealed class InputManager : MonoBehaviour
             lockOnAction.performed += OnLockOnPerformed;
         if (uiCancelAction != null)
             uiCancelAction.performed += OnUiCancelPerformed;
+        if (interactAction != null)
+            interactAction.performed += OnInteractPerformed;
+        if (settingsAction != null)
+            settingsAction.performed += OnSettingsPerformed;
     }
 
     // 注销回调并禁用动作映射。
@@ -102,6 +119,10 @@ public sealed class InputManager : MonoBehaviour
             lockOnAction.performed -= OnLockOnPerformed;
         if (uiCancelAction != null)
             uiCancelAction.performed -= OnUiCancelPerformed;
+        if (interactAction != null)
+            interactAction.performed -= OnInteractPerformed;
+        if (settingsAction != null)
+            settingsAction.performed -= OnSettingsPerformed;
 
         playerMap?.Disable();
         uiMap?.Disable();
@@ -137,6 +158,8 @@ public sealed class InputManager : MonoBehaviour
         heavyAttackAction = playerMap.FindAction("HeavyAttack", false);
         lockOnAction = playerMap.FindAction("LockOn", false);
         inventoryAction = playerMap.FindAction("Inventory", false);
+        settingsAction = playerMap.FindAction("Settings", false);
+        interactAction = playerMap.FindAction("Interact", false);
         uiMap = actions.FindActionMap(UiMapName, false);
         uiCancelAction = uiMap?.FindAction("Cancel", false);
 
@@ -166,6 +189,19 @@ public sealed class InputManager : MonoBehaviour
             uiMap.Enable();
         else
             uiMap.Disable();
+    }
+
+    /// <summary>启用或禁用 Player 动作映射，供对话等独占 UI 暂时锁定玩法输入。</summary>
+    public void SetPlayerInputEnabled(bool enabled)
+    {
+        if (playerInputEnabled == enabled)
+            return;
+
+        playerInputEnabled = enabled;
+        if (enabled)
+            playerMap?.Enable();
+        else
+            playerMap?.Disable();
     }
 
     /// <summary>启用或禁用游戏视角输入，背包等暂停界面打开时应关闭。</summary>
@@ -200,5 +236,17 @@ public sealed class InputManager : MonoBehaviour
     private void OnUiCancelPerformed(InputAction.CallbackContext context)
     {
         UiCancelPressed?.Invoke();
+    }
+
+    // 将交互动作转发给附近 NPC 的运行时组件。
+    private void OnInteractPerformed(InputAction.CallbackContext context)
+    {
+        InteractPressed?.Invoke();
+    }
+
+    // 将设置动作转发给跨场景设置面板。
+    private void OnSettingsPerformed(InputAction.CallbackContext context)
+    {
+        SettingsPressed?.Invoke();
     }
 }

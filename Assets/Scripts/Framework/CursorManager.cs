@@ -2,26 +2,26 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 
 /// <summary>
-/// Êó±ê¹â±ê¹ÜÀíÆ÷
-/// Ö°Ôğ£ºËø¶¨/½âËøÊó±ê£¬Esc ½âËø¡¢µã»÷»­ÃæÖØĞÂËø¶¨
-/// »ùÓÚ Input System£¨ÏîÄ¿ÒÑÇĞ»»ÎªĞÂÊäÈëÏµÍ³£¬½ûÖ¹Ê¹ÓÃ¾É Input Àà£©
+/// é¼ æ ‡å…‰æ ‡ç®¡ç†å™¨
+/// èŒè´£ï¼šé”å®š/è§£é”é¼ æ ‡ï¼Œç‚¹å‡»ç”»é¢é‡æ–°é”å®š
+/// åŸºäº Input Systemï¼ˆé¡¹ç›®å·²åˆ‡æ¢ä¸ºæ–°è¾“å…¥ç³»ç»Ÿï¼Œç¦æ­¢ä½¿ç”¨æ—§ Input ç±»ï¼‰
 /// </summary>
 public class CursorManager : MonoBehaviour
 {
-    // ³¡¾°¿ªÊ¼Ê±Ëø¶¨²¢Òş²ØÊó±ê¹â±ê¡£
+    // åœºæ™¯å¼€å§‹æ—¶é”å®šå¹¶éšè—é¼ æ ‡å…‰æ ‡ã€‚
     private void Start()
     {
         LockCursor();
     }
 
-    // Ã¿Ö¡¼ì²â½âËø»òÖØĞÂËø¶¨¹â±êµÄÊäÈë¡£
+    // æ¯å¸§æ£€æµ‹é‡æ–°é”å®šå…‰æ ‡çš„è¾“å…¥ã€‚
     private void Update()
     {
         HandleInput();
     }
 
     /// <summary>
-    /// Ëø¶¨Êó±êµ½ÆÁÄ»ÖĞĞÄ²¢Òş²Ø
+    /// é”å®šé¼ æ ‡åˆ°å±å¹•ä¸­å¿ƒå¹¶éšè—
     /// </summary>
     public void LockCursor()
     {
@@ -30,7 +30,7 @@ public class CursorManager : MonoBehaviour
     }
 
     /// <summary>
-    /// ½âËøÊó±ê
+    /// è§£é”é¼ æ ‡
     /// </summary>
     public void UnlockCursor()
     {
@@ -39,17 +39,11 @@ public class CursorManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Esc ½âËø£¬×ó¼üµã»÷ÖØĞÂËø¶¨£¨Input System °æ£©
+    /// è®¾ç½®é¢æ¿è´Ÿè´£ Escï¼›æ­¤å¤„åªåœ¨ç‚¹å‡»ç”»é¢æ—¶é‡æ–°é”å®šå…‰æ ‡ã€‚
     /// </summary>
     private void HandleInput()
     {
-        // Esc ½âËø
-        if (Keyboard.current != null && Keyboard.current.escapeKey.wasPressedThisFrame)
-        {
-            UnlockCursor();
-        }
-
-        // ×ó¼üµã»÷ÖØĞÂËø¶¨
+        // å·¦é”®ç‚¹å‡»é‡æ–°é”å®š
         if (Mouse.current != null && Mouse.current.leftButton.wasPressedThisFrame &&
             Cursor.lockState == CursorLockMode.None)
         {

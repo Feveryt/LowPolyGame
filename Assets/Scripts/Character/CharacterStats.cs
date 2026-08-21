@@ -71,6 +71,18 @@ public abstract class CharacterStats : MonoBehaviour, IDamageable
         InitializeRuntimeStats();
     }
 
+    /// <summary>从存档恢复当前资源，并限制在配置上限内后通知订阅者。</summary>
+    public void RestoreFromSave(float health, float stamina, float mana)
+    {
+        currentHealth = Mathf.Clamp(Mathf.Max(1f, health), 0f, MaxHealth);
+        currentStamina = Mathf.Clamp(stamina, 0f, MaxStamina);
+        currentMana = Mathf.Clamp(mana, 0f, MaxMana);
+        IsAlive = currentHealth > 0f;
+        NotifyResourceChanged(ResourceType.Health);
+        NotifyResourceChanged(ResourceType.Stamina);
+        NotifyResourceChanged(ResourceType.Mana);
+    }
+
     /// <summary>尝试足额消耗体力；资源不足时不修改当前值。</summary>
     public bool TrySpendStamina(float amount)
     {

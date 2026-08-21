@@ -257,6 +257,22 @@ public sealed class InventoryModel
         Changed?.Invoke(changeEvent);
     }
 
+    /// <summary>按固定槽位索引替换背包内容，并在恢复完成后只通知一次。</summary>
+    public void RestoreSlots(IReadOnlyList<InventorySlot> restoredSlots)
+    {
+        for (int i = 0; i < slots.Count; i++)
+        {
+            InventorySlot restoredSlot = restoredSlots != null && i < restoredSlots.Count
+                ? restoredSlots[i]
+                : default;
+            slots[i] = restoredSlot.IsEmpty
+                ? default
+                : new InventorySlot(restoredSlot.Item, Mathf.Min(restoredSlot.Quantity, restoredSlot.Item.MaxStack));
+        }
+
+        RaiseChanged(new InventoryChangedEvent(InventoryChangeType.Initialized));
+    }
+
     // 检查物品数量是否可以完整放入现有堆叠和空槽位。
     private bool CanFit(ItemDefinition item, int amount)
     {
