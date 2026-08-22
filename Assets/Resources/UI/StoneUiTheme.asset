@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 13ae1b2173f0dd94ea0abbe3ca509d42, type: 3}
+  m_Name: StoneUiTheme
+  m_EditorClassIdentifier: 
+  chineseFont: {fileID: 11400000, guid: 3191586dfd099214597f180a6cb047c2, type: 2}
+  displayFont: {fileID: 11400000, guid: 3191586dfd099214597f180a6cb047c2, type: 2}
+  panelSprite: {fileID: 21300000, guid: 05635dc0b2e38494a8926bc193d12085, type: 3}
+  titleSprite: {fileID: 21300000, guid: 0921245800cac4766af8e5348720887e, type: 3}
+  primaryButtonSprite: {fileID: 21300000, guid: cbb338b33765f40d2b04b54d803786bd, type: 3}
+  dangerButtonSprite: {fileID: 21300000, guid: 4f27cdb744c7b4f4aba46139d40a63f1, type: 3}
+  itemSlotSprite: {fileID: 21300000, guid: c2bdd4b29e21a43c296e7d7c09e5752a, type: 3}
+  selectionSprite: {fileID: 21300000, guid: 0911fdf92c5ec4ee18b3b0c207cda8cc, type: 3}
+  resourceBackgroundSprite: {fileID: 21300000, guid: e76a69b5dafc24589b24bb92e46c8936, type: 3}
+  healthFillSprite: {fileID: 21300000, guid: bec952085f91f4f20a74f044506b140f, type: 3}
+  staminaFillSprite: {fileID: 21300000, guid: 7b8efde45ee1f4ad78fc1beeb7b72184, type: 3}
+  manaFillSprite: {fileID: 21300000, guid: 85b8c077af757423b85df92789d332dd, type: 3}
+  coinSprite: {fileID: 21300000, guid: aa04871d55ad4478a99ba540017e88c0, type: 3}

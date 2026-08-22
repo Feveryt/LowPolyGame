@@ -3,6 +3,7 @@ using QFramework;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
+using TMPro;
 
 /// <summary>
 /// 背包界面控制器，驱动 ScrollView 槽位、详情面板、UI 焦点、暂停和鼠标状态。
@@ -29,15 +30,15 @@ public sealed class UIInventory : UIPanel
     // 背包和商店共用的基础槽位预制体。
     [SerializeField] private InventorySlotView slotPrefab;
     // 当前物品名称文本。
-    [SerializeField] private Text itemNameText;
+    [SerializeField] private Graphic itemNameText;
     // 当前物品类型文本。
-    [SerializeField] private Text itemTypeText;
+    [SerializeField] private Graphic itemTypeText;
     // 当前物品描述文本。
-    [SerializeField] private Text itemDescriptionText;
+    [SerializeField] private Graphic itemDescriptionText;
     // 当前物品数量文本。
-    [SerializeField] private Text itemQuantityText;
+    [SerializeField] private Graphic itemQuantityText;
     // 玩家金币文本。
-    [SerializeField] private Text goldText;
+    [SerializeField] private Graphic goldText;
     // 使用当前消耗品的按钮。
     [SerializeField] private Button useButton;
     // 丢弃当前物品的按钮。
@@ -258,7 +259,7 @@ public sealed class UIInventory : UIPanel
     private void OnGoldChanged(int value)
     {
         if (goldText != null)
-            goldText.text = $"金币: {value}";
+            SetText(goldText, $"金币: {value}");
     }
 
     // 处理鼠标点击或提交选择的槽位。
@@ -338,13 +339,13 @@ public sealed class UIInventory : UIPanel
         InventorySlot slot = default;
         bool hasItem = playerInventory != null && selectedIndex >= 0 && selectedIndex < playerInventory.Slots.Count && (slot = playerInventory.Slots[selectedIndex]).IsEmpty == false;
         if (itemNameText != null)
-            itemNameText.text = hasItem ? slot.Item.DisplayName : "未选择物品";
+            SetText(itemNameText, hasItem ? slot.Item.DisplayName : "未选择物品");
         if (itemTypeText != null)
-            itemTypeText.text = hasItem ? slot.Item.Category.ToString() : string.Empty;
+            SetText(itemTypeText, hasItem ? slot.Item.Category.ToString() : string.Empty);
         if (itemDescriptionText != null)
-            itemDescriptionText.text = hasItem ? slot.Item.Description : "请选择一个物品查看详情";
+            SetText(itemDescriptionText, hasItem ? slot.Item.Description : "请选择一个物品查看详情");
         if (itemQuantityText != null)
-            itemQuantityText.text = hasItem ? $"数量: {slot.Quantity}" : string.Empty;
+            SetText(itemQuantityText, hasItem ? $"数量: {slot.Quantity}" : string.Empty);
 
         bool usable = hasItem && slot.Item.Category == ItemCategory.Consumable;
         if (useButton != null)
@@ -399,5 +400,14 @@ public sealed class UIInventory : UIPanel
     {
         GameArchitecture.Interface.SendCommand(new ChangeGameStateCommand(state));
         Time.timeScale = state == GameState.Paused ? 0f : 1f;
+    }
+
+    // 同时兼容旧 UGUI Text 与石质主题使用的 TMP 文本。
+    private static void SetText(Graphic textGraphic, string content)
+    {
+        if (textGraphic is TMP_Text tmpText)
+            tmpText.text = content;
+        else if (textGraphic is Text legacyText)
+            legacyText.text = content;
     }
 }

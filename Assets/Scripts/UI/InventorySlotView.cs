@@ -2,6 +2,7 @@ using System;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
+using TMPro;
 
 /// <summary>
 /// 背包单个槽位的预制体视图，负责显示物品并将点击、焦点事件转发给背包面板。
@@ -13,7 +14,7 @@ public sealed class InventorySlotView : MonoBehaviour, ISelectHandler
     // 物品图标显示控件。
     [SerializeField] private Image icon;
     // 物品堆叠数量显示文本。
-    [SerializeField] private Text quantityText;
+    [SerializeField] private Graphic quantityText;
     // 当前槽位获得焦点时显示的边框。
     [SerializeField] private Image selectionImage;
 
@@ -58,7 +59,7 @@ public sealed class InventorySlotView : MonoBehaviour, ISelectHandler
         if (quantityText != null)
         {
             quantityText.enabled = hasItem && slot.Quantity > 1;
-            quantityText.text = hasItem ? slot.Quantity.ToString() : string.Empty;
+            SetText(quantityText, hasItem ? slot.Quantity.ToString() : string.Empty);
         }
 
         if (button != null)
@@ -82,5 +83,14 @@ public sealed class InventorySlotView : MonoBehaviour, ISelectHandler
     private void HandleClick()
     {
         clickHandler?.Invoke(slotIndex);
+    }
+
+    // 同时兼容旧 UGUI Text 与石质主题使用的 TMP 文本。
+    private static void SetText(Graphic textGraphic, string content)
+    {
+        if (textGraphic is TMP_Text tmpText)
+            tmpText.text = content;
+        else if (textGraphic is Text legacyText)
+            legacyText.text = content;
     }
 }

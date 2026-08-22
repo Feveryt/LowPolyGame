@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   id: 1004
   displayName: "\u94C1\u5251"
-  icon: {fileID: 0}
+  icon: {fileID: 21300000, guid: e62d0e0e21f1c4d13bbc1137759cbd14, type: 3}
   category: 2
   quality: 0
   description: "\u88C5\u5907\u5360\u4F4D\u7269\u54C1\uFF0C\u88C5\u5907\u7CFB\u7EDF\u5C1A\u672A\u5B9E\u73B0\u3002"

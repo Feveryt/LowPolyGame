@@ -2,6 +2,7 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using TMPro;
 
 /// <summary>
 /// 负责跨场景异步加载与全屏加载过渡。
@@ -24,8 +25,10 @@ public sealed class SceneLoader : MonoBehaviour
     private CanvasGroup overlayCanvasGroup;
     // 显示模拟加载进度的 UGUI Slider。
     private Slider progressSlider;
-    // 显示百分比数值的 UGUI Text。
-    private Text progressText;
+    // 显示百分比数值的 TMP 文本。
+    private TMP_Text progressText;
+    // 运行时加载遮罩使用的石质主题配置。
+    private StoneUiTheme stoneUiTheme;
     // 当前是否已进入不可重复触发的加载流程。
     private bool isLoading;
 
@@ -55,6 +58,7 @@ public sealed class SceneLoader : MonoBehaviour
 
         instance = this;
         DontDestroyOnLoad(gameObject);
+        stoneUiTheme = Resources.Load<StoneUiTheme>("UI/StoneUiTheme");
         CreateOverlay();
     }
 
@@ -126,13 +130,13 @@ public sealed class SceneLoader : MonoBehaviour
         overlayCanvasGroup.blocksRaycasts = false;
         overlayCanvasGroup.interactable = false;
 
-        Text loadingLabel = CreateText("Loading Label", overlayObject.transform, "正在加载", 28, TextAnchor.MiddleCenter);
+        TMP_Text loadingLabel = CreateText("Loading Label", overlayObject.transform, "正在加载", 28, TextAlignmentOptions.Center);
         SetCenteredLayout(loadingLabel.rectTransform, new Vector2(0f, 42f), new Vector2(360f, 44f));
 
         progressSlider = CreateProgressSlider(overlayObject.transform);
         SetCenteredLayout(progressSlider.GetComponent<RectTransform>(), Vector2.zero, new Vector2(420f, 18f));
 
-        progressText = CreateText("Progress Text", overlayObject.transform, "0%", 18, TextAnchor.MiddleCenter);
+        progressText = CreateText("Progress Text", overlayObject.transform, "0%", 18, TextAlignmentOptions.Center);
         SetCenteredLayout(progressText.rectTransform, new Vector2(0f, -38f), new Vector2(140f, 30f));
     }
 
@@ -170,12 +174,12 @@ public sealed class SceneLoader : MonoBehaviour
         return uiObject;
     }
 
-    // 创建统一样式的内置 Text。
-    private static Text CreateText(string objectName, Transform parent, string content, int fontSize, TextAnchor alignment)
+    // 创建统一石质样式的 TMP 文本。
+    private TMP_Text CreateText(string objectName, Transform parent, string content, int fontSize, TextAlignmentOptions alignment)
     {
         GameObject textObject = CreateUiObject(objectName, parent);
-        Text text = textObject.AddComponent<Text>();
-        text.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
+        TextMeshProUGUI text = textObject.AddComponent<TextMeshProUGUI>();
+        text.font = stoneUiTheme != null ? stoneUiTheme.ChineseFont : null;
         text.text = content;
         text.fontSize = fontSize;
         text.alignment = alignment;
@@ -184,11 +188,13 @@ public sealed class SceneLoader : MonoBehaviour
     }
 
     // 创建黑底青绿色填充的最小进度条。
-    private static Slider CreateProgressSlider(Transform parent)
+    private Slider CreateProgressSlider(Transform parent)
     {
         GameObject sliderObject = CreateUiObject("Loading Progress", parent);
         Image background = sliderObject.AddComponent<Image>();
-        background.color = new Color(0.12f, 0.14f, 0.17f, 1f);
+        background.sprite = stoneUiTheme != null ? stoneUiTheme.ResourceBackgroundSprite : null;
+        background.type = background.sprite != null ? Image.Type.Sliced : Image.Type.Simple;
+        background.color = background.sprite != null ? Color.white : new Color(0.12f, 0.14f, 0.17f, 1f);
         Slider slider = sliderObject.AddComponent<Slider>();
         slider.minValue = 0f;
         slider.maxValue = 1f;
@@ -199,7 +205,9 @@ public sealed class SceneLoader : MonoBehaviour
         StretchToParent(fillArea.GetComponent<RectTransform>(), 4f);
         GameObject fill = CreateUiObject("Fill", fillArea.transform);
         Image fillImage = fill.AddComponent<Image>();
-        fillImage.color = new Color(0.22f, 0.72f, 0.57f, 1f);
+        fillImage.sprite = stoneUiTheme != null ? stoneUiTheme.StaminaFillSprite : null;
+        fillImage.type = fillImage.sprite != null ? Image.Type.Sliced : Image.Type.Simple;
+        fillImage.color = fillImage.sprite != null ? Color.white : new Color(0.22f, 0.72f, 0.57f, 1f);
         StretchToParent(fill.GetComponent<RectTransform>());
         slider.fillRect = fill.GetComponent<RectTransform>();
         slider.targetGraphic = background;
