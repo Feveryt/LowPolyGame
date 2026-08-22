@@ -143,32 +143,35 @@ sequenceDiagram
 
 ```
 Assets/Scripts/
-├── Framework/                    # 框架核心
-│   ├── QFramework/
-│   │   └── QFramework.cs         # QFramework 官方架构核心（MIT，原样引入）
-│   ├── GameArchitecture.cs       # 游戏架构入口：注册所有 Model/System/Utility
-│   ├── Models/
-│   │   └── GameStateModel.cs     # 游戏状态数据（BindableProperty 数据绑定）
-│   ├── Systems/
-│   │   └── GameStateSystem.cs    # 游戏状态机（数据变化 → 事件广播）
-│   ├── Commands/
-│   │   └── ChangeGameStateCommand.cs  # 状态切换命令（唯一入口）
-│   ├── GameManager.cs            # 架构引导器 + 单例
-│   ├── EventManager.cs           # 字符串事件兼容层（新代码推荐类型事件）
-│   ├── AudioManager.cs           # 音效/音乐（待迁移为 System）
-│   ├── CameraManager.cs          # 相机管理
-│   ├── ConfigManager.cs          # 配置表管理
-│   ├── CursorManager.cs          # 鼠标锁定/解锁
-│   ├── InputManager.cs           # 输入封装（键鼠/手柄）
-│   ├── PoolManager.cs            # 对象池
-│   ├── SaveManager.cs            # 存档系统
-│   ├── SceneLoader.cs            # 场景加载
-│   └── UIManager.cs              # UI 面板管理
-├── Player/                       # 玩家系统（移动、战斗、属性、背包、技能、任务）
-├── Enemy/                        # 敌人系统（AI、属性、刷怪）
-├── UI/                           # 界面系统（HUD、背包、技能树、对话、暂停）
-├── Combat/                       # 战斗逻辑（伤害计算、Buff、弹道、打击检测）
-└── Data/                         # 数据结构定义（物品、技能、敌人配置、存档）
+├── Core/                         # 输入、存档、场景、管理器和 QFramework
+│   ├── Input/
+│   ├── Save/
+│   ├── Scene/
+│   ├── Managers/
+│   └── QFramework/
+├── Gameplay/                     # 游戏玩法模块
+│   ├── Character/
+│   │   ├── Player/
+│   │   ├── Enemy/
+│   │   └── Shared/
+│   ├── Combat/
+│   ├── Inventory/
+│   ├── Dialogue/
+│   └── Targeting/
+├── Camera/                       # Cinemachine 与镜头输入
+├── UI/                           # 表现层 UI
+│   ├── Common/
+│   ├── HUD/
+│   ├── Inventory/
+│   ├── Settings/
+│   ├── MainMenu/
+│   ├── Dialogue/
+│   └── SkillTree/
+├── Data/                         # ScriptableObject 与存档数据定义
+├── Commands/                     # 跨模块命令
+├── Models/                       # 全局运行时模型
+├── Systems/                      # 全局系统
+└── Editor/                       # 编辑器工具
 ```
 
 ---

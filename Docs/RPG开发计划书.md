@@ -116,17 +116,25 @@ flowchart TD
 
 ```text
 Assets/Scripts/
-├── Core/                  # Architecture、公共类型、通用接口
-├── Input/                 # Input System 适配层
-├── Character/             # 玩家/敌人共享的属性与战斗接口
-├── Combat/                # 伤害、攻击、技能、Buff、命中
-├── Inventory/             # 背包、装备、物品
-├── Quest/                 # 任务定义、目标、进度
-├── Dialogue/              # 对话图、条件、动作
-├── Camera/                # 相机模式与锁定
-├── UI/                    # HUD 与各面板
-├── Save/                  # 快照、迁移、存储
-└── Infrastructure/        # 配置、对象池、音频、场景加载
+├── Core/                  # Input、Save、Scene、Managers、QFramework
+│   ├── Input/
+│   ├── Save/
+│   ├── Scene/
+│   ├── Managers/
+│   └── QFramework/
+├── Gameplay/              # Character、Combat、Inventory、Dialogue、Targeting
+│   ├── Character/         # Player、Enemy、Shared
+│   ├── Combat/
+│   ├── Inventory/
+│   ├── Dialogue/
+│   └── Targeting/
+├── Camera/                # 相机模式与输入适配
+├── UI/                    # Common、HUD、Inventory、Settings、MainMenu、Dialogue
+├── Data/                  # ScriptableObject 和存档 DTO
+├── Commands/              # 跨模块命令
+├── Models/                # 全局运行时模型
+├── Systems/               # 全局系统
+└── Editor/                # 编辑器工具
 ```
 
 建议先完成模块接口和命名空间整理，再添加 `.asmdef`。不要在代码仍频繁跨目录引用时一次性拆出过多程序集。
