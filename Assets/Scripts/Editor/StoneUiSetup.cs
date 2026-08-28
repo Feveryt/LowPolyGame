@@ -320,7 +320,9 @@ public static class StoneUiSetup
     private static void SetupTestActScene()
     {
         Scene scene = EditorSceneManager.OpenScene(TestActScenePath, OpenSceneMode.Single);
-        Canvas hudCanvas = Object.FindFirstObjectByType<Canvas>(FindObjectsInactive.Include);
+        // 优先查找 HUD 自身所在的 Canvas，避免拿到先创建的对话 Canvas。
+        UIHUD hud = Object.FindFirstObjectByType<UIHUD>(FindObjectsInactive.Include);
+        Canvas hudCanvas = hud != null ? hud.GetComponentInParent<Canvas>() : null;
         if (hudCanvas == null)
         {
             GameObject canvasObject = CreateUiObject("Canvas", null);
@@ -330,7 +332,6 @@ public static class StoneUiSetup
             canvasObject.AddComponent<GraphicRaycaster>();
         }
 
-        UIHUD hud = Object.FindFirstObjectByType<UIHUD>(FindObjectsInactive.Include);
         if (hud == null)
             hud = hudCanvas.gameObject.AddComponent<UIHUD>();
         ClearChildren(hud.transform);

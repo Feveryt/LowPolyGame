@@ -1,0 +1,40 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 316a5a172946d3944aa8f75433721a1b, type: 3}
+  m_Name: Dialogue_NPC_1_1
+  m_EditorClassIdentifier: 
+  dialogueId: 11e55b31f62c4c5d93a13b8006de5fdb
+  npcName: NPC
+  npcPortrait: {fileID: 0}
+  npcPortraitSide: 0
+  entryNodeId: 1
+  nodes:
+  - nodeId: 1
+    speaker: 0
+    text: New player line
+    eventId: 
+    nextNodeId: 2
+    choices: []
+  - nodeId: 2
+    speaker: 0
+    text: New player line
+    eventId: 
+    nextNodeId: 3
+    choices: []
+  - nodeId: 3
+    speaker: 0
+    text: New NPC line
+    eventId: 
+    nextNodeId: -1
+    choices: []
+  completionText: "\u6211\u5DF2\u7ECF\u6CA1\u6709\u66F4\u591A\u8981\u8BF4\u7684\u4E86\u3002"
+  completionEventId: 

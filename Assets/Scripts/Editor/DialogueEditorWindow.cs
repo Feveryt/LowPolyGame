@@ -15,14 +15,16 @@ public sealed class DialogueEditorWindow : EditorWindow
     private string validationReport;
     // 校验结果是否包含错误。
     private bool hasErrors;
+    // 编辑器内容区域的垂直滚动位置。
+    private Vector2 scrollPosition;
 
-    [MenuItem("Tools/Dialogue Editor")]
+    [MenuItem("工具/对话编辑器")]
     private static void Open()
     {
-        GetWindow<DialogueEditorWindow>("Dialogue Editor");
+        GetWindow<DialogueEditorWindow>("对话编辑器");
     }
 
-    [MenuItem("Tools/Dialogue/Clear Completed Progress")]
+    [MenuItem("工具/对话/清除已完成进度")]
     private static void ClearCompletedProgress()
     {
         DialogueProgressStore.ClearAll();
@@ -32,22 +34,30 @@ public sealed class DialogueEditorWindow : EditorWindow
     // 绘制资产入口、玩家头像资料、NPC 对话内容和校验结果。
     private void OnGUI()
     {
+        scrollPosition = EditorGUILayout.BeginScrollView(scrollPosition, GUILayout.ExpandHeight(true));
         EditorGUILayout.Space(8f);
-        EditorGUILayout.LabelField("Dialogue Editor", EditorStyles.boldLabel);
+        EditorGUILayout.LabelField("对话编辑器", EditorStyles.boldLabel);
         EditorGUILayout.BeginHorizontal();
-        dialogue = (DialogueAsset)EditorGUILayout.ObjectField("Dialogue Asset", dialogue, typeof(DialogueAsset), false);
-        if (GUILayout.Button("Create NPC Dialogue", GUILayout.Width(150f)))
+        dialogue = (DialogueAsset)EditorGUILayout.ObjectField("对话资产", dialogue, typeof(DialogueAsset), false);
+        if (GUILayout.Button("新建 NPC 对话", GUILayout.Width(120f)))
             CreateDialogueAsset();
+        using (new EditorGUI.DisabledScope(dialogue == null))
+        {
+            if (GUILayout.Button("删除当前对话", GUILayout.Width(120f)))
+                DeleteDialogueAsset();
+        }
         EditorGUILayout.EndHorizontal();
 
         DrawPresentationSettings();
         if (dialogue == null)
         {
-            EditorGUILayout.HelpBox("创建或选择一个 Dialogue Asset 后开始编辑。", MessageType.Info);
+            EditorGUILayout.HelpBox("请新建或选择一个对话资产后开始编辑。", MessageType.Info);
+            EditorGUILayout.EndScrollView();
             return;
         }
 
         DrawDialogue();
+        EditorGUILayout.EndScrollView();
     }
 
     // 显示全局玩家头像资产的创建与选中入口。
@@ -55,17 +65,17 @@ public sealed class DialogueEditorWindow : EditorWindow
     {
         DialoguePresentationSettings settings = FindPresentationSettings();
         EditorGUILayout.BeginVertical(EditorStyles.helpBox);
-        EditorGUILayout.LabelField("Player Portrait", EditorStyles.boldLabel);
+        EditorGUILayout.LabelField("玩家头像资料", EditorStyles.boldLabel);
         if (settings == null)
         {
-            EditorGUILayout.HelpBox("请创建玩家展示设置并在 Inspector 绑定玩家头像及左右位置。", MessageType.Warning);
-            if (GUILayout.Button("Create Presentation Settings"))
+            EditorGUILayout.HelpBox("请创建玩家展示设置，并在 Inspector 中绑定玩家头像及左右位置。", MessageType.Warning);
+            if (GUILayout.Button("创建展示设置"))
                 CreatePresentationSettings();
         }
         else
         {
-            EditorGUILayout.ObjectField("Settings", settings, typeof(DialoguePresentationSettings), false);
-            if (GUILayout.Button("Select Settings"))
+            EditorGUILayout.ObjectField("展示设置", settings, typeof(DialoguePresentationSettings), false);
+            if (GUILayout.Button("选中展示设置"))
                 Selection.activeObject = settings;
         }
         EditorGUILayout.EndVertical();
@@ -85,28 +95,29 @@ public sealed class DialogueEditorWindow : EditorWindow
         SerializedProperty completionEventId = serialized.FindProperty("completionEventId");
 
         EditorGUILayout.BeginVertical(EditorStyles.helpBox);
-        EditorGUILayout.LabelField("NPC Portrait", EditorStyles.boldLabel);
-        EditorGUILayout.PropertyField(npcName, new GUIContent("NPC Name"));
-        EditorGUILayout.PropertyField(npcPortrait, new GUIContent("NPC Image"));
-        EditorGUILayout.PropertyField(npcPortraitSide, new GUIContent("NPC Image Side"));
-        EditorGUILayout.PropertyField(completionText, new GUIContent("Completion Text"));
-        EditorGUILayout.PropertyField(completionEventId, new GUIContent("Completion Event ID"));
+        EditorGUILayout.LabelField("NPC 资料", EditorStyles.boldLabel);
+        EditorGUILayout.PropertyField(npcName, new GUIContent("NPC 名称"));
+        EditorGUILayout.PropertyField(npcPortrait, new GUIContent("NPC 头像"));
+        EditorGUILayout.PropertyField(npcPortraitSide, new GUIContent("NPC 头像位置"));
+        EditorGUILayout.PropertyField(completionText, new GUIContent("完成后的重复台词"));
+        EditorGUILayout.PropertyField(completionEventId, new GUIContent("完成事件 ID"));
         EditorGUILayout.EndVertical();
 
         EditorGUILayout.BeginHorizontal();
-        if (GUILayout.Button("Add NPC Line"))
+        if (GUILayout.Button("添加 NPC 台词"))
             AddLine(serialized, DialogueSpeaker.Npc);
-        if (GUILayout.Button("Add Player Line"))
+        if (GUILayout.Button("添加玩家台词"))
             AddLine(serialized, DialogueSpeaker.Player);
-        if (GUILayout.Button("Validate"))
+        if (GUILayout.Button("校验对话"))
             Validate(serialized);
         EditorGUILayout.EndHorizontal();
 
         EditorGUILayout.HelpBox(
-            "节点按列表顺序添加。每个节点的 Next Node Id 和 NPC 节点 Choices.Target Node Id 都填写目标节点编号；-1 表示结束。为 NPC 节点添加 Choices 即可显示玩家回答按钮。",
+            "节点按列表顺序添加。每个节点的“下一节点 ID”和 NPC 节点选项的“目标节点 ID”都填写目标节点编号；-1 表示结束。为 NPC 节点添加玩家选项即可显示回答按钮。",
             MessageType.None);
-        EditorGUILayout.PropertyField(entryNodeId, new GUIContent("Entry Node ID"));
-        DrawNodes(nodes);
+        EditorGUILayout.PropertyField(entryNodeId, new GUIContent("入口节点 ID"));
+        if (DrawNodes(serialized, nodes))
+            return;
 
         if (!string.IsNullOrWhiteSpace(validationReport))
             EditorGUILayout.HelpBox(validationReport, hasErrors ? MessageType.Error : MessageType.Info);
@@ -120,8 +131,9 @@ public sealed class DialogueEditorWindow : EditorWindow
     }
 
     // 将节点逐项展示，选项列表仅对 NPC 节点开放。
-    private static void DrawNodes(SerializedProperty nodes)
+    private bool DrawNodes(SerializedObject serialized, SerializedProperty nodes)
     {
+        int nodeToDelete = -1;
         for (int index = 0; index < nodes.arraySize; index++)
         {
             SerializedProperty node = nodes.GetArrayElementAtIndex(index);
@@ -133,17 +145,121 @@ public sealed class DialogueEditorWindow : EditorWindow
             SerializedProperty choices = node.FindPropertyRelative("choices");
 
             EditorGUILayout.BeginVertical(EditorStyles.helpBox);
-            EditorGUILayout.LabelField($"Node #{id.intValue}", EditorStyles.boldLabel);
-            EditorGUILayout.PropertyField(speaker);
-            EditorGUILayout.PropertyField(text);
-            EditorGUILayout.PropertyField(eventId, new GUIContent("Event ID"));
+            EditorGUILayout.BeginHorizontal();
+            EditorGUILayout.LabelField($"节点 #{id.intValue}", EditorStyles.boldLabel);
+            if (GUILayout.Button("删除节点", GUILayout.Width(80f)))
+                nodeToDelete = index;
+            EditorGUILayout.EndHorizontal();
+            speaker.enumValueIndex = EditorGUILayout.Popup(
+                "发言者",
+                speaker.enumValueIndex,
+                new[] { "玩家", "NPC" });
+            EditorGUILayout.PropertyField(text, new GUIContent("台词内容"));
+            EditorGUILayout.PropertyField(eventId, new GUIContent("事件 ID"));
             if ((DialogueSpeaker)speaker.enumValueIndex == DialogueSpeaker.Npc)
-                EditorGUILayout.PropertyField(choices, new GUIContent("Player Choices"), true);
+                DrawChoices(choices);
             else if (choices.arraySize > 0)
-                EditorGUILayout.HelpBox("玩家节点的 Choices 不会在运行时使用。", MessageType.Warning);
-            EditorGUILayout.PropertyField(next, new GUIContent("Next Node ID"));
+                EditorGUILayout.HelpBox("玩家节点的“玩家选项”不会在运行时使用。", MessageType.Warning);
+            EditorGUILayout.PropertyField(next, new GUIContent("下一节点 ID"));
             EditorGUILayout.EndVertical();
         }
+
+        if (nodeToDelete < 0)
+            return false;
+
+        DeleteNode(serialized, nodeToDelete);
+        return true;
+    }
+
+    // 绘制 NPC 节点的玩家回答选项，并支持独立添加和删除。
+    private static void DrawChoices(SerializedProperty choices)
+    {
+        choices.isExpanded = EditorGUILayout.Foldout(
+            choices.isExpanded,
+            $"玩家选项（{choices.arraySize}）",
+            true);
+        if (!choices.isExpanded)
+            return;
+
+        int choiceToDelete = -1;
+        EditorGUI.indentLevel++;
+        for (int index = 0; index < choices.arraySize; index++)
+        {
+            SerializedProperty choice = choices.GetArrayElementAtIndex(index);
+            EditorGUILayout.BeginVertical(EditorStyles.helpBox);
+            EditorGUILayout.BeginHorizontal();
+            EditorGUILayout.LabelField($"选项 #{index + 1}", EditorStyles.miniBoldLabel);
+            if (GUILayout.Button("删除选项", GUILayout.Width(80f)))
+                choiceToDelete = index;
+            EditorGUILayout.EndHorizontal();
+            EditorGUILayout.PropertyField(choice.FindPropertyRelative("text"), new GUIContent("回答文本"));
+            EditorGUILayout.PropertyField(choice.FindPropertyRelative("targetNodeId"), new GUIContent("目标节点 ID"));
+            EditorGUILayout.EndVertical();
+        }
+
+        if (choiceToDelete >= 0)
+            choices.DeleteArrayElementAtIndex(choiceToDelete);
+
+        if (GUILayout.Button("添加玩家选项"))
+        {
+            choices.InsertArrayElementAtIndex(choices.arraySize);
+            SerializedProperty choice = choices.GetArrayElementAtIndex(choices.arraySize - 1);
+            choice.FindPropertyRelative("text").stringValue = "新的玩家回答";
+            choice.FindPropertyRelative("targetNodeId").intValue = -1;
+        }
+        EditorGUI.indentLevel--;
+    }
+
+    // 删除指定节点，并清理入口和其他节点中指向它的跳转引用。
+    private void DeleteNode(SerializedObject serialized, int index)
+    {
+        SerializedProperty nodes = serialized.FindProperty("nodes");
+        if (index < 0 || index >= nodes.arraySize)
+            return;
+
+        int removedId = nodes.GetArrayElementAtIndex(index).FindPropertyRelative("nodeId").intValue;
+        if (!EditorUtility.DisplayDialog(
+                "删除对话节点",
+                $"确定删除节点 #{removedId} 吗？所有指向该节点的跳转都会改为结束对话。",
+                "删除",
+                "取消"))
+            return;
+
+        Undo.RecordObject(dialogue, "删除对话节点");
+        SerializedProperty entry = serialized.FindProperty("entryNodeId");
+        for (int nodeIndex = 0; nodeIndex < nodes.arraySize; nodeIndex++)
+        {
+            SerializedProperty node = nodes.GetArrayElementAtIndex(nodeIndex);
+            SerializedProperty next = node.FindPropertyRelative("nextNodeId");
+            if (next.intValue == removedId)
+                next.intValue = -1;
+
+            SerializedProperty choices = node.FindPropertyRelative("choices");
+            for (int choiceIndex = 0; choiceIndex < choices.arraySize; choiceIndex++)
+            {
+                SerializedProperty target = choices.GetArrayElementAtIndex(choiceIndex)
+                    .FindPropertyRelative("targetNodeId");
+                if (target.intValue == removedId)
+                    target.intValue = -1;
+            }
+        }
+
+        if (entry.intValue == removedId)
+        {
+            entry.intValue = nodes.arraySize > 1
+                ? nodes.GetArrayElementAtIndex(index == 0 ? 1 : 0).FindPropertyRelative("nodeId").intValue
+                : -1;
+        }
+
+        int sizeBeforeDelete = nodes.arraySize;
+        nodes.DeleteArrayElementAtIndex(index);
+        if (nodes.arraySize == sizeBeforeDelete)
+            nodes.DeleteArrayElementAtIndex(index);
+
+        serialized.ApplyModifiedProperties();
+        dialogue.EnsureDialogueId();
+        EditorUtility.SetDirty(dialogue);
+        validationReport = string.Empty;
     }
 
     // 新增一条线性台词，自动连到此前无选项的末尾节点。
@@ -151,14 +267,14 @@ public sealed class DialogueEditorWindow : EditorWindow
     {
         SerializedProperty nodes = serialized.FindProperty("nodes");
         SerializedProperty entry = serialized.FindProperty("entryNodeId");
-        Undo.RecordObject(dialogue, "Add Dialogue Line");
+        Undo.RecordObject(dialogue, "添加对话台词");
         int newId = GetNextId(nodes);
         int previousIndex = nodes.arraySize - 1;
         nodes.InsertArrayElementAtIndex(nodes.arraySize);
         SerializedProperty node = nodes.GetArrayElementAtIndex(nodes.arraySize - 1);
         node.FindPropertyRelative("nodeId").intValue = newId;
         node.FindPropertyRelative("speaker").enumValueIndex = (int)speaker;
-        node.FindPropertyRelative("text").stringValue = speaker == DialogueSpeaker.Npc ? "New NPC line" : "New player line";
+        node.FindPropertyRelative("text").stringValue = speaker == DialogueSpeaker.Npc ? "新的 NPC 台词" : "新的玩家台词";
         node.FindPropertyRelative("eventId").stringValue = string.Empty;
         node.FindPropertyRelative("nextNodeId").intValue = -1;
         node.FindPropertyRelative("choices").ClearArray();
@@ -280,6 +396,27 @@ public sealed class DialogueEditorWindow : EditorWindow
         AssetDatabase.CreateAsset(dialogue, path);
         AssetDatabase.SaveAssets();
         Selection.activeObject = dialogue;
+    }
+
+    // 经确认后删除当前对话资产及其对应的 meta 文件。
+    private void DeleteDialogueAsset()
+    {
+        string assetPath = AssetDatabase.GetAssetPath(dialogue);
+        if (string.IsNullOrWhiteSpace(assetPath))
+            return;
+
+        if (!EditorUtility.DisplayDialog(
+                "删除当前对话",
+                $"确定永久删除对话资产“{dialogue.name}”吗？此操作无法撤销。",
+                "删除",
+                "取消"))
+            return;
+
+        dialogue = null;
+        validationReport = string.Empty;
+        hasErrors = false;
+        AssetDatabase.DeleteAsset(assetPath);
+        AssetDatabase.SaveAssets();
     }
 
     // 查找项目中已有的玩家展示设置。

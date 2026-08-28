@@ -11,15 +11,15 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b630920b62284eecbee7cd05ea2cbcac, type: 3}
   m_Name: CharacterStats_Player
-  m_EditorClassIdentifier:
+  m_EditorClassIdentifier: 
   id: 1
   displayName: Player
   maxHealth: 100
   attack: 20
   defense: 10
-  maxStamina: 100
+  maxStamina: 1000
   maxMana: 100
   staminaDrainPerSecond: 20
-  staminaRecoveryPerSecond: 25
+  staminaRecoveryPerSecond: 100
   staminaRecoveryDelay: 1
-  staminaResumeThreshold: 10
+  staminaResumeThreshold: 1
