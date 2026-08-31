@@ -8,6 +8,7 @@ using UnityEngine;
 [DisallowMultipleComponent]
 [RequireComponent(typeof(InputManager))]
 [RequireComponent(typeof(PlayerAnimation))]
+[RequireComponent(typeof(PlayerStats))]
 public sealed class PlayerCombat : MonoBehaviour
 {
     // 第一段重攻击状态的 Animator 哈希值。
@@ -23,6 +24,8 @@ public sealed class PlayerCombat : MonoBehaviour
     [SerializeField] private PlayerAnimation playerAnimation;
     // 用于查询当前攻击状态与切换进度的 Animator。
     [SerializeField] private Animator animator;
+    // 提供玩家存活状态，防止死亡后继续发起或缓存攻击。
+    [SerializeField] private PlayerStats playerStats;
     // 连段输入窗口起始归一化时间。
     [SerializeField, Range(0f, 1f)] private float comboInputStart = 0.45f;
     // 连段输入窗口结束归一化时间。
@@ -46,6 +49,7 @@ public sealed class PlayerCombat : MonoBehaviour
         input = input != null ? input : GetComponent<InputManager>();
         playerAnimation = playerAnimation != null ? playerAnimation : GetComponent<PlayerAnimation>();
         animator = animator != null ? animator : GetComponentInChildren<Animator>();
+        playerStats = playerStats != null ? playerStats : GetComponent<PlayerStats>();
     }
 
     // 启用时订阅重攻击输入事件。
@@ -65,6 +69,14 @@ public sealed class PlayerCombat : MonoBehaviour
     // 每帧同步攻击状态，并在有效窗口消费连段输入。
     private void Update()
     {
+        if (playerStats != null && !playerStats.IsAlive)
+        {
+            comboQueued = false;
+            attackRequested = false;
+            IsAttacking = false;
+            return;
+        }
+
         if (animator == null)
             return;
 
@@ -104,7 +116,7 @@ public sealed class PlayerCombat : MonoBehaviour
     // 响应重攻击输入，开始攻击或缓存下一段连招。
     private void OnHeavyAttackPressed()
     {
-        if (playerAnimation == null)
+        if (playerAnimation == null || (playerStats != null && !playerStats.IsAlive))
             return;
 
         if (!playerAnimation.IsEquipped)

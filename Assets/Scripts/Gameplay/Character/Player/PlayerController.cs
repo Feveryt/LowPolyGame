@@ -18,6 +18,7 @@ using UnityEngine;
 [RequireComponent(typeof(InputManager))]
 [RequireComponent(typeof(PlayerAnimation))]
 [RequireComponent(typeof(PlayerStats))]
+[RequireComponent(typeof(PlayerHitReaction))]
 public sealed class PlayerController : MonoBehaviour, IController, ICanSendEvent
 {
     [Header("References")]
@@ -68,8 +69,9 @@ public sealed class PlayerController : MonoBehaviour, IController, ICanSendEvent
     // 当前是否在探索模式中实际以奔跑速度移动。
     public bool IsExplorationRunning => CanMove && !isEquipped && isRunning;
 
-    // 攻击期间禁止角色移动。
-    private bool CanMove => playerCombat == null || !playerCombat.IsAttacking;
+    // 死亡或攻击期间禁止角色移动。
+    private bool CanMove => (playerStats == null || playerStats.IsAlive) &&
+        (playerCombat == null || !playerCombat.IsAttacking);
     // 探索模式下按住奔跑键且存在有效方向输入。
     private bool HasExplorationRunInput => inputEnabled && input != null && input.SprintHeld &&
         input.Move.sqrMagnitude > runForwardThreshold * runForwardThreshold;
@@ -143,7 +145,7 @@ public sealed class PlayerController : MonoBehaviour, IController, ICanSendEvent
         if (IsExplorationMoving)
             UpdateExplorationRotation(ExplorationMoveDirection, isRunning);
 
-        if (isEquipped)
+        if (isEquipped && canMove)
             UpdateCombatRotation();
 
         Vector2 animationMove = canMove ? moveInput : Vector2.zero;
@@ -248,7 +250,8 @@ public sealed class PlayerController : MonoBehaviour, IController, ICanSendEvent
     // 响应装备键，切换持武器状态并广播表现层事件。
     private void OnEquipPressed()
     {
-        if (!inputEnabled || (playerCombat != null && playerCombat.IsAttacking))
+        if (!inputEnabled || (playerStats != null && !playerStats.IsAlive) ||
+            (playerCombat != null && playerCombat.IsAttacking))
             return;
 
         playerAnimation?.ToggleEquipped();

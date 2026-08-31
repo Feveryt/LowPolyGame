@@ -1752,6 +1752,7 @@ GameObject:
   - component: {fileID: 2000882956414297595}
   - component: {fileID: 7865880879425794305}
   - component: {fileID: 8891000000000000004}
+  - component: {fileID: 8891000000000000005}
   - component: {fileID: 8749028449791592251}
   m_Layer: 0
   m_Name: Player
@@ -1862,8 +1863,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 55f15b02fbe211b42a7886b7deadcd43, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
+  m_Name:
+  m_EditorClassIdentifier:
   controller: {fileID: 3471640849459013604}
   input: {fileID: 8891000000000000001}
   playerAnimation: {fileID: 8891000000000000002}
@@ -1919,6 +1920,7 @@ MonoBehaviour:
   input: {fileID: 8891000000000000001}
   playerAnimation: {fileID: 8891000000000000002}
   animator: {fileID: 9566420}
+  playerStats: {fileID: 8891000000000000004}
   comboInputStart: 0.45
   comboInputEnd: 0.9
   attackStartTimeout: 0.3
@@ -1983,6 +1985,20 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   definition: {fileID: 11400000, guid: 4028d147d9224c048f51a0c583a7ab89, type: 2}
+--- !u!114 &8891000000000000005
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 162860}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7db90dc3ff3542d080ba43f60d8e6a4e, type: 3}
+  m_Name:
+  m_EditorClassIdentifier:
+  playerStats: {fileID: 8891000000000000004}
+  playerAnimation: {fileID: 8891000000000000002}
 --- !u!114 &8749028449791592251
 MonoBehaviour:
   m_ObjectHideFlags: 0

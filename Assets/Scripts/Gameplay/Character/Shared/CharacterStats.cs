@@ -10,8 +10,8 @@ public abstract class CharacterStats : MonoBehaviour, IDamageable
     // 用于初始化本角色数值的静态配置资产。
     [SerializeField] private CharacterStatsDefinition definition;
 
-    // 当前生命值，仅在运行时变化。
-    private float currentHealth;
+    // 当前生命值；通过专用 Inspector 仅允许在运行时调试修改。
+    [SerializeField] private float currentHealth;
     // 当前体力值，仅在运行时变化。
     private float currentStamina;
     // 当前蓝量，仅在运行时变化。
@@ -59,6 +59,19 @@ public abstract class CharacterStats : MonoBehaviour, IDamageable
     /// <summary>当前是否拥有有效生命值。</summary>
     public bool IsAlive { get; private set; }
 
+    /// <summary>
+    /// 为生成器或角色定义资产指定静态数值配置。
+    /// 已完成初始化时会立即按新配置重置运行时资源。
+    /// </summary>
+    public void SetDefinition(CharacterStatsDefinition statsDefinition)
+    {
+        if (definition == statsDefinition)
+            return;
+
+        definition = statsDefinition;
+        InitializeRuntimeStats();
+    }
+
     // 根据静态配置初始化运行时资源。
     protected virtual void Awake()
     {
@@ -101,6 +114,16 @@ public abstract class CharacterStats : MonoBehaviour, IDamageable
         RestoreResource(ResourceType.Health, amount);
     }
 
+    /// <summary>供运行时 Inspector 和测试工具安全修改生命值，并同步资源事件与死亡状态。</summary>
+    public void SetHealthForDebug(float value)
+    {
+        bool wasAlive = IsAlive;
+        SetResource(ResourceType.Health, value);
+
+        if (wasAlive && !IsAlive)
+            Died?.Invoke(this);
+    }
+
     /// <summary>恢复体力，并限制在体力上限内。</summary>
     public void RestoreStamina(float amount)
     {
@@ -114,7 +137,7 @@ public abstract class CharacterStats : MonoBehaviour, IDamageable
     }
 
     /// <summary>按统一伤害公式结算请求，并更新当前生命值。</summary>
-    public DamageResult TakeDamage(DamageRequest request)
+    public virtual DamageResult TakeDamage(DamageRequest request)
     {
         if (!IsAlive)
             return DamageResult.Ignored;

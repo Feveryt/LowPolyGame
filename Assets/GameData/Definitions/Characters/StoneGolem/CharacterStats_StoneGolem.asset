@@ -10,16 +10,16 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b630920b62284eecbee7cd05ea2cbcac, type: 3}
-  m_Name: CharacterStats_Player
+  m_Name: CharacterStats_StoneGolem
   m_EditorClassIdentifier: 
-  id: 1
-  displayName: Player
+  id: 2
+  displayName: StoneGolem
   maxHealth: 100
   attack: 20
   defense: 10
-  maxStamina: 1000
+  maxStamina: 100
   maxMana: 100
   staminaDrainPerSecond: 20
-  staminaRecoveryPerSecond: 100
+  staminaRecoveryPerSecond: 25
   staminaRecoveryDelay: 1
-  staminaResumeThreshold: 1
+  staminaResumeThreshold: 10

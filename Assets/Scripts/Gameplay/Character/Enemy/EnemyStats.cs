@@ -7,4 +7,13 @@ using UnityEngine;
 [DisallowMultipleComponent]
 public sealed class EnemyStats : CharacterStats
 {
+    // 在父类初始化资源前，优先读取 EnemyBase 配置中引用的基础数值资产。
+    protected override void Awake()
+    {
+        EnemyBase enemy = GetComponent<EnemyBase>();
+        if (enemy != null && enemy.Config != null && enemy.Config.StatsDefinition != null)
+            SetDefinition(enemy.Config.StatsDefinition);
+
+        base.Awake();
+    }
 }

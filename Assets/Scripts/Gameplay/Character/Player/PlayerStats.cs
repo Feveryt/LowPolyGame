@@ -7,6 +7,11 @@ using UnityEngine;
 [DisallowMultipleComponent]
 public sealed class PlayerStats : CharacterStats
 {
+    // 霸体免伤结束的游戏时间。
+    private float damageImmunityEndsAt = float.NegativeInfinity;
+
+    /// <summary>当前是否处于霸体免伤状态。</summary>
+    public bool IsDamageImmune => Time.time < damageImmunityEndsAt;
     // 体力归零后用于阻止立即反复奔跑的状态标记。
     private bool staminaExhausted;
     // 最近一次奔跑扣除体力的游戏时间。
@@ -65,12 +70,31 @@ public sealed class PlayerStats : CharacterStats
         return true;
     }
 
+    /// <summary>授予指定时长的免伤霸体，重复授予只延长结束时间。</summary>
+    public void GrantDamageImmunity(float duration)
+    {
+        if (duration <= 0f)
+            return;
+
+        damageImmunityEndsAt = Mathf.Max(damageImmunityEndsAt, Time.time + duration);
+    }
+
+    /// <summary>在伤害计算前拦截霸体期间的攻击。</summary>
+    public override DamageResult TakeDamage(DamageRequest request)
+    {
+        if (IsDamageImmune)
+            return DamageResult.Ignored;
+
+        return base.TakeDamage(request);
+    }
+
     /// <summary>恢复所有资源时同时重置体力耗尽和恢复计时状态。</summary>
     public override void ResetRuntimeStats()
     {
         base.ResetRuntimeStats();
         staminaExhausted = false;
         lastStaminaSpendTime = float.NegativeInfinity;
+        damageImmunityEndsAt = float.NegativeInfinity;
     }
 
     // 在恢复延迟结束后按配置速率补充体力。

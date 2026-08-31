@@ -1,7 +1,8 @@
 using UnityEngine;
 
 /// <summary>
-/// Drives the locomotion parameters shared by the equipped and unequipped trees.
+/// 玩家 Animator 的参数适配组件。
+/// 负责装备/未装备移动树、重攻击、受击和死亡动画参数，不处理伤害数值判断。
 /// </summary>
 [DisallowMultipleComponent]
 public sealed class PlayerAnimation : MonoBehaviour
@@ -20,6 +21,16 @@ public sealed class PlayerAnimation : MonoBehaviour
     private static readonly int HeavyAttackHash = Animator.StringToHash("HeavyAttack");
     // Animator 中重攻击连段触发器的哈希值。
     private static readonly int HeavyAttackComboHash = Animator.StringToHash("HeavyAttackCombo");
+    // Animator 中非致命受击触发器的哈希值。
+    private static readonly int DamagedHash = Animator.StringToHash("Damaged");
+    // Animator 中死亡触发器的哈希值。
+    private static readonly int DeadHash = Animator.StringToHash("Dead");
+    // 受击状态的短名称与完整路径哈希，用于强制从头重播。
+    private static readonly int HurtStateHash = Animator.StringToHash("Damage_01");
+    private static readonly int HurtStatePathHash = Animator.StringToHash("Base Layer.Damage_01");
+    // 两个移动状态的完整路径哈希，用于霸体触发时退出受击状态。
+    private static readonly int EquippedLocomotionStateHash = Animator.StringToHash("Base Layer.Equipped Locomotion");
+    private static readonly int UnequippedLocomotionStateHash = Animator.StringToHash("Base Layer.Unequipped Locomotion");
 
     // 角色模型上的 Animator 组件引用。
     [SerializeField] private Animator animator;
@@ -75,5 +86,62 @@ public sealed class PlayerAnimation : MonoBehaviour
     public void ContinueHeavyAttack()
     {
         animator?.SetTrigger(HeavyAttackComboHash);
+    }
+
+    /// <summary>触发玩家的非致命受击动画。</summary>
+    public void PlayHurt()
+    {
+        if (animator == null)
+            return;
+
+        animator.ResetTrigger(DamagedHash);
+        animator.CrossFadeInFixedTime(HurtStatePathHash, 0.05f, 0, 0f);
+    }
+
+    /// <summary>判断当前或即将进入的动画是否为受击状态。</summary>
+    public bool IsPlayingHurt()
+    {
+        if (animator == null)
+            return false;
+
+        AnimatorStateInfo current = animator.GetCurrentAnimatorStateInfo(0);
+        if (current.shortNameHash == HurtStateHash || current.fullPathHash == HurtStatePathHash)
+            return true;
+
+        if (!animator.IsInTransition(0))
+            return false;
+
+        AnimatorStateInfo next = animator.GetNextAnimatorStateInfo(0);
+        return next.shortNameHash == HurtStateHash || next.fullPathHash == HurtStatePathHash;
+    }
+
+    /// <summary>取消受击动画并回到当前装备状态对应的移动树。</summary>
+    public void CancelHurt()
+    {
+        if (animator == null)
+            return;
+
+        animator.ResetTrigger(DamagedHash);
+        animator.SetFloat(MoveXHash, 0f);
+        animator.SetFloat(MoveYHash, 0f);
+        animator.SetFloat(MoveAmountHash, 0f);
+        int locomotionState = IsEquipped ? EquippedLocomotionStateHash : UnequippedLocomotionStateHash;
+        animator.CrossFadeInFixedTime(locomotionState, 0.05f, 0, 0f);
+    }
+
+    /// <summary>停止移动与待处理动作参数，并触发玩家死亡动画。</summary>
+    public void PlayDie()
+    {
+        if (animator == null)
+            return;
+
+        animator.SetFloat(MoveXHash, 0f);
+        animator.SetFloat(MoveYHash, 0f);
+        animator.SetFloat(MoveAmountHash, 0f);
+        animator.SetBool(IsRunningHash, false);
+        animator.ResetTrigger(DamagedHash);
+        animator.ResetTrigger(HeavyAttackHash);
+        animator.ResetTrigger(HeavyAttackComboHash);
+        animator.SetTrigger(DeadHash);
     }
 }
