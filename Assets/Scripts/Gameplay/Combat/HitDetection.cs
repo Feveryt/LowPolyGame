@@ -1,17 +1,48 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
-/// ´ò»÷¼ì²â
-/// Ö°Ôğ£º¹¥»÷/¼¼ÄÜÅö×²Ìå´¥·¢¼ì²â£¬ÊÕ¼¯ÃüÖĞÄ¿±ê£¬±ÜÃâÍ¬Ò»´Î¹¥»÷ÃüÖĞÍ¬Ò»Ä¿±ê¶à´Î
+/// é€šç”¨è¿‘æˆ˜å‘½ä¸­æ£€æµ‹ç»„ä»¶ï¼Œåœ¨åŠ¨ç”»å‘½ä¸­å¸§æŸ¥æ‰¾ç›®æ ‡å¹¶æäº¤ä¼¤å®³è¯·æ±‚ã€‚
 /// </summary>
-public class HitDetection : MonoBehaviour
+[DisallowMultipleComponent]
+public sealed class HitDetection : MonoBehaviour
 {
-    // Åö×²Ìå´¥·¢Æ÷£¨Í¨³£¹ÒÔÚÎäÆ÷»ò¼¼ÄÜÌØĞ§ÉÏ£©
-    // ÒÑÃüÖĞÄ¿±êÁĞ±í£¨·ÀÖ¹´©Í¸¶à¸öµĞÈËÊ±ÖØ¸´¼ÆËãÉËº¦£©
-    // ¹¥»÷Ö¡Çø¼ä£¨Ö»ÔÚ¶¯»­¹Ø¼üÖ¡ÆÚ¼ä¼ì²â£©
-    // ÆôÓÃ¼ì²â£ºEnableDetection()
-    // ½ûÓÃ¼ì²â£ºDisableDetection()
-    // ÃüÖĞ»Øµ÷£ºOnTriggerEnter(Collider other) -> ¹ıÂËÌõ¼ş -> ¼ÆËãÉËº¦ -> Ó¦ÓÃÉËº¦
-    // ¹ıÂËÌõ¼ş£ºÕóÓª£¨Íæ¼Ò/µĞÈË£©¡¢ÊÇ·ñ´æ»î¡¢ÊÇ·ñÒÑÓĞÃüÖĞ¼ÇÂ¼
-    // ÉËº¦½áËã£ºµ÷ÓÃÄ¿±êµÄ TakeDamage ½Ó¿Ú
+    // æ¯è½®æ”»å‡»å·²ç»ç»“ç®—è¿‡ä¼¤å®³çš„ç›®æ ‡é›†åˆã€‚
+    private readonly HashSet<IDamageable> hitTargets = new HashSet<IDamageable>();
+    // NonAlloc æ£€æµ‹ç¼“å­˜ï¼Œé¿å…å‘½ä¸­å¸§äº§ç”Ÿä¸´æ—¶æ•°ç»„ã€‚
+    private readonly Collider[] overlapResults = new Collider[32];
+
+    /// <summary>å¼€å§‹æ–°çš„æ”»å‡»æ®µå¹¶æ¸…ç©ºä¸Šä¸€æ®µçš„å‘½ä¸­è®°å½•ã€‚</summary>
+    public void BeginAttack() => hitTargets.Clear();
+
+    /// <summary>åœ¨æ”»å‡»åŸç‚¹å‰æ–¹æ£€æµ‹ç›®æ ‡å¹¶åº”ç”¨æœ¬æ®µæ”»å‡»ä¼¤å®³ã€‚</summary>
+    public int DetectAndApply(Transform origin, PlayerAttackDefinition attack, PlayerStats attacker)
+    {
+        if (origin == null || attack == null || attacker == null || !attacker.IsAlive)
+            return 0;
+
+        Vector3 center = origin.position + origin.forward * attack.HitForwardOffset;
+        int count = Physics.OverlapSphereNonAlloc(center, attack.HitRadius, overlapResults, attack.TargetMask, QueryTriggerInteraction.Ignore);
+        int appliedCount = 0;
+        for (int index = 0; index < count; index++)
+        {
+            IDamageable target = overlapResults[index].GetComponentInParent<IDamageable>();
+            if (target == null || ReferenceEquals(target, attacker) || !target.IsAlive || !hitTargets.Add(target))
+                continue;
+
+            DamageResult result = target.TakeDamage(new DamageRequest(attacker.Attack, attack.DamageMultiplier, attack.AttackType, attack.AttackId, attacker));
+            if (result.WasApplied)
+                appliedCount++;
+        }
+
+        return appliedCount;
+    }
+
+    /// <summary>åœ¨ Scene è§†å›¾ç»˜åˆ¶é»˜è®¤å‘½ä¸­èŒƒå›´ï¼Œä¾¿äºè°ƒè¯•ç»„ä»¶ä½ç½®ã€‚</summary>
+    private void OnDrawGizmosSelected()
+    {
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireSphere(transform.position + transform.forward * 0.8f, 0.8f);
+        Gizmos.DrawLine(transform.position, transform.position + transform.forward * 1.6f);
+    }
 }

@@ -93,6 +93,7 @@ public sealed class DialogueEditorWindow : EditorWindow
         SerializedProperty nodes = serialized.FindProperty("nodes");
         SerializedProperty completionText = serialized.FindProperty("completionText");
         SerializedProperty completionEventId = serialized.FindProperty("completionEventId");
+        SerializedProperty repeatable = serialized.FindProperty("repeatable");
 
         EditorGUILayout.BeginVertical(EditorStyles.helpBox);
         EditorGUILayout.LabelField("NPC 资料", EditorStyles.boldLabel);
@@ -101,6 +102,7 @@ public sealed class DialogueEditorWindow : EditorWindow
         EditorGUILayout.PropertyField(npcPortraitSide, new GUIContent("NPC 头像位置"));
         EditorGUILayout.PropertyField(completionText, new GUIContent("完成后的重复台词"));
         EditorGUILayout.PropertyField(completionEventId, new GUIContent("完成事件 ID"));
+        EditorGUILayout.PropertyField(repeatable, new GUIContent("允许重复进入分支"));
         EditorGUILayout.EndVertical();
 
         EditorGUILayout.BeginHorizontal();
@@ -141,6 +143,9 @@ public sealed class DialogueEditorWindow : EditorWindow
             SerializedProperty speaker = node.FindPropertyRelative("speaker");
             SerializedProperty text = node.FindPropertyRelative("text");
             SerializedProperty eventId = node.FindPropertyRelative("eventId");
+            SerializedProperty requiredQuestId = node.FindPropertyRelative("requiredQuestId");
+            SerializedProperty requiredQuestState = node.FindPropertyRelative("requiredQuestState");
+            SerializedProperty questActions = node.FindPropertyRelative("questActions");
             SerializedProperty next = node.FindPropertyRelative("nextNodeId");
             SerializedProperty choices = node.FindPropertyRelative("choices");
 
@@ -156,6 +161,8 @@ public sealed class DialogueEditorWindow : EditorWindow
                 new[] { "玩家", "NPC" });
             EditorGUILayout.PropertyField(text, new GUIContent("台词内容"));
             EditorGUILayout.PropertyField(eventId, new GUIContent("事件 ID"));
+            DrawQuestCondition(requiredQuestId, requiredQuestState);
+            DrawQuestActions(questActions);
             if ((DialogueSpeaker)speaker.enumValueIndex == DialogueSpeaker.Npc)
                 DrawChoices(choices);
             else if (choices.arraySize > 0)
@@ -194,6 +201,8 @@ public sealed class DialogueEditorWindow : EditorWindow
             EditorGUILayout.EndHorizontal();
             EditorGUILayout.PropertyField(choice.FindPropertyRelative("text"), new GUIContent("回答文本"));
             EditorGUILayout.PropertyField(choice.FindPropertyRelative("targetNodeId"), new GUIContent("目标节点 ID"));
+            DrawQuestCondition(choice.FindPropertyRelative("requiredQuestId"), choice.FindPropertyRelative("requiredQuestState"));
+            DrawQuestActions(choice.FindPropertyRelative("questActions"));
             EditorGUILayout.EndVertical();
         }
 
@@ -208,6 +217,38 @@ public sealed class DialogueEditorWindow : EditorWindow
             choice.FindPropertyRelative("targetNodeId").intValue = -1;
         }
         EditorGUI.indentLevel--;
+    }
+
+    // 绘制节点或选项的可选任务状态门槛。
+    private static void DrawQuestCondition(SerializedProperty questId, SerializedProperty questState)
+    {
+        EditorGUILayout.PropertyField(questId, new GUIContent("所需任务 ID"));
+        if (!string.IsNullOrWhiteSpace(questId.stringValue))
+            EditorGUILayout.PropertyField(questState, new GUIContent("所需任务状态"));
+    }
+
+    // 绘制进入节点或选择回答时按顺序执行的任务动作。
+    private static void DrawQuestActions(SerializedProperty actions)
+    {
+        actions.isExpanded = EditorGUILayout.Foldout(actions.isExpanded, $"任务动作（{actions.arraySize}）", true);
+        if (!actions.isExpanded)
+            return;
+        for (int index = 0; index < actions.arraySize; index++)
+        {
+            SerializedProperty action = actions.GetArrayElementAtIndex(index);
+            EditorGUILayout.BeginVertical(EditorStyles.helpBox);
+            EditorGUILayout.PropertyField(action.FindPropertyRelative("actionType"), new GUIContent("动作"));
+            EditorGUILayout.PropertyField(action.FindPropertyRelative("questId"), new GUIContent("任务 ID"));
+            EditorGUILayout.PropertyField(action.FindPropertyRelative("objectiveId"), new GUIContent("目标 ID"));
+            if (GUILayout.Button("删除任务动作"))
+            {
+                actions.DeleteArrayElementAtIndex(index);
+                break;
+            }
+            EditorGUILayout.EndVertical();
+        }
+        if (GUILayout.Button("添加任务动作"))
+            actions.InsertArrayElementAtIndex(actions.arraySize);
     }
 
     // 删除指定节点，并清理入口和其他节点中指向它的跳转引用。
@@ -304,6 +345,9 @@ public sealed class DialogueEditorWindow : EditorWindow
                 messages.Add($"重复节点 ID: {node.NodeId}");
             if (string.IsNullOrWhiteSpace(node.Text))
                 messages.Add($"节点 #{node.NodeId} 的文本为空。");
+            ValidateQuestReferences(node.RequiredQuestId, node.QuestActions, $"节点 #{node.NodeId}", messages);
+            foreach (DialogueChoice choice in node.Choices)
+                ValidateQuestReferences(choice.RequiredQuestId, choice.QuestActions, $"节点 #{node.NodeId} 的选项", messages);
         }
 
         if (dialogue.NpcPortrait == null)
@@ -324,6 +368,36 @@ public sealed class DialogueEditorWindow : EditorWindow
 
         hasErrors = messages.Exists(message => !message.StartsWith("提示："));
         validationReport = messages.Count == 0 ? "校验通过。" : string.Join(System.Environment.NewLine, messages);
+    }
+
+    // 检查条件和动作的必要稳定标识，避免运行时静默跳过剧情操作。
+    private static void ValidateQuestReferences(string requiredQuestId, IReadOnlyList<DialogueQuestAction> actions, string owner, ICollection<string> messages)
+    {
+        if (!string.IsNullOrWhiteSpace(requiredQuestId) && !QuestExists(requiredQuestId))
+            messages.Add($"{owner} 引用了不存在的任务 ID: {requiredQuestId}");
+        if (actions == null)
+            return;
+        foreach (DialogueQuestAction action in actions)
+        {
+            if (action == null || string.IsNullOrWhiteSpace(action.QuestId))
+            {
+                messages.Add($"{owner} 存在缺少任务 ID 的任务动作。");
+                continue;
+            }
+            if (!QuestExists(action.QuestId))
+                messages.Add($"{owner} 的任务动作引用不存在的任务 ID: {action.QuestId}");
+            if (action.ActionType == DialogueQuestActionType.AdvanceObjective && string.IsNullOrWhiteSpace(action.ObjectiveId))
+                messages.Add($"{owner} 的推进任务动作缺少目标 ID。");
+        }
+    }
+
+    // 从 Resources 任务定义中验证编辑器填写的稳定任务 ID。
+    private static bool QuestExists(string questId)
+    {
+        foreach (QuestDefinition definition in Resources.LoadAll<QuestDefinition>("Quests"))
+            if (definition != null && definition.QuestId == questId)
+                return true;
+        return false;
     }
 
     // 深度遍历链接并识别循环或不存在的目标。

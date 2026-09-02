@@ -1,0 +1,86 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 316a5a172946d3944aa8f75433721a1b, type: 3}
+  m_Name: Dialogue_UnsignedGuardian
+  m_EditorClassIdentifier: 
+  dialogueId: 98e62f163fef408db883d86c79f3dd2b
+  npcName: "\u8BB0\u5F55\u5458"
+  npcPortrait: {fileID: 0}
+  npcPortraitSide: 0
+  entryNodeId: 1
+  nodes:
+  - nodeId: 1
+    speaker: 1
+    text: "\u6211\u53EA\u627E\u5230\u4E00\u9875\u6B8B\u7A3F\u3002\u6DF1\u5904\u7684\u77F3\u5934\u5B88\u536B\u4E0D\u8BA9\u4EFB\u4F55\u4EBA\u9760\u8FD1\u3002"
+    eventId: 
+    requiredQuestId: 
+    requiredQuestState: 0
+    questActions: []
+    nextNodeId: -1
+    choices:
+    - text: "\u6211\u53BB\u53D6\u56DE\u8BB0\u5F55\u3002"
+      targetNodeId: 2
+      requiredQuestId: unsigned_guardian.lost_page
+      requiredQuestState: 0
+      questActions:
+      - actionType: 0
+        questId: unsigned_guardian.lost_page
+        objectiveId: 
+    - text: "\u8BB0\u5F55\u9875\u63D0\u5230\u4EEA\u5F0F\u95F4\u3002"
+      targetNodeId: 3
+      requiredQuestId: unsigned_guardian.lost_page
+      requiredQuestState: 2
+      questActions:
+      - actionType: 2
+        questId: unsigned_guardian.lost_page
+        objectiveId: 
+      - actionType: 0
+        questId: unsigned_guardian.guardian_testimony
+        objectiveId: 
+    - text: "\u4EA4\u51FA\u5C01\u5370\u94ED\u7247\u3002"
+      targetNodeId: 4
+      requiredQuestId: unsigned_guardian.guardian_testimony
+      requiredQuestState: 2
+      questActions:
+      - actionType: 2
+        questId: unsigned_guardian.guardian_testimony
+        objectiveId: 
+  - nodeId: 2
+    speaker: 1
+    text: "\u4E0D\u8981\u76F8\u4FE1\u5899\u4E0A\u7684\u5224\u8BCD\u3002\u5B83\u4EEC\u6BD4\u7070\u5C18\u65B0\u3002"
+    eventId: 
+    requiredQuestId: 
+    requiredQuestState: 0
+    questActions: []
+    nextNodeId: -1
+    choices: []
+  - nodeId: 3
+    speaker: 1
+    text: "\u53BB\u4EEA\u5F0F\u95F4\u3002\u77F3\u5934\u5B88\u536B\u9192\u7740\uFF0C\u4F60\u5F97\u5148\u8BA9\u5B83\u505C\u4E0B\u3002"
+    eventId: 
+    requiredQuestId: 
+    requiredQuestState: 0
+    questActions: []
+    nextNodeId: -1
+    choices: []
+  - nodeId: 4
+    speaker: 1
+    text: "\u5B83\u5B88\u7740\u7684\u4E0D\u662F\u95E8\uFF0C\u662F\u4E00\u4E2A\u4E0D\u8BE5\u88AB\u7559\u4E0B\u7684\u540D\u5B57\u3002"
+    eventId: 
+    requiredQuestId: 
+    requiredQuestState: 0
+    questActions: []
+    nextNodeId: -1
+    choices: []
+  completionText: "\u5B83\u5B88\u7740\u7684\u4E0D\u662F\u95E8\uFF0C\u662F\u4E00\u4E2A\u4E0D\u8BE5\u88AB\u7559\u4E0B\u7684\u540D\u5B57\u3002"
+  completionEventId: 
+  repeatable: 1

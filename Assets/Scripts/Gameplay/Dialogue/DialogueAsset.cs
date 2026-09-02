@@ -39,6 +39,10 @@ public sealed class DialogueAsset : ScriptableObject
     [SerializeField, TextArea(2, 5)] private string completionText = "我已经没有更多要说的了。";
     // 首次完成时发送一次的可选事件 ID。
     [SerializeField] private string completionEventId;
+    // 为任务发布者保留重复进入分支的能力，不记录一次性完成状态。
+    [SerializeField] private bool repeatable;
+    // 对话打开时播放的可选双人镜头模板；角色对象由交互现场传入。
+    [SerializeField] private CameraSequenceAsset cameraSequence;
 
     /// <summary>用于存档的稳定对话标识。</summary>
     public string DialogueId => dialogueId;
@@ -56,6 +60,10 @@ public sealed class DialogueAsset : ScriptableObject
     public string CompletionText => completionText;
     /// <summary>首次完成时可发送的事件 ID。</summary>
     public string CompletionEventId => completionEventId;
+    /// <summary>是否每次交互都从入口节点重新计算条件分支。</summary>
+    public bool Repeatable => repeatable;
+    /// <summary>对话期间可选播放的双人镜头模板。</summary>
+    public CameraSequenceAsset CameraSequence => cameraSequence;
 
     /// <summary>按节点 ID 查找运行时应显示的台词。</summary>
     public DialogueNode GetNode(int nodeId)
@@ -92,6 +100,12 @@ public sealed class DialogueNode
     [SerializeField, TextArea(2, 6)] private string text;
     // 节点进入时广播的可选业务事件标识。
     [SerializeField] private string eventId;
+    // 显示此节点前必须满足的任务状态；任务 ID 为空时不限制。
+    [SerializeField] private string requiredQuestId;
+    // 与 requiredQuestId 配套的状态条件。
+    [SerializeField] private QuestState requiredQuestState;
+    // 进入节点时按顺序执行的任务动作。
+    [SerializeField] private List<DialogueQuestAction> questActions = new List<DialogueQuestAction>();
     // 无选项节点继续时进入的下一节点，负数表示结束。
     [SerializeField] private int nextNodeId = -1;
     // 仅 NPC 节点使用的玩家回答分支。
@@ -105,6 +119,12 @@ public sealed class DialogueNode
     public string Text => text;
     /// <summary>节点进入时发送的事件 ID。</summary>
     public string EventId => eventId;
+    /// <summary>显示当前节点前必须满足的任务 ID。</summary>
+    public string RequiredQuestId => requiredQuestId;
+    /// <summary>显示当前节点前必须满足的任务状态。</summary>
+    public QuestState RequiredQuestState => requiredQuestState;
+    /// <summary>进入当前节点时执行的任务动作。</summary>
+    public IReadOnlyList<DialogueQuestAction> QuestActions => questActions;
     /// <summary>无选项节点的默认后继节点。</summary>
     public int NextNodeId => nextNodeId;
     /// <summary>NPC 节点可提供的玩家选项。</summary>
@@ -119,9 +139,45 @@ public sealed class DialogueChoice
     [SerializeField, TextArea(1, 3)] private string text;
     // 选择回答后进入的后续节点，负数表示对话结束。
     [SerializeField] private int targetNodeId = -1;
+    // 显示此选择前必须满足的任务 ID。
+    [SerializeField] private string requiredQuestId;
+    // 与选择任务 ID 配套的状态条件。
+    [SerializeField] private QuestState requiredQuestState;
+    // 玩家选择该回答后执行的任务动作。
+    [SerializeField] private List<DialogueQuestAction> questActions = new List<DialogueQuestAction>();
 
     /// <summary>玩家回答文本。</summary>
     public string Text => text;
     /// <summary>回答后进入的节点 ID。</summary>
     public int TargetNodeId => targetNodeId;
+    /// <summary>显示该选择前必须满足的任务 ID。</summary>
+    public string RequiredQuestId => requiredQuestId;
+    /// <summary>显示该选择前必须满足的任务状态。</summary>
+    public QuestState RequiredQuestState => requiredQuestState;
+    /// <summary>选中该选择时执行的任务动作。</summary>
+    public IReadOnlyList<DialogueQuestAction> QuestActions => questActions;
+}
+
+/// <summary>对话节点或选项可调用的最小任务写操作。</summary>
+public enum DialogueQuestActionType
+{
+    StartQuest,
+    AdvanceObjective,
+    SubmitQuest,
+}
+
+/// <summary>对话中配置的单条任务动作。</summary>
+[Serializable]
+public sealed class DialogueQuestAction
+{
+    [SerializeField] private DialogueQuestActionType actionType;
+    [SerializeField] private string questId;
+    [SerializeField] private string objectiveId;
+
+    /// <summary>将由对话运行时调用的动作类型。</summary>
+    public DialogueQuestActionType ActionType => actionType;
+    /// <summary>动作作用的稳定任务 ID。</summary>
+    public string QuestId => questId;
+    /// <summary>推进动作使用的稳定目标 ID。</summary>
+    public string ObjectiveId => objectiveId;
 }

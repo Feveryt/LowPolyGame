@@ -110,7 +110,7 @@ public sealed class NpcDialogueInteractor : MonoBehaviour
     private void TryInteract()
     {
         if (closestInteractor == this && dialogue != null && !DialogueManager.Instance.IsOpen)
-            DialogueManager.Instance.Begin(dialogue);
+            DialogueManager.Instance.Begin(dialogue, transform);
     }
 
     // 解析 Inspector 绑定或场景玩家控制器的 Transform。

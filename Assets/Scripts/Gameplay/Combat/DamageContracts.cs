@@ -37,11 +37,27 @@ public readonly struct DamageRequest
     /// <summary>攻击、重击或技能附带的伤害倍率。</summary>
     public float Multiplier { get; }
 
+    /// <summary>本次伤害对应的攻击类别。</summary>
+    public AttackType AttackType { get; }
+    /// <summary>本次伤害对应的攻击配置 ID。</summary>
+    public int AttackId { get; }
+    /// <summary>造成伤害的来源对象。</summary>
+    public object Source { get; }
+
     /// <summary>使用基础攻击力和可选倍率创建伤害请求。</summary>
     public DamageRequest(float attackPower, float multiplier = 1f)
+        : this(attackPower, multiplier, AttackType.Skill, 0, null)
+    {
+    }
+
+    /// <summary>创建包含攻击类别、配置 ID 和来源的完整伤害请求。</summary>
+    public DamageRequest(float attackPower, float multiplier, AttackType attackType, int attackId, object source = null)
     {
         AttackPower = attackPower;
         Multiplier = multiplier;
+        AttackType = attackType;
+        AttackId = attackId;
+        Source = source;
     }
 }
 

@@ -16,6 +16,8 @@ public sealed class DialogueManager : MonoBehaviour
     private DialogueAsset activeDialogue;
     // 当前正在显示的台词节点。
     private DialogueNode currentNode;
+    // 当前对话对应的场景 NPC，用于动态双人镜头构图。
+    private Transform activeNpcTransform;
     // 玩家回答显示完毕后要进入的目标节点。
     private int pendingTargetNodeId = -1;
     // 项目共享的玩家头像与名称设置。
@@ -72,15 +74,15 @@ public sealed class DialogueManager : MonoBehaviour
     }
 
     /// <summary>从场景 NPC 开始一段对话，已完成资产则播放结束栏。</summary>
-    public void Begin(DialogueAsset dialogue)
+    public void Begin(DialogueAsset dialogue, Transform npcTransform = null)
     {
         if (IsOpen || dialogue == null)
             return;
 
         dialogue.EnsureDialogueId();
-        if (DialogueProgressStore.IsCompleted(dialogue.DialogueId))
+        if (!dialogue.Repeatable && DialogueProgressStore.IsCompleted(dialogue.DialogueId))
         {
-            Open(dialogue);
+            Open(dialogue, npcTransform);
             ShowCompletionText();
             return;
         }
@@ -92,7 +94,7 @@ public sealed class DialogueManager : MonoBehaviour
             return;
         }
 
-        Open(dialogue);
+        Open(dialogue, npcTransform);
         ShowNode(entry);
     }
 
@@ -106,13 +108,16 @@ public sealed class DialogueManager : MonoBehaviour
         activeDialogue = null;
         currentNode = null;
         pendingTargetNodeId = -1;
+        activeNpcTransform = null;
+        CameraDirector.Instance.Stop();
         RestoreGameplay();
     }
 
     // 打开 UGUI 并切换为不暂停世界的对话输入状态。
-    private void Open(DialogueAsset dialogue)
+    private void Open(DialogueAsset dialogue, Transform npcTransform)
     {
         activeDialogue = dialogue;
+        activeNpcTransform = npcTransform;
         EnsurePanel();
         AttachInputManager();
         inputManager?.SetPlayerInputEnabled(false);
@@ -120,19 +125,36 @@ public sealed class DialogueManager : MonoBehaviour
         inputManager?.SetLookInputEnabled(false);
         SetCursorForDialogue(true);
         GameArchitecture.Interface.SendCommand(new ChangeGameStateCommand(GameState.Cutscene));
+        PlayDialogueCamera();
     }
 
     // 显示普通台词节点，并在进入节点后广播配置事件。
     private void ShowNode(DialogueNode node)
     {
+        if (!IsNodeAvailable(node))
+        {
+            if (node.NextNodeId >= 0)
+                ShowTargetNode(node.NextNodeId);
+            else
+                CompleteDialogue();
+            return;
+        }
         currentNode = node;
         pendingTargetNodeId = -1;
+        ExecuteQuestActions(node.QuestActions);
         ResolveSpeaker(node.Speaker, out string speakerName, out Sprite portrait, out DialoguePortraitSide portraitSide);
         panel.ShowLine(speakerName, node.Text, portrait, portraitSide, AdvanceCurrentNode);
         SendNodeEvent(node);
 
         if (node.Speaker == DialogueSpeaker.Npc && node.Choices.Count > 0)
-            panel.ShowChoices(node.Choices, SelectChoice);
+        {
+            var availableChoices = new System.Collections.Generic.List<DialogueChoice>();
+            foreach (DialogueChoice choice in node.Choices)
+                if (IsChoiceAvailable(choice))
+                    availableChoices.Add(choice);
+            if (availableChoices.Count > 0)
+                panel.ShowChoices(availableChoices, index => SelectChoice(availableChoices[index]));
+        }
     }
 
     // 显示已完成对话的结束栏，不会重复发送完成事件。
@@ -164,12 +186,11 @@ public sealed class DialogueManager : MonoBehaviour
     }
 
     // 先显示玩家选择的回答，再在确认后进入其配置的目标节点。
-    private void SelectChoice(int choiceIndex)
+    private void SelectChoice(DialogueChoice choice)
     {
-        if (currentNode == null || choiceIndex < 0 || choiceIndex >= currentNode.Choices.Count)
+        if (currentNode == null || choice == null)
             return;
-
-        DialogueChoice choice = currentNode.Choices[choiceIndex];
+        ExecuteQuestActions(choice.QuestActions);
         pendingTargetNodeId = choice.TargetNodeId;
         ResolveSpeaker(DialogueSpeaker.Player, out string speakerName, out Sprite portrait, out DialoguePortraitSide portraitSide);
         panel.ShowLine(speakerName, choice.Text, portrait, portraitSide, AdvanceAfterChoice);
@@ -204,7 +225,7 @@ public sealed class DialogueManager : MonoBehaviour
     // 首次完成时记录进度，发送一次完成事件并结束此次交互。
     private void CompleteDialogue()
     {
-        if (activeDialogue != null && !DialogueProgressStore.IsCompleted(activeDialogue.DialogueId))
+        if (activeDialogue != null && !activeDialogue.Repeatable && !DialogueProgressStore.IsCompleted(activeDialogue.DialogueId))
         {
             DialogueProgressStore.MarkCompleted(activeDialogue.DialogueId);
             if (!string.IsNullOrWhiteSpace(activeDialogue.CompletionEventId))
@@ -244,6 +265,44 @@ public sealed class DialogueManager : MonoBehaviour
             GameArchitecture.Interface.SendEvent(new DialogueNodeEvent(node.EventId, activeDialogue.DialogueId, node.NodeId));
     }
 
+    // 判断节点的可见条件，空任务 ID 表示无条件可见。
+    private static bool IsNodeAvailable(DialogueNode node)
+    {
+        return node != null && (string.IsNullOrWhiteSpace(node.RequiredQuestId) ||
+            QuestService.Instance.IsInState(node.RequiredQuestId, node.RequiredQuestState));
+    }
+
+    // 判断玩家回答的任务状态条件。
+    private static bool IsChoiceAvailable(DialogueChoice choice)
+    {
+        return choice != null && (string.IsNullOrWhiteSpace(choice.RequiredQuestId) ||
+            QuestService.Instance.IsInState(choice.RequiredQuestId, choice.RequiredQuestState));
+    }
+
+    // 将配置动作转发给唯一任务服务。
+    private static void ExecuteQuestActions(System.Collections.Generic.IReadOnlyList<DialogueQuestAction> actions)
+    {
+        if (actions == null)
+            return;
+        foreach (DialogueQuestAction action in actions)
+        {
+            if (action == null || string.IsNullOrWhiteSpace(action.QuestId))
+                continue;
+            switch (action.ActionType)
+            {
+                case DialogueQuestActionType.StartQuest:
+                    QuestService.Instance.StartQuest(action.QuestId);
+                    break;
+                case DialogueQuestActionType.AdvanceObjective:
+                    QuestService.Instance.AdvanceObjective(action.QuestId, action.ObjectiveId);
+                    break;
+                case DialogueQuestActionType.SubmitQuest:
+                    QuestService.Instance.SubmitQuest(action.QuestId);
+                    break;
+            }
+        }
+    }
+
     // 创建或查找默认对话面板。
     private void EnsurePanel()
     {
@@ -280,6 +339,16 @@ public sealed class DialogueManager : MonoBehaviour
         inputManager?.SetLookInputEnabled(true);
         SetCursorForDialogue(false);
         GameArchitecture.Interface.SendCommand(new ChangeGameStateCommand(GameState.Playing));
+    }
+
+    // 当资产配置了双人镜头时，将当前玩家与交互 NPC 注入调度器播放。
+    private void PlayDialogueCamera()
+    {
+        if (activeDialogue == null || activeDialogue.CameraSequence == null)
+            return;
+
+        Transform player = FindFirstObjectByType<PlayerController>()?.transform;
+        CameraDirector.Instance.Play(activeDialogue.CameraSequence, player, activeNpcTransform);
     }
 
     // 处理对话期间鼠标可点击 UI 的锁定状态。

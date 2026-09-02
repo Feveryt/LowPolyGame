@@ -1206,7 +1206,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   inputActions: {fileID: 11400000, guid: 27af026acbf816b42af3565d2eccd076, type: 2}
   targetScene: {fileID: 102900000, guid: 6fb1bab841ef2c1489283cfa9075a0f5, type: 3}
-  targetScenePath: Assets/Scenes/GameScene/TestAct.unity
+  targetScenePath: Assets/Scenes/GameScene/Demo 1.unity
   menuCanvasGroup: {fileID: 310005}
   startButton: {fileID: 310014}
   settingsButton: {fileID: 310034}

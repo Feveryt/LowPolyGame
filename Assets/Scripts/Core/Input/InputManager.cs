@@ -34,6 +34,8 @@ public sealed class InputManager : MonoBehaviour
     private InputAction equipAction;
     // 重攻击动作。
     private InputAction heavyAttackAction;
+    // 轻攻击动作。
+    private InputAction lightAttackAction;
     // 锁定目标动作。
     private InputAction lockOnAction;
     // 打开或关闭背包界面的动作。
@@ -67,6 +69,8 @@ public sealed class InputManager : MonoBehaviour
     public event Action EquipPressed;
     // 重攻击动作完成时触发。
     public event Action HeavyAttackPressed;
+    // 轻攻击动作完成时触发。
+    public event Action LightAttackPressed;
     // 锁定动作完成时触发。
     public event Action LockOnPressed;
     // 背包动作完成时触发。
@@ -98,6 +102,8 @@ public sealed class InputManager : MonoBehaviour
             equipAction.performed += OnEquipPerformed;
         if (heavyAttackAction != null)
             heavyAttackAction.performed += OnHeavyAttackPerformed;
+        if (lightAttackAction != null)
+            lightAttackAction.performed += OnLightAttackPerformed;
         if (lockOnAction != null)
             lockOnAction.performed += OnLockOnPerformed;
         if (uiCancelAction != null)
@@ -115,6 +121,8 @@ public sealed class InputManager : MonoBehaviour
             equipAction.performed -= OnEquipPerformed;
         if (heavyAttackAction != null)
             heavyAttackAction.performed -= OnHeavyAttackPerformed;
+        if (lightAttackAction != null)
+            lightAttackAction.performed -= OnLightAttackPerformed;
         if (lockOnAction != null)
             lockOnAction.performed -= OnLockOnPerformed;
         if (uiCancelAction != null)
@@ -156,6 +164,7 @@ public sealed class InputManager : MonoBehaviour
         sprintAction = playerMap.FindAction("Sprint", false);
         equipAction = playerMap.FindAction("Equip", false);
         heavyAttackAction = playerMap.FindAction("HeavyAttack", false);
+        lightAttackAction = playerMap.FindAction("LightAttack", false);
         lockOnAction = playerMap.FindAction("LockOn", false);
         inventoryAction = playerMap.FindAction("Inventory", false);
         settingsAction = playerMap.FindAction("Settings", false);
@@ -224,6 +233,12 @@ public sealed class InputManager : MonoBehaviour
     private void OnHeavyAttackPerformed(InputAction.CallbackContext context)
     {
         HeavyAttackPressed?.Invoke();
+    }
+
+    // 将 Input System 的轻攻击完成回调转发为 C# 事件。
+    private void OnLightAttackPerformed(InputAction.CallbackContext context)
+    {
+        LightAttackPressed?.Invoke();
     }
 
     // 将 Input System 的锁定完成回调转发为 C# 事件。

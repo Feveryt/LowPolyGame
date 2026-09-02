@@ -21,6 +21,10 @@ public sealed class PlayerAnimation : MonoBehaviour
     private static readonly int HeavyAttackHash = Animator.StringToHash("HeavyAttack");
     // Animator 中重攻击连段触发器的哈希值。
     private static readonly int HeavyAttackComboHash = Animator.StringToHash("HeavyAttackCombo");
+    // Animator 中轻攻击起手触发器的哈希值。
+    private static readonly int LightAttackHash = Animator.StringToHash("LightAttack");
+    // Animator 中轻攻击连段触发器的哈希值。
+    private static readonly int LightAttackComboHash = Animator.StringToHash("LightAttackCombo");
     // Animator 中非致命受击触发器的哈希值。
     private static readonly int DamagedHash = Animator.StringToHash("Damaged");
     // Animator 中死亡触发器的哈希值。
@@ -31,6 +35,8 @@ public sealed class PlayerAnimation : MonoBehaviour
     // 两个移动状态的完整路径哈希，用于霸体触发时退出受击状态。
     private static readonly int EquippedLocomotionStateHash = Animator.StringToHash("Base Layer.Equipped Locomotion");
     private static readonly int UnequippedLocomotionStateHash = Animator.StringToHash("Base Layer.Unequipped Locomotion");
+    // 负责接收攻击动画事件并执行命中检测的玩家战斗组件。
+    [SerializeField] private PlayerCombat playerCombat;
 
     // 角色模型上的 Animator 组件引用。
     [SerializeField] private Animator animator;
@@ -45,6 +51,7 @@ public sealed class PlayerAnimation : MonoBehaviour
     {
         if (animator == null)
             animator = GetComponentInChildren<Animator>();
+        playerCombat = playerCombat != null ? playerCombat : GetComponentInParent<PlayerCombat>();
     }
 
     // 写入移动、奔跑和装备参数以驱动移动动画树。
@@ -86,6 +93,36 @@ public sealed class PlayerAnimation : MonoBehaviour
     public void ContinueHeavyAttack()
     {
         animator?.SetTrigger(HeavyAttackComboHash);
+    }
+
+    /// <summary>触发轻攻击第一段动画。</summary>
+    public void StartLightAttack()
+    {
+        animator?.SetTrigger(LightAttackHash);
+    }
+
+    /// <summary>触发轻攻击下一段连招动画。</summary>
+    public void ContinueLightAttack()
+    {
+        animator?.SetTrigger(LightAttackComboHash);
+    }
+
+    /// <summary>将 Animator 的攻击命中事件转发给 PlayerCombat。</summary>
+    public void AnimationEvent_AttackHit()
+    {
+        playerCombat?.AnimationEvent_AttackHit();
+    }
+
+    /// <summary>将 Animator 的攻击命中结束事件转发给 PlayerCombat。</summary>
+    public void AnimationEvent_AttackHitEnd()
+    {
+        playerCombat?.AnimationEvent_AttackHitEnd();
+    }
+
+    /// <summary>将 Animator 的攻击结束事件转发给 PlayerCombat。</summary>
+    public void AnimationEvent_AttackFinished()
+    {
+        playerCombat?.AnimationEvent_AttackFinished();
     }
 
     /// <summary>触发玩家的非致命受击动画。</summary>
@@ -142,6 +179,8 @@ public sealed class PlayerAnimation : MonoBehaviour
         animator.ResetTrigger(DamagedHash);
         animator.ResetTrigger(HeavyAttackHash);
         animator.ResetTrigger(HeavyAttackComboHash);
+        animator.ResetTrigger(LightAttackHash);
+        animator.ResetTrigger(LightAttackComboHash);
         animator.SetTrigger(DeadHash);
     }
 }
