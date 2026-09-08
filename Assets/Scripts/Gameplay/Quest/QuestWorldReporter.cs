@@ -50,6 +50,12 @@ public sealed class QuestWorldReporter : MonoBehaviour
             return;
         if (!QuestService.Instance.NotifyInteraction(targetId))
             return;
+
+        if (targetId == UnsignedGuardianQuestIds.RecordPage)
+            AudioManager.Instance?.PlayUiPickupRecordPage();
+        else if (targetId == UnsignedGuardianQuestIds.SealingInscription)
+            AudioManager.Instance?.PlayUiPickupInscription();
+
         consumed = true;
         gameObject.SetActive(false);
     }

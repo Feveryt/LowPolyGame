@@ -9,9 +9,11 @@ public sealed class PlayerStats : CharacterStats
 {
     // 霸体免伤结束的游戏时间。
     private float damageImmunityEndsAt = float.NegativeInfinity;
+    // 翻滚动画事件控制的即时免伤状态。
+    private bool rollDamageImmune;
 
     /// <summary>当前是否处于霸体免伤状态。</summary>
-    public bool IsDamageImmune => Time.time < damageImmunityEndsAt;
+    public bool IsDamageImmune => rollDamageImmune || Time.time < damageImmunityEndsAt;
     // 体力归零后用于阻止立即反复奔跑的状态标记。
     private bool staminaExhausted;
     // 最近一次奔跑扣除体力的游戏时间。
@@ -56,12 +58,17 @@ public sealed class PlayerStats : CharacterStats
         if (staminaExhausted && CurrentStamina >= Definition.StaminaResumeThreshold)
             staminaExhausted = false;
 
-        float spent = SpendResourceUpTo(ResourceType.Stamina, amount);
-        if (spent <= 0f)
-        {
-            staminaExhausted = true;
+        return TrySpendStamina(amount);
+    }
+
+    /// <summary>消耗动作体力并刷新延迟恢复计时。</summary>
+    public override bool TrySpendStamina(float amount)
+    {
+        if (!base.TrySpendStamina(amount))
             return false;
-        }
+
+        if (amount <= 0f)
+            return true;
 
         lastStaminaSpendTime = Time.time;
         if (CurrentStamina <= Mathf.Epsilon)
@@ -77,6 +84,12 @@ public sealed class PlayerStats : CharacterStats
             return;
 
         damageImmunityEndsAt = Mathf.Max(damageImmunityEndsAt, Time.time + duration);
+    }
+
+    /// <summary>由翻滚动画事件启用或关闭独立免伤来源。</summary>
+    public void SetRollDamageImmunity(bool enabled)
+    {
+        rollDamageImmune = enabled;
     }
 
     /// <summary>在伤害计算前拦截霸体期间的攻击。</summary>
@@ -95,6 +108,7 @@ public sealed class PlayerStats : CharacterStats
         staminaExhausted = false;
         lastStaminaSpendTime = float.NegativeInfinity;
         damageImmunityEndsAt = float.NegativeInfinity;
+        rollDamageImmune = false;
     }
 
     // 在恢复延迟结束后按配置速率补充体力。

@@ -19,6 +19,7 @@ using UnityEngine;
 [RequireComponent(typeof(PlayerAnimation))]
 [RequireComponent(typeof(PlayerStats))]
 [RequireComponent(typeof(PlayerHitReaction))]
+[RequireComponent(typeof(PlayerRoll))]
 public sealed class PlayerController : MonoBehaviour, IController, ICanSendEvent
 {
     [Header("References")]
@@ -32,6 +33,8 @@ public sealed class PlayerController : MonoBehaviour, IController, ICanSendEvent
     [SerializeField] private PlayerCombat playerCombat;
     // 提供奔跑体力状态与持续消耗接口的玩家属性组件。
     [SerializeField] private PlayerStats playerStats;
+    // 管理战斗翻滚状态并提供固定方向位移的组件。
+    [SerializeField] private PlayerRoll playerRoll;
 
     [Header("Movement")]
     // 探索或战斗慢走时的水平速度，单位为米每秒。
@@ -68,6 +71,10 @@ public sealed class PlayerController : MonoBehaviour, IController, ICanSendEvent
     public bool IsEquipped => isEquipped;
     // 当前是否在探索模式中实际以奔跑速度移动。
     public bool IsExplorationRunning => CanMove && !isEquipped && isRunning;
+    /// <summary>当前是否允许接收游戏玩法输入。</summary>
+    public bool IsGameplayInputEnabled => inputEnabled;
+    /// <summary>当前是否由翻滚组件接管水平位移。</summary>
+    public bool IsRolling => playerRoll != null && playerRoll.IsRolling;
 
     // 死亡或攻击期间禁止角色移动。
     private bool CanMove => (playerStats == null || playerStats.IsAlive) &&
@@ -91,6 +98,7 @@ public sealed class PlayerController : MonoBehaviour, IController, ICanSendEvent
         playerAnimation = playerAnimation != null ? playerAnimation : GetComponent<PlayerAnimation>();
         playerCombat = playerCombat != null ? playerCombat : GetComponent<PlayerCombat>();
         playerStats = playerStats != null ? playerStats : GetComponent<PlayerStats>();
+        playerRoll = playerRoll != null ? playerRoll : GetComponent<PlayerRoll>();
         isEquipped = playerAnimation != null && playerAnimation.IsEquipped;
 
         this.RegisterEvent<GameStateChangedEvent>(OnGameStateChanged)
@@ -118,13 +126,18 @@ public sealed class PlayerController : MonoBehaviour, IController, ICanSendEvent
     {
         Vector2 moveInput = inputEnabled && input != null ? input.Move : Vector2.zero;
         bool canMove = CanMove;
-        bool wantsToRun = isEquipped ? HasCombatRunInput : HasExplorationRunInput;
+        bool isRolling = IsRolling;
+        bool wantsToRun = !isRolling && (isEquipped ? HasCombatRunInput : HasExplorationRunInput);
         isRunning = canMove && wantsToRun && (playerStats == null || playerStats.CanSprint);
 
         Vector3 horizontalMotion;
         if (!canMove)
         {
             horizontalMotion = Vector3.zero;
+        }
+        else if (isRolling)
+        {
+            horizontalMotion = playerRoll.PlanarVelocity;
         }
         else if (isEquipped)
         {
@@ -135,7 +148,7 @@ public sealed class PlayerController : MonoBehaviour, IController, ICanSendEvent
 
         ApplyMovement(horizontalMotion);
 
-        bool isActuallyRunning = isRunning && horizontalMotion.sqrMagnitude > 0.0001f;
+        bool isActuallyRunning = !isRolling && isRunning && horizontalMotion.sqrMagnitude > 0.0001f;
         if (isActuallyRunning && playerStats != null)
             playerStats.SpendSprintStamina(playerStats.StaminaDrainPerSecond * Time.deltaTime);
 
@@ -145,14 +158,15 @@ public sealed class PlayerController : MonoBehaviour, IController, ICanSendEvent
         if (IsExplorationMoving)
             UpdateExplorationRotation(ExplorationMoveDirection, isRunning);
 
-        if (isEquipped && canMove)
+        if (isEquipped && canMove && !isRolling)
             UpdateCombatRotation();
 
-        Vector2 animationMove = canMove ? moveInput : Vector2.zero;
+        Vector2 animationMove = canMove && !isRolling ? moveInput : Vector2.zero;
         if (IsExplorationMoving)
             animationMove = Vector2.up * Mathf.Clamp01(moveInput.magnitude);
 
         playerAnimation?.SetLocomotion(animationMove, isActuallyRunning);
+        playerRoll?.AdvanceRoll(Time.deltaTime);
     }
 
     // 将输入转换为相机相对的探索移动速度。
@@ -192,7 +206,7 @@ public sealed class PlayerController : MonoBehaviour, IController, ICanSendEvent
     /// <summary>
     /// 战斗模式移动：相机相对横移（strafe），前进方向为相机前方
     /// </summary>
-    private Vector3 GetCombatMotion(Vector2 moveInput, bool isRunning)
+    public Vector3 GetCombatMotion(Vector2 moveInput, bool isRunning)
     {
         if (moveInput == Vector2.zero)
             return Vector3.zero;
@@ -251,7 +265,7 @@ public sealed class PlayerController : MonoBehaviour, IController, ICanSendEvent
     private void OnEquipPressed()
     {
         if (!inputEnabled || (playerStats != null && !playerStats.IsAlive) ||
-            (playerCombat != null && playerCombat.IsAttacking))
+            (playerCombat != null && playerCombat.IsAttacking) || IsRolling)
             return;
 
         playerAnimation?.ToggleEquipped();
@@ -271,5 +285,7 @@ public sealed class PlayerController : MonoBehaviour, IController, ICanSendEvent
     private void OnGameStateChanged(GameStateChangedEvent e)
     {
         inputEnabled = e.To == GameState.Playing;
+        if (!inputEnabled)
+            playerRoll?.CancelRoll();
     }
 }

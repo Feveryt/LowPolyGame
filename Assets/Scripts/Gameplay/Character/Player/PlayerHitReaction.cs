@@ -13,6 +13,8 @@ public sealed class PlayerHitReaction : MonoBehaviour
     [SerializeField] private PlayerStats playerStats;
     // 负责触发 Damaged 与 Dead Animator 参数的玩家动画组件。
     [SerializeField] private PlayerAnimation playerAnimation;
+    // 在有效伤害到达时停止翻滚位移与无敌帧的组件。
+    [SerializeField] private PlayerRoll playerRoll;
     // 受击动画未结束时累计达到该次数后触发霸体。
     [SerializeField, Min(1)] private int hitsBeforeSuperArmor = 3;
     // 霸体免伤持续时间，单位为秒。
@@ -32,6 +34,7 @@ public sealed class PlayerHitReaction : MonoBehaviour
     {
         playerStats = playerStats != null ? playerStats : GetComponent<PlayerStats>();
         playerAnimation = playerAnimation != null ? playerAnimation : GetComponent<PlayerAnimation>();
+        playerRoll = playerRoll != null ? playerRoll : GetComponent<PlayerRoll>();
     }
 
     // 启用时订阅伤害结果与死亡事件。
@@ -83,6 +86,7 @@ public sealed class PlayerHitReaction : MonoBehaviour
         if (result.WasLethal)
         {
             consecutiveHitCount = 0;
+            playerRoll?.CancelRoll();
             PlayDeathOnce();
             return;
         }
@@ -90,6 +94,7 @@ public sealed class PlayerHitReaction : MonoBehaviour
         if (deathAnimationTriggered || playerStats.IsDamageImmune)
             return;
 
+        playerRoll?.CancelRoll();
         consecutiveHitCount++;
         if (consecutiveHitCount >= Mathf.Max(1, hitsBeforeSuperArmor))
         {
@@ -120,6 +125,7 @@ public sealed class PlayerHitReaction : MonoBehaviour
         deathAnimationTriggered = true;
         consecutiveHitCount = 0;
         hurtWindowEndsAt = float.NegativeInfinity;
+        playerRoll?.CancelRoll();
         playerAnimation?.PlayDie();
     }
 }

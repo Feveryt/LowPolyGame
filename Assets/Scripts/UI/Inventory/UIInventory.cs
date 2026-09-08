@@ -143,6 +143,7 @@ public sealed class UIInventory : UIPanel
             return;
 
         isOpen = true;
+        AudioManager.Instance?.PlayUiOpen();
         SetPanelVisible(true);
         inputManager?.SetUiInputEnabled(true);
         inputManager?.SetLookInputEnabled(false);
@@ -173,6 +174,7 @@ public sealed class UIInventory : UIPanel
             return;
 
         isOpen = false;
+        AudioManager.Instance?.PlayUiClose();
         inputManager?.SetUiInputEnabled(false);
         inputManager?.SetLookInputEnabled(true);
         SetPanelVisible(false);

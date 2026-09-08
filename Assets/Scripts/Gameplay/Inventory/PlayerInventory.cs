@@ -87,6 +87,28 @@ public sealed class PlayerInventory : MonoBehaviour
         return model.TryAddItem(item, amount);
     }
 
+    /// <summary>判断指定数量的物品是否能放入现有堆叠或空槽。</summary>
+    public bool CanAddItem(ItemDefinition item, int amount)
+    {
+        EnsureInitialized();
+        if (item == null || amount <= 0)
+            return false;
+
+        int remaining = amount;
+        IReadOnlyList<InventorySlot> currentSlots = model.Slots;
+        int emptySlots = 0;
+        for (int i = 0; i < currentSlots.Count; i++)
+        {
+            InventorySlot slot = currentSlots[i];
+            if (slot.IsEmpty)
+                emptySlots++;
+            else if (slot.Item == item)
+                remaining -= Mathf.Max(0, item.MaxStack - slot.Quantity);
+        }
+
+        return remaining <= emptySlots * item.MaxStack;
+    }
+
     /// <summary>尝试从槽位移除指定数量的物品。</summary>
     public bool TryRemoveItem(int slotIndex, int amount)
     {

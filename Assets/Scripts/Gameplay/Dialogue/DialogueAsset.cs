@@ -164,6 +164,7 @@ public enum DialogueQuestActionType
     StartQuest,
     AdvanceObjective,
     SubmitQuest,
+    OpenShop,
 }
 
 /// <summary>对话中配置的单条任务动作。</summary>
@@ -173,6 +174,7 @@ public sealed class DialogueQuestAction
     [SerializeField] private DialogueQuestActionType actionType;
     [SerializeField] private string questId;
     [SerializeField] private string objectiveId;
+    [SerializeField] private ShopDefinition shop;
 
     /// <summary>将由对话运行时调用的动作类型。</summary>
     public DialogueQuestActionType ActionType => actionType;
@@ -180,4 +182,6 @@ public sealed class DialogueQuestAction
     public string QuestId => questId;
     /// <summary>推进动作使用的稳定目标 ID。</summary>
     public string ObjectiveId => objectiveId;
+    /// <summary>打开商店动作使用的商店资料。</summary>
+    public ShopDefinition Shop => shop;
 }

@@ -2198,6 +2198,7 @@ GameObject:
   - component: {fileID: 4591360521630508451}
   - component: {fileID: 4470569105567791867}
   - component: {fileID: 7366020192983833465}
+  - component: {fileID: 7036732125047607204}
   m_Layer: 7
   m_Name: StoneGolem
   m_TagString: Untagged
@@ -2392,6 +2393,22 @@ CapsuleCollider:
   m_Height: 3.0097547
   m_Direction: 1
   m_Center: {x: 0.034018338, y: 1.0048773, z: 0}
+--- !u!114 &7036732125047607204
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8603576503534742130}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 76c9fe6c388650f4cb08cf7e5159407c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  targetId: unsigned_guardian.stone_golem
+  eventType: 1
+  interactionRange: 1.5
+  player: {fileID: 0}
 --- !u!1 &8667347325424593032
 GameObject:
   m_ObjectHideFlags: 0

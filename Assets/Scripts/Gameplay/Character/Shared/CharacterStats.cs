@@ -97,7 +97,7 @@ public abstract class CharacterStats : MonoBehaviour, IDamageable
     }
 
     /// <summary>尝试足额消耗体力；资源不足时不修改当前值。</summary>
-    public bool TrySpendStamina(float amount)
+    public virtual bool TrySpendStamina(float amount)
     {
         return TrySpendResource(ResourceType.Stamina, amount);
     }

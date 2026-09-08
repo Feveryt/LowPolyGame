@@ -60,6 +60,15 @@
                     "initialStateCheck": false
                 },
                 {
+                    "name": "Roll",
+                    "type": "Button",
+                    "id": "a42db9bd-dd0b-4a7b-8b6c-65f0807d7c95",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "Press",
+                    "initialStateCheck": false
+                },
+                {
                     "name": "LockOn",
                     "type": "Button",
                     "id": "0565e0b8-a871-4b26-8a4c-9cc10cb9b8df",
@@ -72,6 +81,15 @@
                     "name": "Inventory",
                     "type": "Button",
                     "id": "4e5c5f35-3f3a-4e98-9d30-7a5f2a5f7f6b",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Quest",
+                    "type": "Button",
+                    "id": "b95d251d-9cb5-4c79-9d3f-b3b3239b7ba2",
                     "expectedControlType": "Button",
                     "processors": "",
                     "interactions": "",
@@ -275,6 +293,28 @@
                 },
                 {
                     "name": "",
+                    "id": "bbc4c2a1-5871-4669-91fa-a4c9d8b3d0a7",
+                    "path": "<Keyboard>/space",
+                    "interactions": "Press",
+                    "processors": "",
+                    "groups": "Keyboard&Mouse",
+                    "action": "Roll",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "5f3fa52d-97c6-4b1f-b0fb-f894a9b77788",
+                    "path": "<Gamepad>/buttonEast",
+                    "interactions": "Press",
+                    "processors": "",
+                    "groups": "Gamepad",
+                    "action": "Roll",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
                     "id": "2b52336f-ca56-4664-a17a-14ce520878fb",
                     "path": "<Mouse>/middleButton",
                     "interactions": "Press",
@@ -314,6 +354,28 @@
                     "processors": "",
                     "groups": "Gamepad",
                     "action": "Inventory",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "a3a3a4ee-6664-4f20-963a-05d084478d84",
+                    "path": "<Keyboard>/j",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Keyboard&Mouse",
+                    "action": "Quest",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "aa727172-541a-4e95-8953-75ccd7aeb3d5",
+                    "path": "<Gamepad>/buttonNorth",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Gamepad",
+                    "action": "Quest",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },

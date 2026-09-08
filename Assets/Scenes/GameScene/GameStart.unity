@@ -1192,6 +1192,51 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 4199466b177c49a4a49e6fae58fec118, type: 3}
+--- !u!1 &707694197
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 707694199}
+  - component: {fileID: 707694198}
+  m_Layer: 0
+  m_Name: AudioManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &707694198
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 707694197}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5c8c24a54c622b1418e79cb3f0698e9c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  soundLibrary: {fileID: 0}
+--- !u!4 &707694199
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 707694197}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &2138790835
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1206,7 +1251,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   inputActions: {fileID: 11400000, guid: 27af026acbf816b42af3565d2eccd076, type: 2}
   targetScene: {fileID: 102900000, guid: 6fb1bab841ef2c1489283cfa9075a0f5, type: 3}
-  targetScenePath: Assets/Scenes/GameScene/Demo 1.unity
+  targetScenePath: Assets/Scenes/GameScene/TestAct.unity
   menuCanvasGroup: {fileID: 310005}
   startButton: {fileID: 310014}
   settingsButton: {fileID: 310034}
@@ -1403,6 +1448,14 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2069313696669289218, guid: 538420fc75e8df54fb964c237ec0b7e7, type: 3}
+      propertyPath: targetScene
+      value: 
+      objectReference: {fileID: 102900000, guid: bc94d759f03398d488f9b7fc65d00575, type: 3}
+    - target: {fileID: 2069313696669289218, guid: 538420fc75e8df54fb964c237ec0b7e7, type: 3}
+      propertyPath: targetScenePath
+      value: Assets/Scenes/GameScene/Demo 1.unity
+      objectReference: {fileID: 0}
     - target: {fileID: 7868441405651833744, guid: 538420fc75e8df54fb964c237ec0b7e7, type: 3}
       propertyPath: m_Name
       value: StartMenuCanvas
@@ -1422,3 +1475,4 @@ SceneRoots:
   - {fileID: 14634894}
   - {fileID: 644549736448836388}
   - {fileID: 610882626}
+  - {fileID: 707694199}

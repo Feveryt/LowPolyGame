@@ -486,6 +486,51 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 5104347191886934198, guid: cc23b2ac1eb84974b943aa29f91696ba, type: 3}
   m_PrefabInstance: {fileID: 1841994733042442310}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &836878550
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 836878552}
+  - component: {fileID: 836878551}
+  m_Layer: 0
+  m_Name: AudioManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &836878551
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 836878550}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5c8c24a54c622b1418e79cb3f0698e9c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  soundLibrary: {fileID: 0}
+--- !u!4 &836878552
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 836878550}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &901450336
 GameObject:
   m_ObjectHideFlags: 0
@@ -1691,8 +1736,29 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 8603576503534742130, guid: 631cbdec9c43a334094a7a47951c9ce3, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 5919259942536320479}
   m_SourcePrefab: {fileID: 100100000, guid: 631cbdec9c43a334094a7a47951c9ce3, type: 3}
+--- !u!1 &5919259942536320478 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8603576503534742130, guid: 631cbdec9c43a334094a7a47951c9ce3, type: 3}
+  m_PrefabInstance: {fileID: 5919259942536320477}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &5919259942536320479
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5919259942536320478}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2a50d8f2dfbaa21458906d242b03c4c6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  collapseDelay: 0.2
 --- !u!1001 &6562733834943117299
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1907,3 +1973,4 @@ SceneRoots:
   - {fileID: 5919259942536320477}
   - {fileID: 1606707634}
   - {fileID: 6562733834943117299}
+  - {fileID: 836878552}

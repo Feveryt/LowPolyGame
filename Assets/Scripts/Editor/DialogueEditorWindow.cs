@@ -236,6 +236,9 @@ public sealed class DialogueEditorWindow : EditorWindow
         for (int index = 0; index < actions.arraySize; index++)
         {
             SerializedProperty action = actions.GetArrayElementAtIndex(index);
+            SerializedProperty actionType = action.FindPropertyRelative("actionType");
+            if ((DialogueQuestActionType)actionType.enumValueIndex == DialogueQuestActionType.OpenShop)
+                EditorGUILayout.PropertyField(action.FindPropertyRelative("shop"), new GUIContent("Shop Definition"));
             EditorGUILayout.BeginVertical(EditorStyles.helpBox);
             EditorGUILayout.PropertyField(action.FindPropertyRelative("actionType"), new GUIContent("动作"));
             EditorGUILayout.PropertyField(action.FindPropertyRelative("questId"), new GUIContent("任务 ID"));

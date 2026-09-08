@@ -82,6 +82,7 @@ public sealed class UISettings : SingletonPanel<UISettings>
 
         context = SettingsContext.Gameplay;
         isOpen = true;
+        AudioManager.Instance?.PlayUiOpen();
         SetContextButtons();
         SetPanelVisible(true);
         inputManager.SetPlayerInputEnabled(false);
@@ -103,6 +104,7 @@ public sealed class UISettings : SingletonPanel<UISettings>
         RefreshSceneReferences();
         context = SettingsContext.MainMenu;
         isOpen = true;
+        AudioManager.Instance?.PlayUiOpen();
         SetContextButtons();
         SetPanelVisible(true);
         Cursor.lockState = CursorLockMode.None;
@@ -120,6 +122,7 @@ public sealed class UISettings : SingletonPanel<UISettings>
 
         bool wasGameplay = context == SettingsContext.Gameplay;
         isOpen = false;
+        AudioManager.Instance?.PlayUiClose();
         SetPanelVisible(false);
 
         if (!wasGameplay)
@@ -136,13 +139,41 @@ public sealed class UISettings : SingletonPanel<UISettings>
     private void WireButtons()
     {
         if (continueButton != null)
-            continueButton.onClick.AddListener(CloseSettings);
+            continueButton.onClick.AddListener(HandleContinueClicked);
         if (saveButton != null)
-            saveButton.onClick.AddListener(SaveGame);
+            saveButton.onClick.AddListener(HandleSaveClicked);
         if (returnToMenuButton != null)
-            returnToMenuButton.onClick.AddListener(ReturnToMainMenu);
+            returnToMenuButton.onClick.AddListener(HandleReturnToMenuClicked);
         if (returnButton != null)
-            returnButton.onClick.AddListener(CloseSettings);
+            returnButton.onClick.AddListener(HandleReturnClicked);
+    }
+
+    // 处理继续按钮的确认反馈与关闭操作。
+    private void HandleContinueClicked()
+    {
+        AudioManager.Instance?.PlayUiConfirm();
+        CloseSettings();
+    }
+
+    // 处理存档按钮的确认反馈与存档操作。
+    private void HandleSaveClicked()
+    {
+        AudioManager.Instance?.PlayUiConfirm();
+        SaveGame();
+    }
+
+    // 处理返回主菜单按钮的确认反馈与场景切换。
+    private void HandleReturnToMenuClicked()
+    {
+        AudioManager.Instance?.PlayUiConfirm();
+        ReturnToMainMenu();
+    }
+
+    // 处理菜单场景返回按钮的确认反馈与关闭操作。
+    private void HandleReturnClicked()
+    {
+        AudioManager.Instance?.PlayUiConfirm();
+        CloseSettings();
     }
 
     // 场景激活后重新绑定新场景的输入与光标组件。

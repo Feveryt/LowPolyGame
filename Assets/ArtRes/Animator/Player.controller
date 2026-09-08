@@ -10,7 +10,8 @@ AnimatorState:
   m_Name: Rolling_Left
   m_Speed: 1
   m_CycleOffset: 0
-  m_Transitions: []
+  m_Transitions:
+  - {fileID: 6011000000000000012}
   m_StateMachineBehaviours: []
   m_Position: {x: 50, y: 50, z: 0}
   m_IKOnFeet: 0
@@ -20,7 +21,7 @@ AnimatorState:
   m_MirrorParameterActive: 0
   m_CycleOffsetParameterActive: 0
   m_TimeParameterActive: 0
-  m_Motion: {fileID: 7400000, guid: 1189fd793cbf1534b84104a8373be2d9, type: 3}
+  m_Motion: {fileID: 7400000, guid: 5f24b2797c54a044a859ecbdfbdbb086, type: 2}
   m_Tag: 
   m_SpeedParameter: 
   m_MirrorParameter: 
@@ -491,6 +492,30 @@ AnimatorController:
     m_DefaultInt: 0
     m_DefaultBool: 0
     m_Controller: {fileID: 9100000}
+  - m_Name: RollForward
+    m_Type: 9
+    m_DefaultFloat: 0
+    m_DefaultInt: 0
+    m_DefaultBool: 0
+    m_Controller: {fileID: 9100000}
+  - m_Name: RollBack
+    m_Type: 9
+    m_DefaultFloat: 0
+    m_DefaultInt: 0
+    m_DefaultBool: 0
+    m_Controller: {fileID: 9100000}
+  - m_Name: RollLeft
+    m_Type: 9
+    m_DefaultFloat: 0
+    m_DefaultInt: 0
+    m_DefaultBool: 0
+    m_Controller: {fileID: 9100000}
+  - m_Name: RollRight
+    m_Type: 9
+    m_DefaultFloat: 0
+    m_DefaultInt: 0
+    m_DefaultBool: 0
+    m_Controller: {fileID: 9100000}
   m_AnimatorLayers:
   - serializedVersion: 5
     m_Name: Base Layer
@@ -518,13 +543,13 @@ AnimatorStateMachine:
     m_Position: {x: 720, y: 550, z: 0}
   - serializedVersion: 1
     m_State: {fileID: 1503965337981107653}
-    m_Position: {x: 520, y: -220, z: 0}
+    m_Position: {x: 1460, y: -140, z: 0}
   - serializedVersion: 1
     m_State: {fileID: -6694260456042511778}
-    m_Position: {x: 840, y: -220, z: 0}
+    m_Position: {x: 1680, y: -140, z: 0}
   - serializedVersion: 1
     m_State: {fileID: -7324469403120138408}
-    m_Position: {x: 1100, y: -230, z: 0}
+    m_Position: {x: 1900, y: -140, z: 0}
   - serializedVersion: 1
     m_State: {fileID: -6696726132090638791}
     m_Position: {x: 480, y: 60, z: 0}
@@ -539,49 +564,53 @@ AnimatorStateMachine:
     m_Position: {x: 490, y: 250, z: 0}
   - serializedVersion: 1
     m_State: {fileID: 5368615797901613612}
-    m_Position: {x: 190, y: -450, z: 0}
+    m_Position: {x: 440, y: -540, z: 0}
   - serializedVersion: 1
     m_State: {fileID: 582384376753995907}
-    m_Position: {x: 1160, y: 130, z: 0}
+    m_Position: {x: 2060, y: 170, z: 0}
   - serializedVersion: 1
     m_State: {fileID: 5305116490690852562}
-    m_Position: {x: 460, y: -80, z: 0}
+    m_Position: {x: 290, y: -270, z: 0}
   - serializedVersion: 1
     m_State: {fileID: 8665062047702129305}
-    m_Position: {x: 520, y: -360, z: 0}
+    m_Position: {x: 1460, y: -200, z: 0}
   - serializedVersion: 1
     m_State: {fileID: -4346114568096708540}
-    m_Position: {x: 790, y: -360, z: 0}
+    m_Position: {x: 1680, y: -200, z: 0}
   - serializedVersion: 1
     m_State: {fileID: -7775544681404401049}
-    m_Position: {x: 1080, y: -350, z: 0}
+    m_Position: {x: 1900, y: -200, z: 0}
   - serializedVersion: 1
     m_State: {fileID: -6405702339223739961}
-    m_Position: {x: 1390, y: -140, z: 0}
+    m_Position: {x: 2280, y: 60, z: 0}
   - serializedVersion: 1
     m_State: {fileID: 8054127325625581948}
-    m_Position: {x: 1796.4216, y: -106.69844, z: 0}
+    m_Position: {x: 890, y: -350, z: 0}
   - serializedVersion: 1
     m_State: {fileID: 2042469369103188748}
-    m_Position: {x: 1800.5464, y: 28.38617, z: 0}
+    m_Position: {x: 880, y: -220, z: 0}
   - serializedVersion: 1
     m_State: {fileID: -8603854264736624461}
-    m_Position: {x: 1610, y: -40, z: 0}
+    m_Position: {x: 690, y: -290, z: 0}
   - serializedVersion: 1
     m_State: {fileID: 9137963344748736869}
-    m_Position: {x: 2020, y: -40, z: 0}
+    m_Position: {x: 1100, y: -280, z: 0}
   m_ChildStateMachines: []
   m_AnyStateTransitions:
   - {fileID: 3782428567967616109}
   - {fileID: 6011000000000000000}
   - {fileID: -5254832023855492555}
   - {fileID: 3689156165921715749}
+  - {fileID: 6011000000000000008}
+  - {fileID: 6011000000000000009}
+  - {fileID: 6011000000000000010}
+  - {fileID: 6011000000000000011}
   m_EntryTransitions: []
   m_StateMachineTransitions: {}
   m_StateMachineBehaviours: []
-  m_AnyStatePosition: {x: 210, y: -220, z: 0}
+  m_AnyStatePosition: {x: 1080, y: -600, z: 0}
   m_EntryPosition: {x: 160, y: 50, z: 0}
-  m_ExitPosition: {x: 1230, y: 0, z: 0}
+  m_ExitPosition: {x: 2070, y: 50, z: 0}
   m_ParentStateMachinePosition: {x: 800, y: 20, z: 0}
   m_DefaultState: {fileID: -6696726132090638791}
 --- !u!1102 &582384376753995907
@@ -698,7 +727,8 @@ AnimatorState:
   m_Name: Rolling_Back_01
   m_Speed: 1
   m_CycleOffset: 0
-  m_Transitions: []
+  m_Transitions:
+  - {fileID: 6011000000000000013}
   m_StateMachineBehaviours: []
   m_Position: {x: 50, y: 50, z: 0}
   m_IKOnFeet: 0
@@ -708,7 +738,7 @@ AnimatorState:
   m_MirrorParameterActive: 0
   m_CycleOffsetParameterActive: 0
   m_TimeParameterActive: 0
-  m_Motion: {fileID: 7400000, guid: cf4403ab41892974aa78b7405ec35804, type: 3}
+  m_Motion: {fileID: 7400000, guid: 2ec389492e40bb64fa763b19ce5514dd, type: 2}
   m_Tag: 
   m_SpeedParameter: 
   m_MirrorParameter: 
@@ -1102,6 +1132,206 @@ AnimatorStateTransition:
   m_InterruptionSource: 0
   m_OrderedInterruption: 1
   m_CanTransitionToSelf: 1
+--- !u!1101 &6011000000000000008
+AnimatorStateTransition:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: Roll Forward
+  m_Conditions:
+  - m_ConditionMode: 1
+    m_ConditionEvent: RollForward
+    m_EventTreshold: 0
+  - m_ConditionMode: 1
+    m_ConditionEvent: IsEquipped
+    m_EventTreshold: 0
+  m_DstStateMachine: {fileID: 0}
+  m_DstState: {fileID: 8054127325625581948}
+  m_Solo: 0
+  m_Mute: 0
+  m_IsExit: 0
+  serializedVersion: 3
+  m_TransitionDuration: 0.05
+  m_TransitionOffset: 0
+  m_ExitTime: 0
+  m_HasExitTime: 0
+  m_HasFixedDuration: 1
+  m_InterruptionSource: 0
+  m_OrderedInterruption: 1
+  m_CanTransitionToSelf: 0
+--- !u!1101 &6011000000000000009
+AnimatorStateTransition:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: Roll Back
+  m_Conditions:
+  - m_ConditionMode: 1
+    m_ConditionEvent: RollBack
+    m_EventTreshold: 0
+  - m_ConditionMode: 1
+    m_ConditionEvent: IsEquipped
+    m_EventTreshold: 0
+  m_DstStateMachine: {fileID: 0}
+  m_DstState: {fileID: 2042469369103188748}
+  m_Solo: 0
+  m_Mute: 0
+  m_IsExit: 0
+  serializedVersion: 3
+  m_TransitionDuration: 0.05
+  m_TransitionOffset: 0
+  m_ExitTime: 0
+  m_HasExitTime: 0
+  m_HasFixedDuration: 1
+  m_InterruptionSource: 0
+  m_OrderedInterruption: 1
+  m_CanTransitionToSelf: 0
+--- !u!1101 &6011000000000000010
+AnimatorStateTransition:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: Roll Left
+  m_Conditions:
+  - m_ConditionMode: 1
+    m_ConditionEvent: RollLeft
+    m_EventTreshold: 0
+  - m_ConditionMode: 1
+    m_ConditionEvent: IsEquipped
+    m_EventTreshold: 0
+  m_DstStateMachine: {fileID: 0}
+  m_DstState: {fileID: -8603854264736624461}
+  m_Solo: 0
+  m_Mute: 0
+  m_IsExit: 0
+  serializedVersion: 3
+  m_TransitionDuration: 0.05
+  m_TransitionOffset: 0
+  m_ExitTime: 0
+  m_HasExitTime: 0
+  m_HasFixedDuration: 1
+  m_InterruptionSource: 0
+  m_OrderedInterruption: 1
+  m_CanTransitionToSelf: 0
+--- !u!1101 &6011000000000000011
+AnimatorStateTransition:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: Roll Right
+  m_Conditions:
+  - m_ConditionMode: 1
+    m_ConditionEvent: RollRight
+    m_EventTreshold: 0
+  - m_ConditionMode: 1
+    m_ConditionEvent: IsEquipped
+    m_EventTreshold: 0
+  m_DstStateMachine: {fileID: 0}
+  m_DstState: {fileID: 9137963344748736869}
+  m_Solo: 0
+  m_Mute: 0
+  m_IsExit: 0
+  serializedVersion: 3
+  m_TransitionDuration: 0.05
+  m_TransitionOffset: 0
+  m_ExitTime: 0
+  m_HasExitTime: 0
+  m_HasFixedDuration: 1
+  m_InterruptionSource: 0
+  m_OrderedInterruption: 1
+  m_CanTransitionToSelf: 0
+--- !u!1101 &6011000000000000012
+AnimatorStateTransition:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: Roll Left Complete
+  m_Conditions: []
+  m_DstStateMachine: {fileID: 0}
+  m_DstState: {fileID: 2487348180557589770}
+  m_Solo: 0
+  m_Mute: 0
+  m_IsExit: 0
+  serializedVersion: 3
+  m_TransitionDuration: 0.075
+  m_TransitionOffset: 0
+  m_ExitTime: 0.92
+  m_HasExitTime: 1
+  m_HasFixedDuration: 1
+  m_InterruptionSource: 0
+  m_OrderedInterruption: 1
+  m_CanTransitionToSelf: 0
+--- !u!1101 &6011000000000000013
+AnimatorStateTransition:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: Roll Back Complete
+  m_Conditions: []
+  m_DstStateMachine: {fileID: 0}
+  m_DstState: {fileID: 2487348180557589770}
+  m_Solo: 0
+  m_Mute: 0
+  m_IsExit: 0
+  serializedVersion: 3
+  m_TransitionDuration: 0.075
+  m_TransitionOffset: 0
+  m_ExitTime: 0.92
+  m_HasExitTime: 1
+  m_HasFixedDuration: 1
+  m_InterruptionSource: 0
+  m_OrderedInterruption: 1
+  m_CanTransitionToSelf: 0
+--- !u!1101 &6011000000000000014
+AnimatorStateTransition:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: Roll Front Complete
+  m_Conditions: []
+  m_DstStateMachine: {fileID: 0}
+  m_DstState: {fileID: 2487348180557589770}
+  m_Solo: 0
+  m_Mute: 0
+  m_IsExit: 0
+  serializedVersion: 3
+  m_TransitionDuration: 0.075
+  m_TransitionOffset: 0
+  m_ExitTime: 0.92
+  m_HasExitTime: 1
+  m_HasFixedDuration: 1
+  m_InterruptionSource: 0
+  m_OrderedInterruption: 1
+  m_CanTransitionToSelf: 0
+--- !u!1101 &6011000000000000015
+AnimatorStateTransition:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: Roll Right Complete
+  m_Conditions: []
+  m_DstStateMachine: {fileID: 0}
+  m_DstState: {fileID: 2487348180557589770}
+  m_Solo: 0
+  m_Mute: 0
+  m_IsExit: 0
+  serializedVersion: 3
+  m_TransitionDuration: 0.075
+  m_TransitionOffset: 0
+  m_ExitTime: 0.92
+  m_HasExitTime: 1
+  m_HasFixedDuration: 1
+  m_InterruptionSource: 0
+  m_OrderedInterruption: 1
+  m_CanTransitionToSelf: 0
 --- !u!206 &7059307946108102842
 BlendTree:
   m_ObjectHideFlags: 1
@@ -1270,7 +1500,8 @@ AnimatorState:
   m_Name: Rolling_Front
   m_Speed: 1
   m_CycleOffset: 0
-  m_Transitions: []
+  m_Transitions:
+  - {fileID: 6011000000000000014}
   m_StateMachineBehaviours: []
   m_Position: {x: 50, y: 50, z: 0}
   m_IKOnFeet: 0
@@ -1280,7 +1511,7 @@ AnimatorState:
   m_MirrorParameterActive: 0
   m_CycleOffsetParameterActive: 0
   m_TimeParameterActive: 0
-  m_Motion: {fileID: 7400000, guid: de01ef7c29e3c9b4aad09085a2dd2083, type: 3}
+  m_Motion: {fileID: 7400000, guid: bb440f4100b8dad4c9a697450d49a97f, type: 2}
   m_Tag: 
   m_SpeedParameter: 
   m_MirrorParameter: 
@@ -1376,7 +1607,8 @@ AnimatorState:
   m_Name: Rolling_Right
   m_Speed: 1
   m_CycleOffset: 0
-  m_Transitions: []
+  m_Transitions:
+  - {fileID: 6011000000000000015}
   m_StateMachineBehaviours: []
   m_Position: {x: 50, y: 50, z: 0}
   m_IKOnFeet: 0
@@ -1386,7 +1618,7 @@ AnimatorState:
   m_MirrorParameterActive: 0
   m_CycleOffsetParameterActive: 0
   m_TimeParameterActive: 0
-  m_Motion: {fileID: 7400000, guid: c24be48b1d7bcc24baf6871cc30b63f7, type: 3}
+  m_Motion: {fileID: 7400000, guid: 09e44d4c120b38549935e26e421bace8, type: 2}
   m_Tag: 
   m_SpeedParameter: 
   m_MirrorParameter: 

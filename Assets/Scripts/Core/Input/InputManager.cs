@@ -36,10 +36,14 @@ public sealed class InputManager : MonoBehaviour
     private InputAction heavyAttackAction;
     // 轻攻击动作。
     private InputAction lightAttackAction;
+    // 战斗状态下触发四方向翻滚的动作。
+    private InputAction rollAction;
     // 锁定目标动作。
     private InputAction lockOnAction;
     // 打开或关闭背包界面的动作。
     private InputAction inventoryAction;
+    // 打开或关闭任务面板的动作。
+    private InputAction questAction;
     // 打开或关闭设置面板的暂停菜单动作。
     private InputAction settingsAction;
     // 靠近 NPC 时开始对话的交互动作。
@@ -71,10 +75,14 @@ public sealed class InputManager : MonoBehaviour
     public event Action HeavyAttackPressed;
     // 轻攻击动作完成时触发。
     public event Action LightAttackPressed;
+    // 翻滚动作完成时触发。
+    public event Action RollPressed;
     // 锁定动作完成时触发。
     public event Action LockOnPressed;
     // 背包动作完成时触发。
     public event Action InventoryPressed;
+    // 任务面板动作完成时触发。
+    public event Action QuestPressed;
     // 设置动作完成时触发。
     public event Action SettingsPressed;
     // 靠近可交互 NPC 时按下对话键触发。
@@ -104,6 +112,8 @@ public sealed class InputManager : MonoBehaviour
             heavyAttackAction.performed += OnHeavyAttackPerformed;
         if (lightAttackAction != null)
             lightAttackAction.performed += OnLightAttackPerformed;
+        if (rollAction != null)
+            rollAction.performed += OnRollPerformed;
         if (lockOnAction != null)
             lockOnAction.performed += OnLockOnPerformed;
         if (uiCancelAction != null)
@@ -123,6 +133,8 @@ public sealed class InputManager : MonoBehaviour
             heavyAttackAction.performed -= OnHeavyAttackPerformed;
         if (lightAttackAction != null)
             lightAttackAction.performed -= OnLightAttackPerformed;
+        if (rollAction != null)
+            rollAction.performed -= OnRollPerformed;
         if (lockOnAction != null)
             lockOnAction.performed -= OnLockOnPerformed;
         if (uiCancelAction != null)
@@ -141,6 +153,8 @@ public sealed class InputManager : MonoBehaviour
     {
         if (inventoryAction != null && inventoryAction.WasPressedThisFrame())
             InventoryPressed?.Invoke();
+        if (questAction != null && questAction.WasPressedThisFrame())
+            QuestPressed?.Invoke();
     }
 
     // 从配置资源解析项目约定的各个玩家动作。
@@ -165,8 +179,10 @@ public sealed class InputManager : MonoBehaviour
         equipAction = playerMap.FindAction("Equip", false);
         heavyAttackAction = playerMap.FindAction("HeavyAttack", false);
         lightAttackAction = playerMap.FindAction("LightAttack", false);
+        rollAction = playerMap.FindAction("Roll", false);
         lockOnAction = playerMap.FindAction("LockOn", false);
         inventoryAction = playerMap.FindAction("Inventory", false);
+        questAction = playerMap.FindAction("Quest", false);
         settingsAction = playerMap.FindAction("Settings", false);
         interactAction = playerMap.FindAction("Interact", false);
         uiMap = actions.FindActionMap(UiMapName, false);
@@ -239,6 +255,12 @@ public sealed class InputManager : MonoBehaviour
     private void OnLightAttackPerformed(InputAction.CallbackContext context)
     {
         LightAttackPressed?.Invoke();
+    }
+
+    // 将翻滚动作转发给玩家翻滚组件。
+    private void OnRollPerformed(InputAction.CallbackContext context)
+    {
+        RollPressed?.Invoke();
     }
 
     // 将 Input System 的锁定完成回调转发为 C# 事件。

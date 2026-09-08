@@ -1,0 +1,233 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9c182bfe2b8fdc84e81ee22edd59db43, type: 3}
+  m_Name: SoundLibrary
+  m_EditorClassIdentifier: 
+  uiConfirm:
+    clips:
+    - {fileID: 8300000, guid: 1f9e6a2d6d9edec4ca32fd80811432f6, type: 3}
+    - {fileID: 8300000, guid: 86979d71909c28643b50eefc13c5e2c7, type: 3}
+    - {fileID: 8300000, guid: c462049dcfb58de469d06fcc48c22f6a, type: 3}
+    minVolume: 0.38
+    maxVolume: 0.48
+    minPitch: 0.98
+    maxPitch: 1.03
+    cooldown: 0.04
+    maxSimultaneous: 2
+    spatial: 0
+    minDistance: 1
+    maxDistance: 20
+  uiOpen:
+    clips:
+    - {fileID: 8300000, guid: 780dc6ea5be23f447b47604cd40c1186, type: 3}
+    minVolume: 0.45
+    maxVolume: 0.5
+    minPitch: 0.98
+    maxPitch: 1.02
+    cooldown: 0.02
+    maxSimultaneous: 3
+    spatial: 0
+    minDistance: 1
+    maxDistance: 20
+  uiClose:
+    clips:
+    - {fileID: 8300000, guid: 502443d1e6e7cca4da625eefdc212f26, type: 3}
+    minVolume: 0.42
+    maxVolume: 0.48
+    minPitch: 0.98
+    maxPitch: 1.02
+    cooldown: 0.02
+    maxSimultaneous: 3
+    spatial: 0
+    minDistance: 1
+    maxDistance: 20
+  uiDialogueAdvance:
+    clips:
+    - {fileID: 8300000, guid: e6475be2e69d48f4cbe1537242ad20c0, type: 3}
+    - {fileID: 8300000, guid: 9267366fee0c4584bad049308c3ea115, type: 3}
+    - {fileID: 8300000, guid: fd4b6be4cd87e6946be6cfc16aad7258, type: 3}
+    minVolume: 0.34
+    maxVolume: 0.42
+    minPitch: 0.97
+    maxPitch: 1.04
+    cooldown: 0.06
+    maxSimultaneous: 1
+    spatial: 0
+    minDistance: 1
+    maxDistance: 20
+  uiPickupRecordPage:
+    clips:
+    - {fileID: 8300000, guid: ccbc1f316f8852c498f8f09fe9b9618a, type: 3}
+    minVolume: 0.55
+    maxVolume: 0.62
+    minPitch: 0.98
+    maxPitch: 1.02
+    cooldown: 0
+    maxSimultaneous: 1
+    spatial: 0
+    minDistance: 1
+    maxDistance: 20
+  uiPickupInscription:
+    clips:
+    - {fileID: 8300000, guid: bfa213c3f9a993047b96ce5718e97b6a, type: 3}
+    minVolume: 0.55
+    maxVolume: 0.62
+    minPitch: 0.98
+    maxPitch: 1.02
+    cooldown: 0
+    maxSimultaneous: 1
+    spatial: 0
+    minDistance: 1
+    maxDistance: 20
+  uiQuestUpdated:
+    clips:
+    - {fileID: 8300000, guid: 08643a9666294a54ca608e55a180ce24, type: 3}
+    minVolume: 0.48
+    maxVolume: 0.55
+    minPitch: 1
+    maxPitch: 1
+    cooldown: 0.1
+    maxSimultaneous: 1
+    spatial: 0
+    minDistance: 1
+    maxDistance: 20
+  uiQuestCompleted:
+    clips:
+    - {fileID: 8300000, guid: b7a23f84fd75c814baad1ccec8b1337c, type: 3}
+    minVolume: 0.56
+    maxVolume: 0.64
+    minPitch: 1
+    maxPitch: 1
+    cooldown: 0
+    maxSimultaneous: 1
+    spatial: 0
+    minDistance: 1
+    maxDistance: 20
+  playerLightSwing:
+    clips:
+    - {fileID: 8300000, guid: b3fedddd373c431d8a2b9d66f414802d, type: 3}
+    - {fileID: 8300000, guid: c98e92f6cc4c47deb9e89769bf28b292, type: 3}
+    - {fileID: 8300000, guid: 4d8ad23afa85440191701e520c2a325c, type: 3}
+    minVolume: 0.38
+    maxVolume: 0.48
+    minPitch: 0.96
+    maxPitch: 1.05
+    cooldown: 0.05
+    maxSimultaneous: 2
+    spatial: 0
+    minDistance: 1
+    maxDistance: 20
+  playerHeavySwing:
+    clips:
+    - {fileID: 8300000, guid: caf0bebd0a0390342bd01e64886a7f25, type: 3}
+    - {fileID: 8300000, guid: 6e5b08cf294ec254b98db4524a94a926, type: 3}
+    minVolume: 0.48
+    maxVolume: 0.58
+    minPitch: 0.94
+    maxPitch: 1.02
+    cooldown: 0.08
+    maxSimultaneous: 1
+    spatial: 0
+    minDistance: 1
+    maxDistance: 20
+  playerRoll:
+    clips:
+    - {fileID: 8300000, guid: 6abc80e5c85a4ef47ace27ab5b767a5d, type: 3}
+    minVolume: 0.42
+    maxVolume: 0.5
+    minPitch: 0.97
+    maxPitch: 1.03
+    cooldown: 0
+    maxSimultaneous: 3
+    spatial: 0
+    minDistance: 1
+    maxDistance: 20
+  playerStoneHit:
+    clips:
+    - {fileID: 8300000, guid: c2ab30ff937a9ce4a99160a13b537193, type: 3}
+    - {fileID: 8300000, guid: 1b377dcf119564444b92ccd28ac142b5, type: 3}
+    - {fileID: 8300000, guid: 4e631c6ae93460f4dbb7a2b36c1e3196, type: 3}
+    minVolume: 0.52
+    maxVolume: 0.62
+    minPitch: 0.95
+    maxPitch: 1.04
+    cooldown: 0.05
+    maxSimultaneous: 2
+    spatial: 0
+    minDistance: 1
+    maxDistance: 20
+  stoneGolemAttackWindup:
+    clips:
+    - {fileID: 8300000, guid: 5193d08424532fb4a9bfb42897c220a9, type: 3}
+    - {fileID: 8300000, guid: 4f34a861ddef5a6499b10a7ca3b83936, type: 3}
+    - {fileID: 8300000, guid: 9aaff732bc3f82f4cbf0684b986c6a56, type: 3}
+    - {fileID: 8300000, guid: 91538480d2904e543bc1943216c6424c, type: 3}
+    minVolume: 0.55
+    maxVolume: 0.68
+    minPitch: 0.94
+    maxPitch: 1.04
+    cooldown: 0.12
+    maxSimultaneous: 1
+    spatial: 1
+    minDistance: 3
+    maxDistance: 28
+  stoneGolemImpact:
+    clips:
+    - {fileID: 8300000, guid: 8fe8ec4dbfe907d43bef8f4a52127a4a, type: 3}
+    minVolume: 0.68
+    maxVolume: 0.78
+    minPitch: 0.94
+    maxPitch: 1.02
+    cooldown: 0.08
+    maxSimultaneous: 1
+    spatial: 1
+    minDistance: 3
+    maxDistance: 32
+  stoneGolemHurt:
+    clips:
+    - {fileID: 8300000, guid: 2650ca1e36973344ab953ce808d68c75, type: 3}
+    - {fileID: 8300000, guid: 0f325efa829d6ee43beb2b991c12d3e6, type: 3}
+    - {fileID: 8300000, guid: 01f966cc72201d84b8c96ee1c28c8f1c, type: 3}
+    - {fileID: 8300000, guid: 481bc781d1af1d040941f474818dd904, type: 3}
+    minVolume: 0.52
+    maxVolume: 0.65
+    minPitch: 0.95
+    maxPitch: 1.04
+    cooldown: 0.12
+    maxSimultaneous: 1
+    spatial: 1
+    minDistance: 2.5
+    maxDistance: 25
+  stoneGolemDeath:
+    clips:
+    - {fileID: 8300000, guid: 4b264e458dffa6c439a05c4fd5c8d1aa, type: 3}
+    minVolume: 0.7
+    maxVolume: 0.8
+    minPitch: 1
+    maxPitch: 1
+    cooldown: 0
+    maxSimultaneous: 1
+    spatial: 1
+    minDistance: 3
+    maxDistance: 35
+  stoneGolemCollapse:
+    clips:
+    - {fileID: 8300000, guid: d2b1941488735f5459179c701fb2cff7, type: 3}
+    minVolume: 0.72
+    maxVolume: 0.85
+    minPitch: 0.96
+    maxPitch: 1.02
+    cooldown: 0
+    maxSimultaneous: 1
+    spatial: 1
+    minDistance: 3
+    maxDistance: 38

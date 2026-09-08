@@ -20,6 +20,8 @@ public sealed class DialogueManager : MonoBehaviour
     private Transform activeNpcTransform;
     // 玩家回答显示完毕后要进入的目标节点。
     private int pendingTargetNodeId = -1;
+    // 选项确认后等待对话结束再打开的商店。
+    private ShopDefinition pendingShop;
     // 项目共享的玩家头像与名称设置。
     private DialoguePresentationSettings presentationSettings;
     // 运行时自动创建的对话 UGUI。
@@ -104,10 +106,12 @@ public sealed class DialogueManager : MonoBehaviour
         if (!IsOpen)
             return;
 
+        AudioManager.Instance?.PlayUiClose();
         panel?.Hide();
         activeDialogue = null;
         currentNode = null;
         pendingTargetNodeId = -1;
+        pendingShop = null;
         activeNpcTransform = null;
         CameraDirector.Instance.Stop();
         RestoreGameplay();
@@ -116,6 +120,7 @@ public sealed class DialogueManager : MonoBehaviour
     // 打开 UGUI 并切换为不暂停世界的对话输入状态。
     private void Open(DialogueAsset dialogue, Transform npcTransform)
     {
+        AudioManager.Instance?.PlayUiOpen();
         activeDialogue = dialogue;
         activeNpcTransform = npcTransform;
         EnsurePanel();
@@ -170,6 +175,7 @@ public sealed class DialogueManager : MonoBehaviour
     // 推进没有选项的普通节点，叶子节点在确认后才标记完成。
     private void AdvanceCurrentNode()
     {
+        AudioManager.Instance?.PlayUiDialogueAdvance();
         if (currentNode == null)
         {
             CancelDialogue();
@@ -190,7 +196,8 @@ public sealed class DialogueManager : MonoBehaviour
     {
         if (currentNode == null || choice == null)
             return;
-        ExecuteQuestActions(choice.QuestActions);
+        AudioManager.Instance?.PlayUiConfirm();
+        pendingShop = ExecuteQuestActions(choice.QuestActions);
         pendingTargetNodeId = choice.TargetNodeId;
         ResolveSpeaker(DialogueSpeaker.Player, out string speakerName, out Sprite portrait, out DialoguePortraitSide portraitSide);
         panel.ShowLine(speakerName, choice.Text, portrait, portraitSide, AdvanceAfterChoice);
@@ -201,7 +208,11 @@ public sealed class DialogueManager : MonoBehaviour
     {
         if (pendingTargetNodeId < 0)
         {
+            ShopDefinition shopToOpen = pendingShop;
+            pendingShop = null;
             CompleteDialogue();
+            if (shopToOpen != null)
+                ShopService.Instance?.OpenShop(shopToOpen);
             return;
         }
 
@@ -280,27 +291,39 @@ public sealed class DialogueManager : MonoBehaviour
     }
 
     // 将配置动作转发给唯一任务服务。
-    private static void ExecuteQuestActions(System.Collections.Generic.IReadOnlyList<DialogueQuestAction> actions)
+    private static ShopDefinition ExecuteQuestActions(System.Collections.Generic.IReadOnlyList<DialogueQuestAction> actions)
     {
         if (actions == null)
-            return;
+            return null;
+        ShopDefinition shopToOpen = null;
         foreach (DialogueQuestAction action in actions)
         {
-            if (action == null || string.IsNullOrWhiteSpace(action.QuestId))
+            if (action == null)
                 continue;
             switch (action.ActionType)
             {
                 case DialogueQuestActionType.StartQuest:
+                    if (string.IsNullOrWhiteSpace(action.QuestId))
+                        continue;
                     QuestService.Instance.StartQuest(action.QuestId);
                     break;
                 case DialogueQuestActionType.AdvanceObjective:
+                    if (string.IsNullOrWhiteSpace(action.QuestId))
+                        continue;
                     QuestService.Instance.AdvanceObjective(action.QuestId, action.ObjectiveId);
                     break;
                 case DialogueQuestActionType.SubmitQuest:
+                    if (string.IsNullOrWhiteSpace(action.QuestId))
+                        continue;
                     QuestService.Instance.SubmitQuest(action.QuestId);
+                    break;
+                case DialogueQuestActionType.OpenShop:
+                    if (action.Shop != null)
+                        shopToOpen = action.Shop;
                     break;
             }
         }
+        return shopToOpen;
     }
 
     // 创建或查找默认对话面板。

@@ -32,6 +32,8 @@ public sealed class PlayerCombat : MonoBehaviour
     [SerializeField] private Animator animator;
     // 提供玩家存活状态，防止死亡后继续发起或缓存攻击。
     [SerializeField] private PlayerStats playerStats;
+    // 提供翻滚状态，防止翻滚期间发起或缓存攻击。
+    [SerializeField] private PlayerRoll playerRoll;
     // 负责范围型攻击判定的通用检测组件，保留给拳头和范围技能。
     [SerializeField] private HitDetection hitDetection;
     // 负责当前实体武器 Trigger 命中窗口的组件。
@@ -66,6 +68,7 @@ public sealed class PlayerCombat : MonoBehaviour
         playerAnimation = playerAnimation != null ? playerAnimation : GetComponent<PlayerAnimation>();
         animator = animator != null ? animator : GetComponentInChildren<Animator>();
         playerStats = playerStats != null ? playerStats : GetComponent<PlayerStats>();
+        playerRoll = playerRoll != null ? playerRoll : GetComponent<PlayerRoll>();
         hitDetection = hitDetection != null ? hitDetection : GetComponent<HitDetection>();
         weaponHitbox = weaponHitbox != null ? weaponHitbox : GetComponentInChildren<WeaponHitbox>(true);
         attackOrigin = attackOrigin != null ? attackOrigin : transform;
@@ -147,6 +150,8 @@ public sealed class PlayerCombat : MonoBehaviour
             else if (inLightAttack && state.shortNameHash != Attack06Hash)
             {
                 comboQueued = false;
+                // 连招切换确认后立即播放下一段挥刀声。
+                AudioManager.Instance?.PlayPlayerLightSwing();
                 playerAnimation.ContinueLightAttack();
             }
         }
@@ -155,7 +160,8 @@ public sealed class PlayerCombat : MonoBehaviour
     // 响应重攻击输入，开始攻击或缓存下一段连招。
     private void OnHeavyAttackPressed()
     {
-        if (playerAnimation == null || (playerStats != null && !playerStats.IsAlive))
+        if (playerAnimation == null || (playerStats != null && !playerStats.IsAlive) ||
+            (playerRoll != null && playerRoll.IsRolling))
             return;
 
         if (!playerAnimation.IsEquipped)
@@ -188,7 +194,8 @@ public sealed class PlayerCombat : MonoBehaviour
     // 响应轻攻击输入，启动轻攻击或缓存轻攻击的下一段连招。
     private void OnLightAttackPressed()
     {
-        if (playerAnimation == null || (playerStats != null && !playerStats.IsAlive))
+        if (playerAnimation == null || (playerStats != null && !playerStats.IsAlive) ||
+            (playerRoll != null && playerRoll.IsRolling))
             return;
 
         if (!playerAnimation.IsEquipped)
@@ -210,6 +217,8 @@ public sealed class PlayerCombat : MonoBehaviour
             attackRequestExpiresAt = Time.time + attackStartTimeout;
             IsAttacking = true;
             currentAttack = lightAttackDefinition;
+            // 轻攻击挥刀声在攻击确认时播放，避免被命中动画事件拖后。
+            AudioManager.Instance?.PlayPlayerLightSwing();
             playerAnimation.StartLightAttack();
             return;
         }
@@ -226,6 +235,9 @@ public sealed class PlayerCombat : MonoBehaviour
     {
         if (!IsAttacking || currentAttack == null || playerStats == null)
             return;
+
+        if (currentAttack.AttackType == AttackType.HeavyAttack)
+            AudioManager.Instance?.PlayPlayerHeavySwing();
 
         hitDetection?.BeginAttack();
         weaponHitbox?.BeginAttack(playerStats, currentAttack);

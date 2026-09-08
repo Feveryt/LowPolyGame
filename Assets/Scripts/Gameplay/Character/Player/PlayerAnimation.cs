@@ -25,6 +25,14 @@ public sealed class PlayerAnimation : MonoBehaviour
     private static readonly int LightAttackHash = Animator.StringToHash("LightAttack");
     // Animator 中轻攻击连段触发器的哈希值。
     private static readonly int LightAttackComboHash = Animator.StringToHash("LightAttackCombo");
+    // Animator 中前翻滚触发器的哈希值。
+    private static readonly int RollForwardHash = Animator.StringToHash("RollForward");
+    // Animator 中后翻滚触发器的哈希值。
+    private static readonly int RollBackHash = Animator.StringToHash("RollBack");
+    // Animator 中左翻滚触发器的哈希值。
+    private static readonly int RollLeftHash = Animator.StringToHash("RollLeft");
+    // Animator 中右翻滚触发器的哈希值。
+    private static readonly int RollRightHash = Animator.StringToHash("RollRight");
     // Animator 中非致命受击触发器的哈希值。
     private static readonly int DamagedHash = Animator.StringToHash("Damaged");
     // Animator 中死亡触发器的哈希值。
@@ -37,6 +45,8 @@ public sealed class PlayerAnimation : MonoBehaviour
     private static readonly int UnequippedLocomotionStateHash = Animator.StringToHash("Base Layer.Unequipped Locomotion");
     // 负责接收攻击动画事件并执行命中检测的玩家战斗组件。
     [SerializeField] private PlayerCombat playerCombat;
+    // 负责接收翻滚动画事件并控制无敌帧的组件。
+    [SerializeField] private PlayerRoll playerRoll;
 
     // 角色模型上的 Animator 组件引用。
     [SerializeField] private Animator animator;
@@ -52,6 +62,7 @@ public sealed class PlayerAnimation : MonoBehaviour
         if (animator == null)
             animator = GetComponentInChildren<Animator>();
         playerCombat = playerCombat != null ? playerCombat : GetComponentInParent<PlayerCombat>();
+        playerRoll = playerRoll != null ? playerRoll : GetComponentInParent<PlayerRoll>();
     }
 
     // 写入移动、奔跑和装备参数以驱动移动动画树。
@@ -107,6 +118,30 @@ public sealed class PlayerAnimation : MonoBehaviour
         animator?.SetTrigger(LightAttackComboHash);
     }
 
+    /// <summary>按指定方向触发战斗翻滚动画。</summary>
+    public void PlayRoll(PlayerRollDirection direction)
+    {
+        if (animator == null)
+            return;
+
+        ResetRollTriggers();
+        switch (direction)
+        {
+            case PlayerRollDirection.Forward:
+                animator.SetTrigger(RollForwardHash);
+                break;
+            case PlayerRollDirection.Back:
+                animator.SetTrigger(RollBackHash);
+                break;
+            case PlayerRollDirection.Left:
+                animator.SetTrigger(RollLeftHash);
+                break;
+            case PlayerRollDirection.Right:
+                animator.SetTrigger(RollRightHash);
+                break;
+        }
+    }
+
     /// <summary>将 Animator 的攻击命中事件转发给 PlayerCombat。</summary>
     public void AnimationEvent_AttackHit()
     {
@@ -125,6 +160,18 @@ public sealed class PlayerAnimation : MonoBehaviour
         playerCombat?.AnimationEvent_AttackFinished();
     }
 
+    /// <summary>由翻滚动画事件开始当前翻滚的无敌帧。</summary>
+    public void AnimationEvent_RollInvincibilityStart()
+    {
+        playerRoll?.AnimationEvent_RollInvincibilityStart();
+    }
+
+    /// <summary>由翻滚动画事件结束当前翻滚的无敌帧。</summary>
+    public void AnimationEvent_RollInvincibilityEnd()
+    {
+        playerRoll?.AnimationEvent_RollInvincibilityEnd();
+    }
+
     /// <summary>触发玩家的非致命受击动画。</summary>
     public void PlayHurt()
     {
@@ -132,6 +179,7 @@ public sealed class PlayerAnimation : MonoBehaviour
             return;
 
         animator.ResetTrigger(DamagedHash);
+        ResetRollTriggers();
         animator.CrossFadeInFixedTime(HurtStatePathHash, 0.05f, 0, 0f);
     }
 
@@ -181,6 +229,16 @@ public sealed class PlayerAnimation : MonoBehaviour
         animator.ResetTrigger(HeavyAttackComboHash);
         animator.ResetTrigger(LightAttackHash);
         animator.ResetTrigger(LightAttackComboHash);
+        ResetRollTriggers();
         animator.SetTrigger(DeadHash);
+    }
+
+    // 清除尚未被 Animator 消费的翻滚触发器。
+    private void ResetRollTriggers()
+    {
+        animator?.ResetTrigger(RollForwardHash);
+        animator?.ResetTrigger(RollBackHash);
+        animator?.ResetTrigger(RollLeftHash);
+        animator?.ResetTrigger(RollRightHash);
     }
 }

@@ -83,6 +83,7 @@ public sealed class StartMenuController : MonoBehaviour
             return;
         }
 
+        AudioManager.Instance?.PlayUiConfirm();
         StartCoroutine(StartGameRoutine());
     }
 

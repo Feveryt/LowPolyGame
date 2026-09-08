@@ -1746,6 +1746,7 @@ GameObject:
   - component: {fileID: 7803574647376796668}
   - component: {fileID: 3471640849459013604}
   - component: {fileID: 3578769464235071151}
+  - component: {fileID: 8891000000000000006}
   - component: {fileID: 8891000000000000001}
   - component: {fileID: 8891000000000000002}
   - component: {fileID: 8891000000000000003}
@@ -1870,6 +1871,7 @@ MonoBehaviour:
   playerAnimation: {fileID: 8891000000000000002}
   playerCombat: {fileID: 8891000000000000003}
   playerStats: {fileID: 8891000000000000004}
+  playerRoll: {fileID: 8891000000000000006}
   walkSpeed: 2.5
   runSpeed: 5.5
   runTurnSpeed: 360
@@ -1877,6 +1879,27 @@ MonoBehaviour:
   combatRunLateralThreshold: 0.1
   gravity: -20
   combatTurnSpeed: 12
+--- !u!114 &8891000000000000006
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 162860}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d9f8e6c4b2a14f719d8c6b5a4e3f2109, type: 3}
+  m_Name:
+  m_EditorClassIdentifier:
+  directionInputThreshold: 0.15
+  rollDistance: 4
+  rollDuration: 0.55
+  staminaCost: 20
+  input: {fileID: 8891000000000000001}
+  playerController: {fileID: 3578769464235071151}
+  playerAnimation: {fileID: 8891000000000000002}
+  playerStats: {fileID: 8891000000000000004}
+  playerCombat: {fileID: 8891000000000000003}
 --- !u!114 &8891000000000000001
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1921,6 +1944,7 @@ MonoBehaviour:
   playerAnimation: {fileID: 8891000000000000002}
   animator: {fileID: 9566420}
   playerStats: {fileID: 8891000000000000004}
+  playerRoll: {fileID: 8891000000000000006}
   comboInputStart: 0.45
   comboInputEnd: 0.9
   attackStartTimeout: 0.3
@@ -1999,6 +2023,7 @@ MonoBehaviour:
   m_EditorClassIdentifier:
   playerStats: {fileID: 8891000000000000004}
   playerAnimation: {fileID: 8891000000000000002}
+  playerRoll: {fileID: 8891000000000000006}
 --- !u!114 &8749028449791592251
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -11,8 +11,14 @@ public static class UnsignedGuardianUiBootstrap
     {
         if (SceneManager.GetActiveScene().path != "Assets/Scenes/GameScene/Demo 1.unity")
             return;
+
+        EnsureGameplayCursor();
         if (Object.FindFirstObjectByType<OpeningNarrative>() != null)
+        {
+            if (Object.FindFirstObjectByType<QuestPanel>() == null)
+                CreateQuestPanel(Object.FindFirstObjectByType<OpeningNarrative>().transform.parent);
             return;
+        }
         GameObject canvasObject = new GameObject("Unsigned Guardian UI", typeof(Canvas), typeof(CanvasScaler), typeof(GraphicRaycaster));
         Object.DontDestroyOnLoad(canvasObject);
         Canvas canvas = canvasObject.GetComponent<Canvas>();
@@ -22,6 +28,33 @@ public static class UnsignedGuardianUiBootstrap
         canvasObject.GetComponent<CanvasScaler>().referenceResolution = new Vector2(1920f, 1080f);
         CreateOpening(canvasObject.transform);
         CreateQuestHud(canvasObject.transform);
+        CreateQuestPanel(canvasObject.transform);
+    }
+
+    // Demo 场景不依赖玩家预制体，单独创建场景级光标管理器接管游戏态光标。
+    private static void EnsureGameplayCursor()
+    {
+        if (Object.FindFirstObjectByType<CursorManager>() != null)
+            return;
+
+        GameObject cursorObject = new GameObject("Gameplay Cursor Manager");
+        cursorObject.AddComponent<CursorManager>();
+    }
+
+    // 从 Resources 加载独立任务面板，避免在场景中重复维护同一份 UI。
+    private static void CreateQuestPanel(Transform parent)
+    {
+        if (Object.FindFirstObjectByType<QuestPanel>() != null)
+            return;
+
+        GameObject prefab = Resources.Load<GameObject>("Prefabs/UI/QuestPanel");
+        if (prefab == null)
+        {
+            Debug.LogError("Missing quest panel prefab at Resources/Prefabs/UI/QuestPanel.");
+            return;
+        }
+
+        Object.Instantiate(prefab, parent, false);
     }
 
     // 生成黑色遮罩、叙事文字和明确的继续按钮。

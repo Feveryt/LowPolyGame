@@ -75,12 +75,15 @@ public sealed class WeaponHitbox : MonoBehaviour
         if (target == null || ReferenceEquals(target, attacker) || !target.IsAlive || !hitTargets.Add(target))
             return;
 
-        target.TakeDamage(new DamageRequest(
+        DamageResult result = target.TakeDamage(new DamageRequest(
             attacker.Attack,
             currentAttack.DamageMultiplier,
             currentAttack.AttackType,
             currentAttack.AttackId,
             attacker));
+
+        if (result.WasApplied)
+            AudioManager.Instance?.PlayPlayerStoneHit();
     }
 
     // 安全切换 Collider，兼容 Inspector 尚未绑定的预制体配置阶段。

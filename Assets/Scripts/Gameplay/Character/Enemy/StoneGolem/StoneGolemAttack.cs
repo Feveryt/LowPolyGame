@@ -107,6 +107,7 @@ public sealed class StoneGolemAttack : EnemyAttackBehaviour
         attackStateObserved = false;
         attackActive = true;
         actionStartDeadline = Time.time + definition.ActionStartTimeout;
+        AudioManager.Instance?.PlayStoneGolemAttackWindup(transform.position);
         animator.SetTrigger(isDoublePunch ? DoublePunchTriggerHash : PunchTriggerHash);
     }
 
@@ -127,6 +128,7 @@ public sealed class StoneGolemAttack : EnemyAttackBehaviour
             return;
 
         hitConsumed = true;
+        AudioManager.Instance?.PlayStoneGolemImpact(transform.position);
         Transform origin = enemy.AttackOrigin;
         Vector3 center = origin.TransformPoint(definition.MeleeHitOffset);
         int count = Physics.OverlapSphereNonAlloc(

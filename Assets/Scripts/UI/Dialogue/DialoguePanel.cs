@@ -34,24 +34,17 @@ public sealed class DialoguePanel : MonoBehaviour
     // 每个对话选项复用的石质按钮预制体。
     [SerializeField] private Button choiceButtonPrefab;
 
+    // 石质主题提供统一中文字体，避免运行时 UI 使用默认字体。
+    private StoneUiTheme stoneUiTheme;
+
     // 当前节点生成的选项按钮，用于切换台词前回收。
     private readonly List<Button> optionButtons = new List<Button>();
-    // 内容区域初始的左下偏移，用于恢复头像状态下的排版。
-    private Vector2 dialogueContentOffsetMin;
-    // 内容区域初始的右上偏移，用于恢复头像状态下的排版。
-    private Vector2 dialogueContentOffsetMax;
-
     // 缓存静态 UI 引用并在开局保持隐藏。
     private void Awake()
     {
+        stoneUiTheme = Resources.Load<StoneUiTheme>("UI/StoneUiTheme");
         if (canvasGroup == null)
             canvasGroup = GetComponent<CanvasGroup>();
-
-        if (dialogueContentRoot != null)
-        {
-            dialogueContentOffsetMin = dialogueContentRoot.offsetMin;
-            dialogueContentOffsetMax = dialogueContentRoot.offsetMax;
-        }
 
         Hide();
     }
@@ -66,8 +59,12 @@ public sealed class DialoguePanel : MonoBehaviour
         canvasGroup.interactable = true;
         canvasGroup.blocksRaycasts = true;
         speakerNameText.text = speakerName;
-        dialogueText.text = text;
+        dialogueText.text = text ?? string.Empty;
         SetPortrait(portrait, portraitSide);
+        ConfigureLineLayout(false);
+        ApplyTextStyle(speakerNameText, 26, TextAlignmentOptions.TopLeft);
+        ApplyTextStyle(dialogueText, 24, TextAlignmentOptions.TopLeft);
+        dialogueText.maxVisibleCharacters = int.MaxValue;
         ClearOptions();
         continueButton.gameObject.SetActive(true);
         continueButton.onClick.RemoveAllListeners();
@@ -86,6 +83,8 @@ public sealed class DialoguePanel : MonoBehaviour
         if (choices == null || choiceButtonPrefab == null || optionsRoot == null)
             return;
 
+        ConfigureLineLayout(true);
+
         for (int i = 0; i < choices.Count; i++)
         {
             int index = i;
@@ -93,7 +92,10 @@ public sealed class DialoguePanel : MonoBehaviour
             button.name = $"Choice {index + 1}";
             TMP_Text label = button.GetComponentInChildren<TMP_Text>(true);
             if (label != null)
+            {
                 label.text = choices[i].Text;
+                ApplyTextStyle(label, 23, TextAlignmentOptions.Center);
+            }
 
             button.onClick.RemoveAllListeners();
             button.onClick.AddListener(() => onChoiceSelected?.Invoke(index));
@@ -101,7 +103,10 @@ public sealed class DialoguePanel : MonoBehaviour
         }
 
         if (optionButtons.Count > 0)
+        {
+            Canvas.ForceUpdateCanvases();
             Focus(optionButtons[0].gameObject);
+        }
     }
 
     /// <summary>隐藏对话面板并回收当前节点的所有选项按钮。</summary>
@@ -133,8 +138,65 @@ public sealed class DialoguePanel : MonoBehaviour
         if (dialogueContentRoot == null)
             return;
 
-        dialogueContentRoot.offsetMin = hasPortrait ? dialogueContentOffsetMin : new Vector2(0f, dialogueContentOffsetMin.y);
-        dialogueContentRoot.offsetMax = hasPortrait ? dialogueContentOffsetMax : new Vector2(0f, dialogueContentOffsetMax.y);
+        // 内容区必须收在对话框边框内。预制体历史尺寸使用了负偏移，
+        // 会让角色名和台词越过顶部边框，并压缩出可见文本区域。
+        float leftInset = hasPortrait && side == DialoguePortraitSide.Left ? 210f : 48f;
+        float rightInset = hasPortrait && side == DialoguePortraitSide.Right ? 210f : 48f;
+        dialogueContentRoot.anchorMin = Vector2.zero;
+        dialogueContentRoot.anchorMax = Vector2.one;
+        dialogueContentRoot.offsetMin = new Vector2(leftInset, 18f);
+        dialogueContentRoot.offsetMax = new Vector2(-rightInset, -42f);
+    }
+
+    // 将台词区与底部选项区分开，避免选项按钮覆盖正在显示的台词。
+    private void ConfigureLineLayout(bool showingChoices)
+    {
+        if (speakerNameText != null)
+        {
+            RectTransform speakerRect = speakerNameText.rectTransform;
+            speakerRect.anchorMin = new Vector2(0f, 1f);
+            speakerRect.anchorMax = new Vector2(1f, 1f);
+            speakerRect.pivot = new Vector2(0f, 1f);
+            speakerRect.anchoredPosition = Vector2.zero;
+            speakerRect.sizeDelta = new Vector2(0f, 34f);
+        }
+
+        if (dialogueText != null)
+        {
+            RectTransform textRect = dialogueText.rectTransform;
+            textRect.anchorMin = Vector2.zero;
+            textRect.anchorMax = Vector2.one;
+            textRect.offsetMin = new Vector2(0f, showingChoices ? 82f : 54f);
+            textRect.offsetMax = new Vector2(0f, -40f);
+        }
+
+        if (optionsRoot != null)
+        {
+            optionsRoot.anchorMin = new Vector2(0.5f, 0f);
+            optionsRoot.anchorMax = new Vector2(0.5f, 0f);
+            optionsRoot.pivot = new Vector2(0.5f, 0f);
+            optionsRoot.anchoredPosition = new Vector2(0f, 18f);
+            optionsRoot.sizeDelta = new Vector2(700f, 0f);
+        }
+    }
+
+    // 应用项目石质主题字体和可读的 TMP 文本设置。
+    private void ApplyTextStyle(TMP_Text text, float fontSize, TextAlignmentOptions alignment)
+    {
+        if (text == null)
+            return;
+
+        if (stoneUiTheme != null && stoneUiTheme.ChineseFont != null)
+        {
+            text.font = stoneUiTheme.ChineseFont;
+            // 预制体可能保留旧字体的材质；字体和材质必须成对切换，否则字形会不可见。
+            text.fontSharedMaterial = stoneUiTheme.ChineseFont.material;
+        }
+        text.fontSize = fontSize;
+        text.alignment = alignment;
+        text.textWrappingMode = TextWrappingModes.Normal;
+        text.overflowMode = TextOverflowModes.Overflow;
+        text.color = new Color(0.93f, 0.9f, 0.8f, 1f);
     }
 
     // 销毁上一条台词遗留的动态选项按钮。

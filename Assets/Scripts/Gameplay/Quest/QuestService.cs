@@ -14,6 +14,12 @@ public sealed class QuestService : MonoBehaviour
     /// <summary>任务状态或目标进度变化时通知 HUD 和剧情表现层。</summary>
     public event Action<string> QuestChanged;
 
+    /// <summary>当前任务目标成功完成时发布任务与目标的稳定 ID。</summary>
+    public event Action<string, string> ObjectiveCompleted;
+
+    /// <summary>任务成功提交并进入完成状态时发布任务 ID。</summary>
+    public event Action<string> QuestCompleted;
+
     /// <summary>全局任务服务，首次访问时自动创建。</summary>
     public static QuestService Instance
     {
@@ -117,6 +123,7 @@ public sealed class QuestService : MonoBehaviour
             return false;
         entry.state = QuestState.Completed;
         SaveAndNotify(questId);
+        QuestCompleted?.Invoke(questId);
         return true;
     }
 
@@ -147,6 +154,24 @@ public sealed class QuestService : MonoBehaviour
     {
         PlayerPrefs.DeleteKey(SaveKey);
         instance?.ReloadProgress();
+    }
+
+    /// <summary>返回供任务面板显示的只读任务快照，不会创建或修改任务存档条目。</summary>
+    public IReadOnlyList<QuestSnapshot> GetVisibleQuests()
+    {
+        EnsureInitialized();
+        List<QuestSnapshot> snapshots = new List<QuestSnapshot>();
+        foreach (QuestDefinition definition in definitions.Values)
+        {
+            QuestProgressEntry entry = FindEntry(definition.QuestId);
+            if (entry == null || entry.state == QuestState.Available)
+                continue;
+
+            snapshots.Add(CreateSnapshot(definition, entry));
+        }
+
+        snapshots.Sort(CompareSnapshots);
+        return snapshots;
     }
 
     // 将世界事件与每条活跃任务的当前目标进行匹配。
@@ -185,10 +210,14 @@ public sealed class QuestService : MonoBehaviour
     // 完成当前顺序目标，并在最后一个目标后切换为待交付。
     private void CompleteCurrentObjective(string questId, QuestDefinition definition, QuestProgressEntry entry)
     {
+        string objectiveId = entry.currentObjectiveIndex >= 0 && entry.currentObjectiveIndex < definition.Objectives.Count
+            ? definition.Objectives[entry.currentObjectiveIndex].ObjectiveId
+            : string.Empty;
         entry.currentObjectiveIndex++;
         if (entry.currentObjectiveIndex >= definition.Objectives.Count)
             entry.state = QuestState.ReadyToTurnIn;
         SaveAndNotify(questId);
+        ObjectiveCompleted?.Invoke(questId, objectiveId);
     }
 
     // 查找受配置保护的任务定义。
@@ -209,6 +238,36 @@ public sealed class QuestService : MonoBehaviour
         entry = new QuestProgressEntry { questId = questId, state = QuestState.Available };
         progress.entries.Add(entry);
         return entry;
+    }
+
+    // 只查找已保存的条目，供查询 API 避免把未发现的任务写入存档。
+    private QuestProgressEntry FindEntry(string questId)
+    {
+        return progress.entries.Find(value => value.questId == questId);
+    }
+
+    // 将运行时进度投影为不可变的 UI 数据，隔离任务面板与可写存档。
+    private static QuestSnapshot CreateSnapshot(QuestDefinition definition, QuestProgressEntry entry)
+    {
+        List<QuestObjectiveSnapshot> objectives = new List<QuestObjectiveSnapshot>();
+        for (int index = 0; index < definition.Objectives.Count; index++)
+        {
+            bool completed = entry.state == QuestState.Completed || index < entry.currentObjectiveIndex;
+            bool current = entry.state == QuestState.Active && index == entry.currentObjectiveIndex;
+            objectives.Add(new QuestObjectiveSnapshot(definition.Objectives[index].Text, completed, current));
+        }
+
+        return new QuestSnapshot(definition.QuestId, definition.Title, definition.Description,
+            entry.state, entry.currentObjectiveIndex, objectives);
+    }
+
+    // 进行中列表先显示可交付任务，再按标题稳定排序；已完成任务按标题排序。
+    private static int CompareSnapshots(QuestSnapshot left, QuestSnapshot right)
+    {
+        int leftOrder = left.State == QuestState.ReadyToTurnIn ? 0 : left.State == QuestState.Active ? 1 : 2;
+        int rightOrder = right.State == QuestState.ReadyToTurnIn ? 0 : right.State == QuestState.Active ? 1 : 2;
+        int stateOrder = leftOrder.CompareTo(rightOrder);
+        return stateOrder != 0 ? stateOrder : string.CompareOrdinal(left.Title, right.Title);
     }
 
     // 返回配置中与稳定目标 ID 对应的索引。
@@ -260,4 +319,52 @@ public sealed class QuestProgressEntry
     public string questId;
     public QuestState state;
     public int currentObjectiveIndex;
+}
+
+/// <summary>任务面板使用的只读任务数据，不持有可修改的运行时进度引用。</summary>
+public sealed class QuestSnapshot
+{
+    /// <summary>任务的稳定配置标识。</summary>
+    public string QuestId { get; }
+    /// <summary>面板显示的任务标题。</summary>
+    public string Title { get; }
+    /// <summary>面板显示的剧情说明。</summary>
+    public string Description { get; }
+    /// <summary>任务当前生命周期状态。</summary>
+    public QuestState State { get; }
+    /// <summary>当前顺序目标索引；待交付和已完成时等于目标数量。</summary>
+    public int CurrentObjectiveIndex { get; }
+    /// <summary>按定义顺序排列的只读目标快照。</summary>
+    public IReadOnlyList<QuestObjectiveSnapshot> Objectives { get; }
+
+    /// <summary>构造供 UI 消费的独立任务快照。</summary>
+    public QuestSnapshot(string questId, string title, string description, QuestState state,
+        int currentObjectiveIndex, IReadOnlyList<QuestObjectiveSnapshot> objectives)
+    {
+        QuestId = questId;
+        Title = title;
+        Description = description;
+        State = state;
+        CurrentObjectiveIndex = currentObjectiveIndex;
+        Objectives = objectives;
+    }
+}
+
+/// <summary>任务面板使用的单个目标状态快照。</summary>
+public sealed class QuestObjectiveSnapshot
+{
+    /// <summary>目标的显示文本。</summary>
+    public string Text { get; }
+    /// <summary>目标是否已经完成。</summary>
+    public bool IsCompleted { get; }
+    /// <summary>目标是否为当前需要完成的步骤。</summary>
+    public bool IsCurrent { get; }
+
+    /// <summary>构造单个顺序目标的显示状态。</summary>
+    public QuestObjectiveSnapshot(string text, bool isCompleted, bool isCurrent)
+    {
+        Text = text;
+        IsCompleted = isCompleted;
+        IsCurrent = isCurrent;
+    }
 }
