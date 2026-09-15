@@ -115,8 +115,6 @@ MonoBehaviour:
   playerLightSwing:
     clips:
     - {fileID: 8300000, guid: b3fedddd373c431d8a2b9d66f414802d, type: 3}
-    - {fileID: 8300000, guid: c98e92f6cc4c47deb9e89769bf28b292, type: 3}
-    - {fileID: 8300000, guid: 4d8ad23afa85440191701e520c2a325c, type: 3}
     minVolume: 0.38
     maxVolume: 0.48
     minPitch: 0.96

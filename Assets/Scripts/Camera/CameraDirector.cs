@@ -18,6 +18,10 @@ public sealed class CameraDirector : MonoBehaviour
     private CinemachineVirtualCamera virtualCamera;
     // 对话双方使用的动态构图目标组。
     private CinemachineTargetGroup dialogueTargetGroup;
+    // 玩家胸高构图锚点，避免脚底轴心导致画面偏低。
+    private Transform dialoguePrimaryAnchor;
+    // NPC 胸高构图锚点，避免脚底轴心导致画面偏低。
+    private Transform dialogueSecondaryAnchor;
     // 虚拟相机的目标组构图组件。
     private CinemachineGroupComposer groupComposer;
     // 当前正在播放的镜头资产。
@@ -83,6 +87,15 @@ public sealed class CameraDirector : MonoBehaviour
         ApplyStaticSequence(activeSequence, sequenceElapsed);
         if (activeSequence.AutoComplete && sequenceElapsed >= activeSequence.GetStaticDuration())
             Stop();
+    }
+
+    // 角色移动后刷新双人镜头观察点，确保目标组使用胸口高度。
+    private void LateUpdate()
+    {
+        if (activeSequence == null || activeSequence.SequenceType != CameraSequenceType.DialogueTwoShot)
+            return;
+
+        UpdateDialogueTargets(activeSequence.DialogueTargetHeight);
     }
 
     // 销毁时释放输入锁定和单例引用。
@@ -200,6 +213,11 @@ public sealed class CameraDirector : MonoBehaviour
         dialogueTargetGroup = new GameObject("Dialogue Target Group").AddComponent<CinemachineTargetGroup>();
         dialogueTargetGroup.transform.SetParent(transform, false);
         dialogueTargetGroup.gameObject.SetActive(false);
+
+        dialoguePrimaryAnchor = new GameObject("Dialogue Primary Anchor").transform;
+        dialoguePrimaryAnchor.SetParent(transform, false);
+        dialogueSecondaryAnchor = new GameObject("Dialogue Secondary Anchor").transform;
+        dialogueSecondaryAnchor.SetParent(transform, false);
     }
 
     // 以当前序列的混合时长更新主相机 Brain 的默认混合设置。
@@ -329,11 +347,12 @@ public sealed class CameraDirector : MonoBehaviour
     // 使用 TargetGroup 和 GroupComposer 配置可复用的玩家-NPC 双人构图。
     private void ConfigureDialogueCamera(CameraSequenceAsset sequence)
     {
+        UpdateDialogueTargets(sequence.DialogueTargetHeight);
         dialogueTargetGroup.gameObject.SetActive(true);
         dialogueTargetGroup.m_Targets = new[]
         {
-            new CinemachineTargetGroup.Target { target = primaryTarget, weight = 1f, radius = sequence.DialogueTargetRadius },
-            new CinemachineTargetGroup.Target { target = secondaryTarget, weight = 1f, radius = sequence.DialogueTargetRadius },
+            new CinemachineTargetGroup.Target { target = dialoguePrimaryAnchor, weight = 1f, radius = sequence.DialogueTargetRadius },
+            new CinemachineTargetGroup.Target { target = dialogueSecondaryAnchor, weight = 1f, radius = sequence.DialogueTargetRadius },
         };
 
         virtualCamera.Follow = dialogueTargetGroup.transform;
@@ -359,6 +378,18 @@ public sealed class CameraDirector : MonoBehaviour
         LensSettings lens = virtualCamera.m_Lens;
         lens.FieldOfView = sequence.DialogueFieldOfView;
         virtualCamera.m_Lens = lens;
+    }
+
+    // 将玩家与 NPC 的根节点提升到配置的胸口高度。
+    private void UpdateDialogueTargets(float targetHeight)
+    {
+        if (primaryTarget == null || secondaryTarget == null ||
+            dialoguePrimaryAnchor == null || dialogueSecondaryAnchor == null)
+            return;
+
+        Vector3 targetOffset = Vector3.up * targetHeight;
+        dialoguePrimaryAnchor.position = primaryTarget.position + targetOffset;
+        dialogueSecondaryAnchor.position = secondaryTarget.position + targetOffset;
     }
 
     // 记录并锁定当前玩家的视角输入，避免演出期间 FreeLook 继续被用户驱动。

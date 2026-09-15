@@ -9,10 +9,13 @@ using UnityEngine.UI;
 [DisallowMultipleComponent]
 public sealed class ShopPanel : MonoBehaviour
 {
+    // 商品行预制体在 Resources 下的固定路径，供 Inspector 引用缺失时兜底加载。
+    private const string RowPrefabPath = "Prefabs/UI/ShopItemRow";
+
     private static ShopPanel instance;
 
     // 已创建的商品行，用于刷新背包持有数量和销毁旧商店内容。
-    private readonly List<ShopRow> rows = new List<ShopRow>();
+    private readonly List<ShopItemRow> rows = new List<ShopItemRow>();
     // 当前交易规则和玩家背包的数据入口。
     private ShopService shopService;
     private PlayerInventory playerInventory;
@@ -31,6 +34,8 @@ public sealed class ShopPanel : MonoBehaviour
     [SerializeField] private TMP_Text messageText;
     // 静态预制体中的关闭按钮，实例创建时绑定运行时关闭回调。
     [SerializeField] private Button closeButton;
+    // 单条商品行的预制体，商店打开时按商品数量实例化。
+    [SerializeField] private ShopItemRow rowPrefab;
     // 商店是否正占用游戏输入。
     private bool isOpen;
     // 打开前 CursorManager 的启用状态。
@@ -207,62 +212,40 @@ public sealed class ShopPanel : MonoBehaviour
             Destroy(rows[i].gameObject);
         rows.Clear();
 
+        ShopItemRow prefab = ResolveRowPrefab();
+        if (prefab == null)
+            return;
+
         foreach (ShopItemEntry entry in shop.Items)
         {
             if (entry != null && entry.Item != null)
-                rows.Add(CreateRow(entry));
+                rows.Add(CreateRow(prefab, entry));
         }
     }
 
-    // 创建单个石质商品行及其数量、购买和出售控件。
-    private ShopRow CreateRow(ShopItemEntry entry)
+    // 解析商品行预制体：优先使用 Inspector 引用，缺失时按固定路径兜底加载。
+    private ShopItemRow ResolveRowPrefab()
     {
-        GameObject rowObject = CreateUiObject(entry.Item.DisplayName, contentRoot);
-        Image background = rowObject.AddComponent<Image>();
-        ApplyThemeSprite(background, stoneUiTheme != null ? stoneUiTheme.PanelSprite : null, new Color(0.34f, 0.32f, 0.25f, 0.96f));
-        LayoutElement rowLayoutElement = rowObject.AddComponent<LayoutElement>();
-        rowLayoutElement.minHeight = 112f;
-        rowLayoutElement.preferredHeight = 112f;
-        HorizontalLayoutGroup rowLayout = rowObject.AddComponent<HorizontalLayoutGroup>();
-        rowLayout.padding = new RectOffset(16, 16, 12, 12);
-        rowLayout.spacing = 16f;
-        rowLayout.childAlignment = TextAnchor.MiddleLeft;
-        rowLayout.childControlWidth = false;
-        rowLayout.childControlHeight = true;
-        rowLayout.childForceExpandWidth = false;
-        rowLayout.childForceExpandHeight = true;
+        if (rowPrefab != null)
+            return rowPrefab;
 
-        Image iconFrame = CreateImage(rowObject.transform, stoneUiTheme != null ? stoneUiTheme.ItemSlotSprite : null, Color.white, 76f);
-        Image icon = CreateImage(iconFrame.transform, entry.Item.Icon, Color.white, -1f);
-        Stretch(icon.rectTransform, 10f);
-        icon.preserveAspect = true;
+        rowPrefab = Resources.Load<ShopItemRow>(RowPrefabPath);
+        if (rowPrefab != null)
+        {
+            Debug.LogWarning($"[{nameof(ShopPanel)}] 未绑定商品行预制体，已回退加载 Resources/{RowPrefabPath}.prefab。", this);
+            return rowPrefab;
+        }
 
-        GameObject detailObject = CreateUiObject("Item Details", rowObject.transform);
-        LayoutElement detailLayout = detailObject.AddComponent<LayoutElement>();
-        detailLayout.minWidth = 300f;
-        detailLayout.preferredWidth = 300f;
-        VerticalLayoutGroup detailGroup = detailObject.AddComponent<VerticalLayoutGroup>();
-        detailGroup.spacing = 2f;
-        detailGroup.childAlignment = TextAnchor.MiddleLeft;
-        detailGroup.childControlWidth = true;
-        detailGroup.childControlHeight = false;
-        detailGroup.childForceExpandHeight = false;
-        TMP_Text name = CreateText(detailObject.transform, entry.Item.DisplayName, 24, TextAlignmentOptions.MidlineLeft, 300f, 32f);
-        name.fontStyle = FontStyles.Bold;
-        TMP_Text owned = CreateText(detailObject.transform, "拥有：0", 18, TextAlignmentOptions.MidlineLeft, 300f, 24f);
-        TMP_Text price = CreateText(detailObject.transform, $"买入：{entry.BuyPrice}    出售：{entry.SellPrice}", 17, TextAlignmentOptions.MidlineLeft, 300f, 24f);
-        price.color = new Color(0.95f, 0.78f, 0.37f, 1f);
+        Debug.LogError($"[{nameof(ShopPanel)}] 未配置商品行预制体，本次不会显示任何商品行。", this);
+        return null;
+    }
 
-        Button minus = CreateButton(rowObject.transform, "-", 44f, stoneUiTheme != null ? stoneUiTheme.PanelSprite : null, new Color(0.6f, 0.55f, 0.4f, 1f), 24f);
-        TMP_Text amount = CreateText(rowObject.transform, "1", 21, TextAlignmentOptions.Center, 52f, 42f);
-        Button plus = CreateButton(rowObject.transform, "+", 44f, stoneUiTheme != null ? stoneUiTheme.PanelSprite : null, new Color(0.6f, 0.55f, 0.4f, 1f), 24f);
-        Button buy = CreateButton(rowObject.transform, "购买", 104f, stoneUiTheme != null ? stoneUiTheme.PrimaryButtonSprite : null, Color.white, 20f);
-        Button sell = CreateButton(rowObject.transform, "出售", 104f, stoneUiTheme != null ? stoneUiTheme.DangerButtonSprite : null, Color.white, 20f);
-
-        ShopRow row = rowObject.AddComponent<ShopRow>();
-        row.Setup(entry, this, owned, amount, buy, sell);
-        minus.onClick.AddListener(row.Decrease);
-        plus.onClick.AddListener(row.Increase);
+    // 实例化商品行预制体并写入该商品的运行时资料。
+    private ShopItemRow CreateRow(ShopItemRow prefab, ShopItemEntry entry)
+    {
+        ShopItemRow row = Instantiate(prefab, contentRoot);
+        row.name = entry.Item.DisplayName;
+        row.Configure(entry, this);
         return row;
     }
 
@@ -291,7 +274,7 @@ public sealed class ShopPanel : MonoBehaviour
     }
 
     // 处理商品行发起的购买操作并显示交易结果。
-    private void Buy(ShopRow row)
+    internal void Buy(ShopItemRow row)
     {
         ShopTransactionResult result = shopService != null
             ? shopService.TryBuy(row.Entry, row.Amount)
@@ -301,7 +284,7 @@ public sealed class ShopPanel : MonoBehaviour
     }
 
     // 处理商品行发起的出售操作并显示交易结果。
-    private void Sell(ShopRow row)
+    internal void Sell(ShopItemRow row)
     {
         ShopTransactionResult result = shopService != null
             ? shopService.TrySell(row.Entry, row.Amount)
@@ -317,13 +300,6 @@ public sealed class ShopPanel : MonoBehaviour
         messageText.color = result.Succeeded
             ? new Color(0.72f, 0.9f, 0.42f, 1f)
             : new Color(0.96f, 0.5f, 0.38f, 1f);
-    }
-
-    /// <summary>供编辑器构建器创建可由 UIManager 管理的静态商店预制体。</summary>
-    public void BuildPrefabLayout()
-    {
-        stoneUiTheme = Resources.Load<StoneUiTheme>("UI/StoneUiTheme");
-        EnsureUi();
     }
 
     // 创建全屏遮罩、石质窗体、标题、商品列表和关闭控件。
@@ -553,71 +529,4 @@ public sealed class ShopPanel : MonoBehaviour
         Time.timeScale = state == GameState.Paused ? 0f : 1f;
     }
 
-    /// <summary>商店列表中的单个商品行，维护该商品的数量选择和持有数量显示。</summary>
-    private sealed class ShopRow : MonoBehaviour
-    {
-        // 此行代表的可交易商品配置。
-        internal ShopItemEntry Entry { get; private set; }
-        // 玩家本次准备交易的件数。
-        internal int Amount { get; private set; } = 1;
-        // 首个可交易控件，供面板打开时设置 UI 焦点。
-        internal Button BuyButton { get; private set; }
-        // 驱动交易操作的所属商店面板。
-        private ShopPanel panel;
-        // 行内的拥有数量、交易数量和出售按钮。
-        private TMP_Text ownedText;
-        private TMP_Text amountText;
-        private Button sellButton;
-
-        // 保存行控件引用并绑定购买、出售回调。
-        internal void Setup(ShopItemEntry entry, ShopPanel owner, TMP_Text owned, TMP_Text amountLabel, Button buy, Button sell)
-        {
-            Entry = entry;
-            panel = owner;
-            ownedText = owned;
-            amountText = amountLabel;
-            BuyButton = buy;
-            sellButton = sell;
-            buy.onClick.AddListener(() => panel.Buy(this));
-            sell.onClick.AddListener(() => panel.Sell(this));
-        }
-
-        // 将交易数量上调到单次交互允许的最大值。
-        internal void Increase()
-        {
-            Amount = Mathf.Min(99, Amount + 1);
-            UpdateAmount();
-        }
-
-        // 将交易数量下调并保留至少一件。
-        internal void Decrease()
-        {
-            Amount = Mathf.Max(1, Amount - 1);
-            UpdateAmount();
-        }
-
-        // 根据当前背包刷新持有数量和购买、出售按钮状态。
-        internal void Refresh(PlayerInventory inventory)
-        {
-            int owned = 0;
-            if (inventory != null)
-            {
-                foreach (InventorySlot slot in inventory.Slots)
-                    if (!slot.IsEmpty && slot.Item == Entry.Item)
-                        owned += slot.Quantity;
-            }
-
-            ownedText.text = $"拥有: {owned}";
-            BuyButton.interactable = Entry.CanBuy;
-            sellButton.interactable = Entry.CanSell && owned >= Amount;
-            UpdateAmount();
-        }
-
-        // 将内存中的数量写入数量标签。
-        private void UpdateAmount()
-        {
-            if (amountText != null)
-                amountText.text = Amount.ToString();
-        }
-    }
 }

@@ -49,6 +49,10 @@ public sealed class EnemyConfig : ScriptableObject
     // 受击动作未能进入 Animator 时的保底等待时间，单位为秒。
     [SerializeField, Min(0f)] private float hurtFallbackDuration = 0.25f;
 
+    [Header("死亡")]
+    // 死亡动画未通过末帧事件上报结束时，从进入死亡状态起等待销毁的最大时长，单位为秒。
+    [SerializeField, Min(0.1f)] private float deathDespawnTimeout = 6f;
+
     /// <summary>敌人的基础生命、攻击与防御配置。</summary>
     public CharacterStatsDefinition StatsDefinition => statsDefinition;
     /// <summary>敌人的非战斗行为类型。</summary>
@@ -81,6 +85,8 @@ public sealed class EnemyConfig : ScriptableObject
     public float ReturnArrivalDistance => returnArrivalDistance;
     /// <summary>受击动画未启动时的保底等待时间。</summary>
     public float HurtFallbackDuration => hurtFallbackDuration;
+    /// <summary>死亡动画事件缺失时等待销毁敌人对象的最大时长。</summary>
+    public float DeathDespawnTimeout => deathDespawnTimeout;
 
     // 在 Inspector 中限制距离、速度与巡逻等待参数为合法值。
     private void OnValidate()
@@ -97,6 +103,7 @@ public sealed class EnemyConfig : ScriptableObject
         angularSpeed = Mathf.Max(0f, angularSpeed);
         returnArrivalDistance = Mathf.Max(0f, returnArrivalDistance);
         hurtFallbackDuration = Mathf.Max(0f, hurtFallbackDuration);
+        deathDespawnTimeout = Mathf.Max(0.1f, deathDespawnTimeout);
     }
 }
 

@@ -5,22 +5,73 @@ using UnityEngine.UI;
 /// <summary>在任意可玩场景自动创建《未署名的守卫》的开场文字和最小任务 HUD。</summary>
 public static class UnsignedGuardianUiBootstrap
 {
-    // 在首个场景载入前创建常驻 UI，避免手工修改每个 Demo 场景。
+    // Demo 场景路径，用于判断是否需要创建或显示剧情 UI。
+    private const string DemoScenePath = "Assets/Scenes/GameScene/Demo 1.unity";
+    // 跨场景保留的剧情 UI 根节点。
+    private static GameObject uiRoot;
+    // 保证场景加载回调只订阅一次。
+    private static bool sceneLoadedSubscribed;
+
+    // 首个场景载入后补建 UI，并订阅后续场景切换。
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
     private static void Create()
     {
-        if (SceneManager.GetActiveScene().path != "Assets/Scenes/GameScene/Demo 1.unity")
+        SubscribeSceneLoaded();
+        ApplyScene(SceneManager.GetActiveScene());
+    }
+
+    // 从开始菜单进入 Demo 时 AfterSceneLoad 不会再次执行，需要在场景加载时补建 UI。
+    private static void SubscribeSceneLoaded()
+    {
+        if (sceneLoadedSubscribed)
             return;
 
-        EnsureGameplayCursor();
-        if (Object.FindFirstObjectByType<OpeningNarrative>() != null)
+        sceneLoadedSubscribed = true;
+        SceneManager.sceneLoaded += OnSceneLoaded;
+    }
+
+    // 场景加载完成后同步显示或隐藏常驻剧情 UI。
+    private static void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        ApplyScene(scene);
+    }
+
+    // 仅在 Demo 场景创建并显示剧情 UI，回到其他场景时隐藏常驻画布。
+    private static void ApplyScene(Scene scene)
+    {
+        if (scene.path != DemoScenePath)
         {
-            if (Object.FindFirstObjectByType<QuestPanel>() == null)
-                CreateQuestPanel(Object.FindFirstObjectByType<OpeningNarrative>().transform.parent);
+            if (uiRoot != null)
+                uiRoot.SetActive(false);
             return;
         }
+
+        EnsureGameplayCursor();
+        if (uiRoot == null)
+        {
+            CreateUiRoot();
+            return;
+        }
+
+        uiRoot.SetActive(true);
+        CreateQuestPanel(uiRoot.transform);
+    }
+
+    // 创建承载开场文字、任务 HUD 与任务面板的常驻画布。
+    private static void CreateUiRoot()
+    {
+        OpeningNarrative existingOpening = Object.FindFirstObjectByType<OpeningNarrative>();
+        if (existingOpening != null)
+        {
+            Transform openingParent = existingOpening.transform.parent;
+            uiRoot = openingParent != null ? openingParent.gameObject : existingOpening.gameObject;
+            CreateQuestPanel(openingParent);
+            return;
+        }
+
         GameObject canvasObject = new GameObject("Unsigned Guardian UI", typeof(Canvas), typeof(CanvasScaler), typeof(GraphicRaycaster));
         Object.DontDestroyOnLoad(canvasObject);
+        uiRoot = canvasObject;
         Canvas canvas = canvasObject.GetComponent<Canvas>();
         canvas.renderMode = RenderMode.ScreenSpaceOverlay;
         canvas.sortingOrder = 100;

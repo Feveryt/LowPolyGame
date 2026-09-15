@@ -44,4 +44,58 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a77728a1eca616f468ede6751d384d97, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  panelEntries: []
+  panelEntries:
+  - id: StartMenu
+    prefab: {fileID: 7868441405651833744, guid: 538420fc75e8df54fb964c237ec0b7e7, type: 3}
+    scenePaths:
+    - Assets/Scenes/GameScene/GameStart.unity
+    keepAlive: 1
+    activateOnEnsure: 1
+  - id: Settings
+    prefab: {fileID: 1000, guid: 4199466b177c49a4a49e6fae58fec118, type: 3}
+    scenePaths:
+    - Assets/Scenes/GameScene/GameStart.unity
+    - Assets/Scenes/GameScene/Demo 1.unity
+    keepAlive: 1
+    activateOnEnsure: 0
+  - id: Quest
+    prefab: {fileID: 390320602341471636, guid: e70a8949d8735ab42b2b7acace32935c, type: 3}
+    scenePaths:
+    - Assets/Scenes/GameScene/Demo 1.unity
+    keepAlive: 0
+    activateOnEnsure: 0
+  - id: Inventory
+    prefab: {fileID: 5216082085609283620, guid: 331df72eb8bee4f429d31c153fbe3213, type: 3}
+    scenePaths:
+    - Assets/Scenes/GameScene/Demo 1.unity
+    keepAlive: 0
+    activateOnEnsure: 0
+  - id: PlayerResources
+    prefab: {fileID: 5175889811851771066, guid: cc23b2ac1eb84974b943aa29f91696ba, type: 3}
+    scenePaths:
+    - Assets/Scenes/GameScene/Demo 1.unity
+    keepAlive: 0
+    activateOnEnsure: 0
+  - id: Dead
+    prefab: {fileID: 4450701045406973825, guid: c5065537d42055b40ba1d1b435c19dfe, type: 3}
+    scenePaths:
+    - Assets/Scenes/GameScene/Demo 1.unity
+    keepAlive: 1
+    activateOnEnsure: 0
+  - id: Dialogue
+    prefab: {fileID: 9184158616625759221, guid: 052d6cbdb3a636f4f980babd348b190a, type: 3}
+    scenePaths:
+    - Assets/Scenes/GameScene/Demo 1.unity
+    keepAlive: 0
+    activateOnEnsure: 0
+  - id: DialoguePrompt
+    prefab: {fileID: 3260802336226391249, guid: 8fe4a10a272668342837770c6d75c690, type: 3}
+    scenePaths: []
+    keepAlive: 1
+    activateOnEnsure: 0
+  - id: ShopPanel
+    prefab: {fileID: 100000, guid: 8cf633a3e37343a4a3f0e98480e98d04, type: 3}
+    scenePaths:
+    - Assets/Scenes/GameScene/Demo 1.unity
+    keepAlive: 1
+    activateOnEnsure: 0

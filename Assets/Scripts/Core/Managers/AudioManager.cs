@@ -41,6 +41,9 @@ public sealed class AudioManager : MonoBehaviour
             twoDimensionalSource = gameObject.AddComponent<AudioSource>();
         twoDimensionalSource.playOnAwake = false;
         twoDimensionalSource.spatialBlend = 0f;
+        // 二维声源的整体响度由音效通道统一控制，单次播放只负责素材自身音量。
+        twoDimensionalSource.volume = AudioVolumeSettings.SfxVolume;
+        AudioVolumeSettings.Changed += OnVolumeSettingsChanged;
     }
 
     // 绑定任务领域事件，使任务提示不依赖 UI 刷新时机。
@@ -89,8 +92,16 @@ public sealed class AudioManager : MonoBehaviour
     // 释放单例引用，避免编辑器域重载后持有已销毁对象。
     private void OnDestroy()
     {
+        AudioVolumeSettings.Changed -= OnVolumeSettingsChanged;
         if (Instance == this)
             Instance = null;
+    }
+
+    // 音效通道音量变化时立即同步二维声源；三维声源在下次播放时取用新值。
+    private void OnVolumeSettingsChanged()
+    {
+        if (twoDimensionalSource != null)
+            twoDimensionalSource.volume = AudioVolumeSettings.SfxVolume;
     }
 
     /// <summary>播放通用 UI 确认声。</summary>
@@ -156,7 +167,7 @@ public sealed class AudioManager : MonoBehaviour
         source.rolloffMode = AudioRolloffMode.Logarithmic;
         source.minDistance = definition.MinDistance;
         source.maxDistance = definition.MaxDistance;
-        source.volume = volume;
+        source.volume = volume * AudioVolumeSettings.SfxVolume;
         source.pitch = pitch;
         source.loop = false;
         source.clip = clip;

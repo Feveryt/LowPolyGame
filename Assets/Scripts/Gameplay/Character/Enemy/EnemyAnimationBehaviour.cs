@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 /// <summary>
@@ -20,4 +21,16 @@ public abstract class EnemyAnimationBehaviour : MonoBehaviour
 
     /// <summary>当前 Animator 是否仍处于受击状态。</summary>
     public abstract bool IsPlayingHurt { get; }
+
+    /// <summary>当前 Animator 是否仍处于死亡状态，用于判断死亡动画是否播放完毕。</summary>
+    public abstract bool IsPlayingDie { get; }
+
+    /// <summary>死亡动画播放到末帧时触发，由敌人决策层据此安排销毁。</summary>
+    public event Action DeathAnimationFinished;
+
+    /// <summary>供 Animator 死亡动画末帧事件调用，广播死亡动画已经播完。</summary>
+    public void AnimationEvent_DeathFinished()
+    {
+        DeathAnimationFinished?.Invoke();
+    }
 }

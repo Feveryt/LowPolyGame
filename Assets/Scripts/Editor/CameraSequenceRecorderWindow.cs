@@ -15,12 +15,17 @@ public sealed class CameraSequenceRecorderWindow : EditorWindow
     private float defaultKeyframeInterval = 2f;
     // 资产 Inspector 的序列化访问器。
     private SerializedObject serializedSequence;
+    // 参数与关键帧编辑区的滚动位置。
+    private Vector2 contentScrollPosition;
 
     /// <summary>打开镜头序列录制工具。</summary>
-    [MenuItem("Tools/Camera Sequence Recorder")]
+    [MenuItem("工具/镜头序列录制器")]
     public static void Open()
     {
-        GetWindow<CameraSequenceRecorderWindow>("Camera Recorder");
+        CameraSequenceRecorderWindow window = GetWindow<CameraSequenceRecorderWindow>("Camera Recorder");
+        if (Selection.activeObject is CameraSequenceAsset selected)
+            window.SetSequence(selected);
+        window.Repaint();
     }
 
     // 将当前选中资产同步到窗口，方便从 Project 面板直接开始编辑。
@@ -44,8 +49,10 @@ public sealed class CameraSequenceRecorderWindow : EditorWindow
 
         using (new EditorGUILayout.HorizontalScope())
         {
-            if (GUILayout.Button("新建镜头资产"))
-                CreateSequenceAsset();
+            if (GUILayout.Button("新建静态镜头"))
+                CreateSequenceAsset(CameraSequenceType.StaticSequence);
+            if (GUILayout.Button("新建对话双人镜头"))
+                CreateSequenceAsset(CameraSequenceType.DialogueTwoShot);
             using (new EditorGUI.DisabledScope(sequence == null))
             {
                 if (GUILayout.Button("定位资产"))
@@ -59,7 +66,12 @@ public sealed class CameraSequenceRecorderWindow : EditorWindow
         if (sequence == null)
             return;
 
+        // 脚本重编译后窗口引用可能保留，但 SerializedObject 会被重置。
+        if (serializedSequence == null || serializedSequence.targetObject != sequence)
+            SetSequence(sequence);
+
         serializedSequence.Update();
+        contentScrollPosition = EditorGUILayout.BeginScrollView(contentScrollPosition, GUILayout.ExpandHeight(true));
         EditorGUILayout.Space();
         DrawSequenceSettings();
         EditorGUILayout.Space();
@@ -70,6 +82,7 @@ public sealed class CameraSequenceRecorderWindow : EditorWindow
         else
             EditorGUILayout.HelpBox("对话双人镜头无需记录场景关键帧。运行时会把玩家和当前交互 NPC 放入动态目标组，保持两人都在画面内。", MessageType.None);
 
+        EditorGUILayout.EndScrollView();
         if (serializedSequence.ApplyModifiedProperties())
             EditorUtility.SetDirty(sequence);
     }
@@ -80,11 +93,13 @@ public sealed class CameraSequenceRecorderWindow : EditorWindow
         DrawProperty("sequenceType");
         DrawProperty("blendInDuration");
         DrawProperty("blendOutDuration");
-        DrawProperty("autoComplete");
-        DrawProperty("endHoldDuration");
 
         if ((CameraSequenceType)serializedSequence.FindProperty("sequenceType").enumValueIndex != CameraSequenceType.DialogueTwoShot)
+        {
+            DrawProperty("autoComplete");
+            DrawProperty("endHoldDuration");
             return;
+        }
 
         EditorGUILayout.Space();
         EditorGUILayout.LabelField("双人构图", EditorStyles.boldLabel);
@@ -92,6 +107,7 @@ public sealed class CameraSequenceRecorderWindow : EditorWindow
         DrawProperty("dialogueFramingSize");
         DrawProperty("dialogueFieldOfView");
         DrawProperty("dialogueTargetRadius");
+        DrawProperty("dialogueTargetHeight");
     }
 
     // 绘制静态镜头的录制按钮和可直接微调的关键帧数组。
@@ -115,16 +131,22 @@ public sealed class CameraSequenceRecorderWindow : EditorWindow
     }
 
     // 在指定默认路径创建镜头资产并立即选中。
-    private void CreateSequenceAsset()
+    private void CreateSequenceAsset(CameraSequenceType sequenceType)
     {
-        string path = EditorUtility.SaveFilePanelInProject("新建镜头序列", "CameraSequence_New", "asset", "选择镜头资产保存位置");
+        string defaultName = sequenceType == CameraSequenceType.DialogueTwoShot
+            ? "CameraSequence_Dialogue"
+            : "CameraSequence_New";
+        string path = EditorUtility.SaveFilePanelInProject("新建镜头序列", defaultName, "asset", "选择镜头资产保存位置");
         if (string.IsNullOrWhiteSpace(path))
             return;
 
         CameraSequenceAsset created = CreateInstance<CameraSequenceAsset>();
         AssetDatabase.CreateAsset(created, path);
-        AssetDatabase.SaveAssets();
         SetSequence(created);
+        serializedSequence.FindProperty("sequenceType").enumValueIndex = (int)sequenceType;
+        serializedSequence.ApplyModifiedPropertiesWithoutUndo();
+        EditorUtility.SetDirty(created);
+        AssetDatabase.SaveAssets();
         Selection.activeObject = created;
     }
 

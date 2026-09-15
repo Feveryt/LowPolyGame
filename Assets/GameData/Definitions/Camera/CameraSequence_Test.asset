@@ -1,0 +1,136 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1d9d06d2f03f46d6b6b3c1c02f650201, type: 3}
+  m_Name: CameraSequence_Test
+  m_EditorClassIdentifier: 
+  sequenceType: 0
+  blendInDuration: 0.6
+  blendOutDuration: 0.5
+  autoComplete: 1
+  endHoldDuration: 0.2
+  keyframes:
+  - time: 4
+    position: {x: 2.0518293, y: 2.5039587, z: 42.795273}
+    rotationEuler: {x: 6.46285, y: 1.0353857, z: -0.0011022764}
+    fieldOfView: 60.000004
+    easing:
+      serializedVersion: 2
+      m_Curve:
+      - serializedVersion: 3
+        time: 0
+        value: 0
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      - serializedVersion: 3
+        time: 1
+        value: 1
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+  - time: 6
+    position: {x: 2.6645808, y: -1.3373332, z: 76.69979}
+    rotationEuler: {x: 6.46285, y: 1.0353857, z: -0.0011022764}
+    fieldOfView: 60.000004
+    easing:
+      serializedVersion: 2
+      m_Curve:
+      - serializedVersion: 3
+        time: 0
+        value: 0
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      - serializedVersion: 3
+        time: 1
+        value: 1
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+  - time: 8
+    position: {x: 0.29100132, y: 0.36834002, z: 76.48228}
+    rotationEuler: {x: 16.947973, y: 331.9862, z: -0.0011518187}
+    fieldOfView: 60.000004
+    easing:
+      serializedVersion: 2
+      m_Curve:
+      - serializedVersion: 3
+        time: 0
+        value: 0
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      - serializedVersion: 3
+        time: 1
+        value: 1
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+  - time: 10
+    position: {x: 1.0209951, y: 0.54001635, z: 72.53284}
+    rotationEuler: {x: 353.5713, y: 235.72984, z: -0.00163759}
+    fieldOfView: 60.000004
+    easing:
+      serializedVersion: 2
+      m_Curve:
+      - serializedVersion: 3
+        time: 0
+        value: 0
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      - serializedVersion: 3
+        time: 1
+        value: 1
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+  dialogueCameraOffset: {x: 4, y: 2.2, z: -5}
+  dialogueFramingSize: 0.72
+  dialogueFieldOfView: 42
+  dialogueTargetRadius: 0.8

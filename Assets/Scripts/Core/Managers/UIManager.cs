@@ -29,6 +29,8 @@ public sealed class UIManager : MonoBehaviour
 
     private const string ManagerPrefabPath = "Prefabs/UI/UIManager";
     private static UIManager instance;
+    // 承载无 Canvas 面板的专用画布缓存，避免每次确保面板时重复创建。
+    private static Canvas managedPanelCanvas;
 
     [SerializeField] private List<PanelEntry> panelEntries = new List<PanelEntry>();
     private readonly Dictionary<string, GameObject> panelInstances = new Dictionary<string, GameObject>(StringComparer.Ordinal);
@@ -257,22 +259,35 @@ public sealed class UIManager : MonoBehaviour
         return false;
     }
 
+    // 获取承载无 Canvas 面板的画布。
+    // 跳过根节点带 CanvasGroup 的画布：那类画布由面板自身控制显隐，
+    // 面板隐藏时会把 alpha 归零，挂进去的子面板会一起变得不可见。
     private static Canvas GetOrCreateCanvas()
     {
-        Canvas[] canvases = FindObjectsByType<Canvas>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+        if (managedPanelCanvas != null)
+            return managedPanelCanvas;
+
+        Canvas[] canvases = FindObjectsByType<Canvas>(FindObjectsInactive.Exclude, FindObjectsSortMode.None);
         for (int index = 0; index < canvases.Length; index++)
         {
-            if (canvases[index].gameObject.scene == SceneManager.GetActiveScene())
-                return canvases[index];
+            Canvas candidate = canvases[index];
+            if (candidate.gameObject.scene != SceneManager.GetActiveScene())
+                continue;
+            if (candidate.GetComponent<CanvasGroup>() != null)
+                continue;
+
+            managedPanelCanvas = candidate;
+            return managedPanelCanvas;
         }
 
-        GameObject canvasObject = new GameObject("UI Canvas", typeof(RectTransform), typeof(Canvas), typeof(CanvasScaler), typeof(GraphicRaycaster));
+        GameObject canvasObject = new GameObject("UI Panel Canvas", typeof(RectTransform), typeof(Canvas), typeof(CanvasScaler), typeof(GraphicRaycaster));
         Canvas canvas = canvasObject.GetComponent<Canvas>();
         canvas.renderMode = RenderMode.ScreenSpaceOverlay;
-        canvas.sortingOrder = 0;
+        canvas.sortingOrder = 300;
         CanvasScaler scaler = canvasObject.GetComponent<CanvasScaler>();
         scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
         scaler.referenceResolution = new Vector2(1920f, 1080f);
-        return canvas;
+        managedPanelCanvas = canvas;
+        return managedPanelCanvas;
     }
 }

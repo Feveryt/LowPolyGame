@@ -6,7 +6,7 @@ using UnityEngine;
 public sealed class QuestService : MonoBehaviour
 {
     private const string DefinitionsPath = "Quests";
-    private const string SaveKey = "LowPolyGame.QuestProgress";
+    private const string SaveKey = StorySaveKeys.QuestProgress;
     private static QuestService instance;
     private readonly Dictionary<string, QuestDefinition> definitions = new Dictionary<string, QuestDefinition>();
     private QuestProgressData progress;

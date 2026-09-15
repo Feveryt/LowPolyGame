@@ -102,8 +102,28 @@ public sealed class SceneLoader : MonoBehaviour
             yield return null;
 
         yield return null;
+        RestoreCursorForLoadedScene();
         yield return FadeOverlay(0f, fadeOutDuration);
         isLoading = false;
+    }
+
+    // 场景激活后立即恢复该场景应有的鼠标模式，避免菜单阶段的可见鼠标带进游戏场景。
+    private static void RestoreCursorForLoadedScene()
+    {
+        // 目标场景带开始菜单时说明仍在菜单流程，保留可见鼠标供 UGUI 操作。
+        if (FindFirstObjectByType<StartMenuController>() != null)
+            return;
+
+        CursorManager cursorManager = FindFirstObjectByType<CursorManager>();
+        if (cursorManager != null)
+        {
+            cursorManager.SetUiCursorActive(false);
+            return;
+        }
+
+        // 目标场景未挂 CursorManager 时直接恢复游戏鼠标模式。
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
     }
 
     // 创建由 Unity 内置 UGUI 控件构成的独立加载画面。

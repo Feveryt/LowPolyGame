@@ -21,9 +21,9 @@ public sealed class CameraSequenceAsset : ScriptableObject
     // 本序列采用的镜头行为。
     [SerializeField] private CameraSequenceType sequenceType = CameraSequenceType.StaticSequence;
     // 从当前玩家镜头切入本序列的混合时长，单位秒。
-    [SerializeField, Min(0f)] private float blendInDuration = 0.6f;
+    [SerializeField, Min(0f)] private float blendInDuration = 0.5f;
     // 本序列结束后回到玩家镜头的混合时长，单位秒。
-    [SerializeField, Min(0f)] private float blendOutDuration = 0.5f;
+    [SerializeField, Min(0f)] private float blendOutDuration = 0.4f;
     // 静态序列是否在最后一帧停留后自动结束。
     [SerializeField] private bool autoComplete = true;
     // 最后一帧额外停留时长，单位秒。
@@ -35,11 +35,13 @@ public sealed class CameraSequenceAsset : ScriptableObject
     // 双人镜头相对目标组中心的位置偏移，采用世界坐标方向。
     [SerializeField] private Vector3 dialogueCameraOffset = new Vector3(4f, 2.2f, -5f);
     // 双人模型在画面中期望占据的比例。
-    [SerializeField, Range(0.1f, 0.95f)] private float dialogueFramingSize = 0.72f;
+    [SerializeField, Range(0.1f, 0.95f)] private float dialogueFramingSize = 0.7f;
     // 双人构图的基础视角，单位度。
-    [SerializeField, Range(1f, 179f)] private float dialogueFieldOfView = 42f;
+    [SerializeField, Range(1f, 179f)] private float dialogueFieldOfView = 40f;
     // 对话对象的构图半径，近似表示角色身体占据范围。
-    [SerializeField, Min(0f)] private float dialogueTargetRadius = 0.8f;
+    [SerializeField, Min(0f)] private float dialogueTargetRadius = 0.9f;
+    // 对话双方根节点到胸口观察点的垂直偏移，单位米。
+    [SerializeField, Min(0f)] private float dialogueTargetHeight = 1.4f;
 
     /// <summary>镜头播放模式。</summary>
     public CameraSequenceType SequenceType => sequenceType;
@@ -61,6 +63,8 @@ public sealed class CameraSequenceAsset : ScriptableObject
     public float DialogueFieldOfView => dialogueFieldOfView;
     /// <summary>双人构图使用的角色半径。</summary>
     public float DialogueTargetRadius => dialogueTargetRadius;
+    /// <summary>对话双方根节点到胸口观察点的高度。</summary>
+    public float DialogueTargetHeight => dialogueTargetHeight;
 
     /// <summary>返回静态序列的总播放时间，不包含切入和切出混合。</summary>
     public float GetStaticDuration()

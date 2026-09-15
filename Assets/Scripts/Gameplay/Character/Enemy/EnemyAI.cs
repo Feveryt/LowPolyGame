@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -42,6 +43,10 @@ public sealed class EnemyAI : MonoBehaviour
     private bool hurtRequested;
     // 受击动画未启动时的保底截止时间。
     private float hurtStartDeadline;
+    // 是否已经安排死亡动画播放结束后的销毁流程。
+    private bool deathDespawnScheduled;
+    // 死亡动画末帧事件是否已经到达，用于立即结束兜底等待。
+    private bool deathAnimationFinished;
     // 当前随机巡逻目标点。
     private Vector3 patrolDestination;
     // 是否已经持有一个待抵达的巡逻目标点。
@@ -73,6 +78,9 @@ public sealed class EnemyAI : MonoBehaviour
             enabled = false;
             return;
         }
+
+        if (enemy.Animation != null)
+            enemy.Animation.DeathAnimationFinished += OnDeathAnimationFinished;
 
         CreateStateMachine();
         stateMachine.Initialize(this);
@@ -311,17 +319,73 @@ public sealed class EnemyAI : MonoBehaviour
         return animation == null || (Time.time >= hurtStartDeadline && !animation.IsPlayingHurt);
     }
 
-    // 进入死亡状态后彻底停止导航并触发死亡动画。
+    // 进入死亡状态后彻底停止导航、播放死亡动画，并安排动画播完后的销毁。
     private void EnterDead()
     {
+        if (deathDespawnScheduled)
+            return;
+
+        deathDespawnScheduled = true;
+        deathAnimationFinished = false;
         StopNavigation();
         enemy.Animation?.PlayDie();
+        StartCoroutine(DestroyAfterDeathAnimation());
+    }
+
+    // 等待死亡动画末帧事件；动画事件缺失或漏触发时由兜底时长结束等待。
+    private IEnumerator DestroyAfterDeathAnimation()
+    {
+        EnemyAnimationBehaviour animation = enemy != null ? enemy.Animation : null;
+        float deadline = Time.time + GetDeathDespawnTimeout();
+        bool deathStateSeen = false;
+
+        while (!deathAnimationFinished && Time.time < deadline)
+        {
+            // 兜底：未配置死亡动画事件时，至少在 Animator 离开死亡状态后销毁。
+            if (animation != null)
+            {
+                if (animation.IsPlayingDie)
+                    deathStateSeen = true;
+                else if (deathStateSeen)
+                    break;
+            }
+
+            yield return null;
+        }
+
+        DestroyEnemyObject();
+    }
+
+    // 响应死亡动画末帧事件，立即销毁敌人对象。
+    private void OnDeathAnimationFinished()
+    {
+        if (!deathDespawnScheduled)
+            return;
+
+        deathAnimationFinished = true;
+        DestroyEnemyObject();
+    }
+
+    // 返回死亡动画的兜底等待时长；未绑定敌人配置资产时使用默认值。
+    private float GetDeathDespawnTimeout()
+    {
+        const float defaultDeathDespawnTimeout = 6f;
+        return enemy != null && enemy.Config != null
+            ? enemy.Config.DeathDespawnTimeout
+            : defaultDeathDespawnTimeout;
+    }
+
+    // 销毁敌人对象本体；优先使用 EnemyBase 所在对象，避免只销毁单个组件。
+    private void DestroyEnemyObject()
+    {
+        Destroy(enemy != null ? enemy.gameObject : gameObject);
     }
 
     // 响应非致命伤害并请求下次状态机逻辑切换到受击。
     private void OnDamageReceived(DamageResult result)
     {
-        if (result.WasApplied && !result.WasLethal)
+        // 受击状态中的后续伤害仍由数值层结算，但不缓存新的动画请求。
+        if (result.WasApplied && !result.WasLethal && CurrentState != EnemyState.Hurt)
             hurtRequested = true;
     }
 
@@ -385,6 +449,9 @@ public sealed class EnemyAI : MonoBehaviour
     {
         if (enemy?.Stats != null)
             enemy.Stats.DamageReceived -= OnDamageReceived;
+
+        if (enemy?.Animation != null)
+            enemy.Animation.DeathAnimationFinished -= OnDeathAnimationFinished;
     }
 
     // 判断目标存在、已激活且仍有生命值。

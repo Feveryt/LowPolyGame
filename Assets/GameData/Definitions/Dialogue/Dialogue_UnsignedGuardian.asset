@@ -35,6 +35,7 @@ MonoBehaviour:
       - actionType: 0
         questId: unsigned_guardian.lost_page
         objectiveId: 
+        shop: {fileID: 0}
     - text: "\u8BB0\u5F55\u9875\u63D0\u5230\u4EEA\u5F0F\u95F4\u3002"
       targetNodeId: 3
       requiredQuestId: unsigned_guardian.lost_page
@@ -43,9 +44,11 @@ MonoBehaviour:
       - actionType: 2
         questId: unsigned_guardian.lost_page
         objectiveId: 
+        shop: {fileID: 0}
       - actionType: 0
         questId: unsigned_guardian.guardian_testimony
         objectiveId: 
+        shop: {fileID: 0}
     - text: "\u4EA4\u51FA\u5C01\u5370\u94ED\u7247\u3002"
       targetNodeId: 4
       requiredQuestId: unsigned_guardian.guardian_testimony
@@ -54,6 +57,7 @@ MonoBehaviour:
       - actionType: 2
         questId: unsigned_guardian.guardian_testimony
         objectiveId: 
+        shop: {fileID: 0}
   - nodeId: 2
     speaker: 1
     text: "\u4E0D\u8981\u76F8\u4FE1\u5899\u4E0A\u7684\u5224\u8BCD\u3002\u5B83\u4EEC\u6BD4\u7070\u5C18\u65B0\u3002"
@@ -84,3 +88,4 @@ MonoBehaviour:
   completionText: "\u5B83\u5B88\u7740\u7684\u4E0D\u662F\u95E8\uFF0C\u662F\u4E00\u4E2A\u4E0D\u8BE5\u88AB\u7559\u4E0B\u7684\u540D\u5B57\u3002"
   completionEventId: 
   repeatable: 1
+  cameraSequence: {fileID: 11400000, guid: 3a64fca5e781e3647a436d8081ced082, type: 2}

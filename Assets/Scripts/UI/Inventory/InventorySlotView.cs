@@ -39,6 +39,10 @@ public sealed class InventorySlotView : MonoBehaviour, ISelectHandler
         selectHandler = onSelected;
         button = button != null ? button : GetComponent<Button>();
 
+        // 选中底图带有不透明中心，必须绘制在物品图标下方以避免遮挡图标。
+        if (selectionImage != null)
+            selectionImage.transform.SetAsFirstSibling();
+
         if (button == null)
             return;
 

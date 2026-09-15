@@ -13,21 +13,21 @@ MonoBehaviour:
   m_Name: Dialogue_NPC_1_1
   m_EditorClassIdentifier: 
   dialogueId: merchant.health_potion
-  npcName: "商人"
+  npcName: "\u5546\u4EBA"
   npcPortrait: {fileID: 0}
   npcPortraitSide: 0
   entryNodeId: 1
   nodes:
   - nodeId: 1
     speaker: 1
-    text: "欢迎来到我的商店。需要看看生命药水吗？"
+    text: "\u6B22\u8FCE\u6765\u5230\u6211\u7684\u5546\u5E97\u3002\u9700\u8981\u770B\u770B\u751F\u547D\u836F\u6C34\u5417\uFF1F"
     eventId: 
     requiredQuestId: 
     requiredQuestState: 0
     questActions: []
     nextNodeId: -1
     choices:
-    - text: "打开商店"
+    - text: "\u6253\u5F00\u5546\u5E97"
       targetNodeId: -1
       requiredQuestId: 
       requiredQuestState: 0
@@ -36,11 +36,12 @@ MonoBehaviour:
         questId: 
         objectiveId: 
         shop: {fileID: 11400000, guid: 8c2e5a7d9b1f4c63a0e6d8f2b3c51749, type: 2}
-    - text: "暂时不用"
+    - text: "\u6682\u65F6\u4E0D\u7528"
       targetNodeId: -1
       requiredQuestId: 
       requiredQuestState: 0
       questActions: []
-  completionText: "欢迎下次再来。"
+  completionText: "\u6B22\u8FCE\u4E0B\u6B21\u518D\u6765\u3002"
   completionEventId: 
   repeatable: 1
+  cameraSequence: {fileID: 11400000, guid: 3a64fca5e781e3647a436d8081ced082, type: 2}

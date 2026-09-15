@@ -39,4 +39,4 @@ MonoBehaviour:
   completionText: "\u6211\u5DF2\u7ECF\u6CA1\u6709\u66F4\u591A\u8981\u8BF4\u7684\u4E86\u3002"
   completionEventId: 1
   repeatable: 1
-  cameraSequence: {fileID: 0}
+  cameraSequence: {fileID: 11400000, guid: 3a64fca5e781e3647a436d8081ced082, type: 2}

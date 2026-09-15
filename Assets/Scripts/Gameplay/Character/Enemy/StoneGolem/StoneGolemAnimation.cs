@@ -21,6 +21,8 @@ public sealed class StoneGolemAnimation : EnemyAnimationBehaviour
     private static readonly int DieHash = Animator.StringToHash("Die");
     // 用于检查 Animator 当前受击状态的短名称哈希值。
     private static readonly int TakeDamageStateHash = Animator.StringToHash("TakeDamage");
+    // 用于检查 Animator 当前死亡状态的短名称哈希值。
+    private static readonly int DieStateHash = Animator.StringToHash("Die");
 
     // 石头人 Animator 引用。
     [SerializeField] private Animator animator;
@@ -30,6 +32,8 @@ public sealed class StoneGolemAnimation : EnemyAnimationBehaviour
 
     /// <summary>当前 Animator 是否正处于受击状态。</summary>
     public override bool IsPlayingHurt => IsPlayingState(TakeDamageStateHash);
+    /// <summary>当前 Animator 是否正处于死亡状态。</summary>
+    public override bool IsPlayingDie => IsPlayingState(DieStateHash);
 
     // 缓存 Animator 组件。
     private void Awake()
@@ -77,7 +81,8 @@ public sealed class StoneGolemAnimation : EnemyAnimationBehaviour
     /// <summary>触发非致命受击动画。</summary>
     public override void PlayHurt()
     {
-        if (animator == null)
+        // EnemyAI 已在状态层去重；这里防止其他调用方重复触发同一受击动画。
+        if (animator == null || IsPlayingHurt)
             return;
 
         ResetMovement();

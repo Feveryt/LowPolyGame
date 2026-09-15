@@ -94,6 +94,7 @@ public sealed class DialogueEditorWindow : EditorWindow
         SerializedProperty completionText = serialized.FindProperty("completionText");
         SerializedProperty completionEventId = serialized.FindProperty("completionEventId");
         SerializedProperty repeatable = serialized.FindProperty("repeatable");
+        SerializedProperty cameraSequence = serialized.FindProperty("cameraSequence");
 
         EditorGUILayout.BeginVertical(EditorStyles.helpBox);
         EditorGUILayout.LabelField("NPC 资料", EditorStyles.boldLabel);
@@ -104,6 +105,8 @@ public sealed class DialogueEditorWindow : EditorWindow
         EditorGUILayout.PropertyField(completionEventId, new GUIContent("完成事件 ID"));
         EditorGUILayout.PropertyField(repeatable, new GUIContent("允许重复进入分支"));
         EditorGUILayout.EndVertical();
+
+        DrawCameraSequence(cameraSequence);
 
         EditorGUILayout.BeginHorizontal();
         if (GUILayout.Button("添加 NPC 台词"))
@@ -130,6 +133,74 @@ public sealed class DialogueEditorWindow : EditorWindow
             EditorUtility.SetDirty(dialogue);
             validationReport = string.Empty;
         }
+    }
+
+    // 绑定、创建和定位当前对话使用的双人镜头资产。
+    private void DrawCameraSequence(SerializedProperty cameraSequence)
+    {
+        EditorGUILayout.BeginVertical(EditorStyles.helpBox);
+        EditorGUILayout.LabelField("对话镜头", EditorStyles.boldLabel);
+        EditorGUILayout.PropertyField(cameraSequence, new GUIContent("双人镜头 SO"));
+
+        using (new EditorGUILayout.HorizontalScope())
+        {
+            if (GUILayout.Button("新建双人镜头"))
+                CreateDialogueCameraSequence(cameraSequence);
+
+            using (new EditorGUI.DisabledScope(cameraSequence.objectReferenceValue == null))
+            {
+                if (GUILayout.Button("定位资产"))
+                {
+                    Selection.activeObject = cameraSequence.objectReferenceValue;
+                    EditorGUIUtility.PingObject(cameraSequence.objectReferenceValue);
+                }
+                if (GUILayout.Button("打开镜头工具"))
+                {
+                    Selection.activeObject = cameraSequence.objectReferenceValue;
+                    CameraSequenceRecorderWindow.Open();
+                }
+            }
+        }
+
+        CameraSequenceAsset asset = cameraSequence.objectReferenceValue as CameraSequenceAsset;
+        if (asset == null)
+        {
+            EditorGUILayout.HelpBox("未绑定镜头时，对话继续使用默认玩家镜头。", MessageType.Info);
+        }
+        else if (asset.SequenceType != CameraSequenceType.DialogueTwoShot)
+        {
+            EditorGUILayout.HelpBox("当前资产不是“对话双人镜头”，运行时不会按双方构图播放。", MessageType.Warning);
+        }
+        else
+        {
+            EditorGUILayout.HelpBox("对话开始播放，结束或取消时自动回到玩家镜头。", MessageType.None);
+        }
+
+        EditorGUILayout.EndVertical();
+    }
+
+    // 在统一目录创建并绑定对话双人镜头资产。
+    private void CreateDialogueCameraSequence(SerializedProperty cameraSequence)
+    {
+        const string folder = "Assets/GameData/Definitions/Camera";
+        Directory.CreateDirectory(folder);
+        CameraSequenceAsset created = CreateInstance<CameraSequenceAsset>();
+        string baseName = string.IsNullOrWhiteSpace(dialogue.name) ? "Dialogue" : dialogue.name;
+        string path = AssetDatabase.GenerateUniqueAssetPath($"{folder}/{baseName}_DialogueCamera.asset");
+        AssetDatabase.CreateAsset(created, path);
+
+        var serializedCamera = new SerializedObject(created);
+        serializedCamera.FindProperty("sequenceType").enumValueIndex = (int)CameraSequenceType.DialogueTwoShot;
+        serializedCamera.ApplyModifiedPropertiesWithoutUndo();
+        EditorUtility.SetDirty(created);
+
+        cameraSequence.objectReferenceValue = created;
+        cameraSequence.serializedObject.ApplyModifiedProperties();
+        EditorUtility.SetDirty(dialogue);
+        AssetDatabase.SaveAssets();
+
+        Selection.activeObject = created;
+        CameraSequenceRecorderWindow.Open();
     }
 
     // 将节点逐项展示，选项列表仅对 NPC 节点开放。
@@ -355,6 +426,9 @@ public sealed class DialogueEditorWindow : EditorWindow
 
         if (dialogue.NpcPortrait == null)
             messages.Add("提示：NPC 头像未绑定。");
+        if (dialogue.CameraSequence != null &&
+            dialogue.CameraSequence.SequenceType != CameraSequenceType.DialogueTwoShot)
+            messages.Add("对话镜头资产必须使用 Dialogue Two Shot 模式。");
         if (!nodesById.ContainsKey(dialogue.EntryNodeId))
             messages.Add("入口节点不存在。");
         else

@@ -7,7 +7,7 @@ using UnityEngine.UI;
 /// <summary>首次进入 Demo 时显示一次可跳过的全屏剧情文字。</summary>
 public sealed class OpeningNarrative : MonoBehaviour
 {
-    private const string SeenKey = "LowPolyGame.UnsignedGuardian.OpeningSeen";
+    private const string SeenKey = StorySaveKeys.OpeningSeen;
     [SerializeField] private CanvasGroup canvasGroup;
     [SerializeField] private Text narrativeText;
     [SerializeField] private Button dismissButton;
