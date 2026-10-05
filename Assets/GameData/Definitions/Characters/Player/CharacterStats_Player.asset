@@ -14,12 +14,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   id: 1
   displayName: Player
-  maxHealth: 1000
+  maxHealth: 100
   attack: 20
   defense: 10
-  maxStamina: 1000
+  maxStamina: 400
   maxMana: 100
   staminaDrainPerSecond: 20
   staminaRecoveryPerSecond: 100
   staminaRecoveryDelay: 1
-  staminaResumeThreshold: 1
+  staminaResumeThreshold: 0

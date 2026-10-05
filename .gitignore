@@ -75,3 +75,11 @@ crashlytics-build.properties
 /[Aa]ssets/[Ss]treamingAssets/aa/*
 
 .fake
+
+# Unity 烘焙光照产物（LightingData 354MB 超 GitHub 100MB 单文件限制；克隆后需在 Unity 里重新烘焙光照）
+/Assets/Scenes/GameScene/Demo 1/LightingData.asset*
+/Assets/Scenes/GameScene/Demo 1/Lightmap-*
+/Assets/Scenes/GameScene/Demo 1/ReflectionProbe-*
+
+# ZCode 本地会话数据
+.zcode/

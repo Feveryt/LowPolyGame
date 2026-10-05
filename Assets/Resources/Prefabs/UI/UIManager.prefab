@@ -69,7 +69,7 @@ MonoBehaviour:
     scenePaths:
     - Assets/Scenes/GameScene/Demo 1.unity
     keepAlive: 0
-    activateOnEnsure: 0
+    activateOnEnsure: 1
   - id: PlayerResources
     prefab: {fileID: 5175889811851771066, guid: cc23b2ac1eb84974b943aa29f91696ba, type: 3}
     scenePaths:

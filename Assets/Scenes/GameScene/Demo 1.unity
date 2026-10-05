@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.18028378, g: 0.22571412, b: 0.30692285, a: 1}
+  m_IndirectSpecularColor: {r: 0.18028377, g: 0.22571409, b: 0.30692285, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &4
 LightmapSettings:
@@ -93,7 +93,7 @@ LightmapSettings:
     m_ExportTrainingData: 0
     m_TrainingDataDestination: TrainingData
     m_LightProbeSampleCountMultiplier: 4
-  m_LightingDataAsset: {fileID: 20201, guid: 0000000000000000f000000000000000, type: 0}
+  m_LightingDataAsset: {fileID: 112000000, guid: 9559e32c58b37df47a2f3cec932f6aaf, type: 2}
   m_LightingSettings: {fileID: 4890085278179872738, guid: 6008bdc91c7fda94c97ab03d91ed99aa, type: 2}
 --- !u!196 &5
 NavMeshSettings:
@@ -2735,7 +2735,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 23
   m_IsActive: 1
 --- !u!108 &23579301
 Light:
@@ -2787,7 +2787,7 @@ Light:
     serializedVersion: 2
     m_Bits: 4294967295
   m_RenderingLayerMask: 1
-  m_Lightmapping: 4
+  m_Lightmapping: 2
   m_LightShadowCasterMode: 0
   m_AreaSize: {x: 1, y: 1}
   m_BounceIntensity: 1
@@ -3784,7 +3784,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 23
   m_IsActive: 0
 --- !u!4 &32937513
 Transform:
@@ -8624,7 +8624,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 23
   m_IsActive: 1
 --- !u!114 &77033808
 MonoBehaviour:
@@ -9543,7 +9543,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 23
   m_IsActive: 1
 --- !u!108 &83212061
 Light:
@@ -9595,7 +9595,7 @@ Light:
     serializedVersion: 2
     m_Bits: 4294967295
   m_RenderingLayerMask: 1
-  m_Lightmapping: 4
+  m_Lightmapping: 2
   m_LightShadowCasterMode: 0
   m_AreaSize: {x: 1, y: 1}
   m_BounceIntensity: 1
@@ -16467,7 +16467,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 153281675}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.08639435, y: -1.0288837e-15, z: 8.9223334e-17, w: 0.99626106}
+  m_LocalRotation: {x: 0.08639435, y: 0.0000000296909, z: -0.0000000025747526, w: 0.99626106}
   m_LocalPosition: {x: 0.61, y: -2.46, z: 39.19}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -17394,7 +17394,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 23
   m_IsActive: 1
 --- !u!4 &161926015
 Transform:
@@ -19707,7 +19707,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 23
   m_IsActive: 1
 --- !u!23 &181239768
 MeshRenderer:
@@ -28766,6 +28766,400 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 401692, guid: b444f81a3b0a3e14d9e6f5cb91afee55, type: 3}
   m_PrefabInstance: {fileID: 265929605}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &265933377
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 265933379}
+  - component: {fileID: 265933378}
+  m_Layer: 0
+  m_Name: Light Probe Group
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!220 &265933378
+LightProbeGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 265933377}
+  m_Enabled: 1
+  m_SourcePositions:
+  - {x: -102.76556, y: -15.064444, z: -130.64005}
+  - {x: -102.76556, y: -10.064444, z: -130.64005}
+  - {x: -87.76556, y: -15.064444, z: -130.64005}
+  - {x: -87.76556, y: -10.064444, z: -130.64005}
+  - {x: -72.76556, y: -15.064444, z: -130.64005}
+  - {x: -72.76556, y: -10.064444, z: -130.64005}
+  - {x: -57.765556, y: -15.064444, z: -130.64005}
+  - {x: -57.765556, y: -10.064444, z: -130.64005}
+  - {x: -42.765556, y: -15.064444, z: -130.64005}
+  - {x: -42.765556, y: -10.064444, z: -130.64005}
+  - {x: -27.765556, y: -15.064444, z: -130.64005}
+  - {x: -27.765556, y: -10.064444, z: -130.64005}
+  - {x: -12.765556, y: -15.064444, z: -130.64005}
+  - {x: -12.765556, y: -10.064444, z: -130.64005}
+  - {x: 2.2344437, y: -15.064444, z: -130.64005}
+  - {x: 2.2344437, y: -10.064444, z: -130.64005}
+  - {x: 17.234444, y: -15.064444, z: -130.64005}
+  - {x: 17.234444, y: -10.064444, z: -130.64005}
+  - {x: 32.234444, y: -15.064444, z: -130.64005}
+  - {x: 32.234444, y: -10.064444, z: -130.64005}
+  - {x: 47.234444, y: -15.064444, z: -130.64005}
+  - {x: 47.234444, y: -10.064444, z: -130.64005}
+  - {x: -102.76556, y: -15.064444, z: -115.640045}
+  - {x: -102.76556, y: -10.064444, z: -115.640045}
+  - {x: -87.76556, y: -15.064444, z: -115.640045}
+  - {x: -87.76556, y: -10.064444, z: -115.640045}
+  - {x: -72.76556, y: -15.064444, z: -115.640045}
+  - {x: -72.76556, y: -10.064444, z: -115.640045}
+  - {x: -57.765556, y: -15.064444, z: -115.640045}
+  - {x: -57.765556, y: -10.064444, z: -115.640045}
+  - {x: -42.765556, y: -15.064444, z: -115.640045}
+  - {x: -42.765556, y: -10.064444, z: -115.640045}
+  - {x: -27.765556, y: -15.064444, z: -115.640045}
+  - {x: -27.765556, y: -10.064444, z: -115.640045}
+  - {x: -12.765556, y: -15.064444, z: -115.640045}
+  - {x: -12.765556, y: -10.064444, z: -115.640045}
+  - {x: 2.2344437, y: -15.064444, z: -115.640045}
+  - {x: 2.2344437, y: -10.064444, z: -115.640045}
+  - {x: 17.234444, y: -15.064444, z: -115.640045}
+  - {x: 17.234444, y: -10.064444, z: -115.640045}
+  - {x: 32.234444, y: -15.064444, z: -115.640045}
+  - {x: 32.234444, y: -10.064444, z: -115.640045}
+  - {x: 47.234444, y: -15.064444, z: -115.640045}
+  - {x: 47.234444, y: -10.064444, z: -115.640045}
+  - {x: -102.76556, y: -15.064444, z: -100.640045}
+  - {x: -102.76556, y: -10.064444, z: -100.640045}
+  - {x: -87.76556, y: -15.064444, z: -100.640045}
+  - {x: -87.76556, y: -10.064444, z: -100.640045}
+  - {x: -72.76556, y: -15.064444, z: -100.640045}
+  - {x: -72.76556, y: -10.064444, z: -100.640045}
+  - {x: -57.765556, y: -15.064444, z: -100.640045}
+  - {x: -57.765556, y: -10.064444, z: -100.640045}
+  - {x: -42.765556, y: -15.064444, z: -100.640045}
+  - {x: -42.765556, y: -10.064444, z: -100.640045}
+  - {x: -27.765556, y: -15.064444, z: -100.640045}
+  - {x: -27.765556, y: -10.064444, z: -100.640045}
+  - {x: -12.765556, y: -15.064444, z: -100.640045}
+  - {x: -12.765556, y: -10.064444, z: -100.640045}
+  - {x: 2.2344437, y: -15.064444, z: -100.640045}
+  - {x: 2.2344437, y: -10.064444, z: -100.640045}
+  - {x: 17.234444, y: -15.064444, z: -100.640045}
+  - {x: 17.234444, y: -10.064444, z: -100.640045}
+  - {x: 32.234444, y: -15.064444, z: -100.640045}
+  - {x: 32.234444, y: -10.064444, z: -100.640045}
+  - {x: 47.234444, y: -15.064444, z: -100.640045}
+  - {x: 47.234444, y: -10.064444, z: -100.640045}
+  - {x: -102.76556, y: -15.064444, z: -85.640045}
+  - {x: -102.76556, y: -10.064444, z: -85.640045}
+  - {x: -87.76556, y: -15.064444, z: -85.640045}
+  - {x: -87.76556, y: -10.064444, z: -85.640045}
+  - {x: -72.76556, y: -15.064444, z: -85.640045}
+  - {x: -72.76556, y: -10.064444, z: -85.640045}
+  - {x: -57.765556, y: -15.064444, z: -85.640045}
+  - {x: -57.765556, y: -10.064444, z: -85.640045}
+  - {x: -42.765556, y: -15.064444, z: -85.640045}
+  - {x: -42.765556, y: -10.064444, z: -85.640045}
+  - {x: -27.765556, y: -15.064444, z: -85.640045}
+  - {x: -27.765556, y: -10.064444, z: -85.640045}
+  - {x: -12.765556, y: -15.064444, z: -85.640045}
+  - {x: -12.765556, y: -10.064444, z: -85.640045}
+  - {x: 2.2344437, y: -15.064444, z: -85.640045}
+  - {x: 2.2344437, y: -10.064444, z: -85.640045}
+  - {x: 17.234444, y: -15.064444, z: -85.640045}
+  - {x: 17.234444, y: -10.064444, z: -85.640045}
+  - {x: 32.234444, y: -15.064444, z: -85.640045}
+  - {x: 32.234444, y: -10.064444, z: -85.640045}
+  - {x: 47.234444, y: -15.064444, z: -85.640045}
+  - {x: 47.234444, y: -10.064444, z: -85.640045}
+  - {x: -102.76556, y: -15.064444, z: -70.640045}
+  - {x: -102.76556, y: -10.064444, z: -70.640045}
+  - {x: -87.76556, y: -15.064444, z: -70.640045}
+  - {x: -87.76556, y: -10.064444, z: -70.640045}
+  - {x: -72.76556, y: -15.064444, z: -70.640045}
+  - {x: -72.76556, y: -10.064444, z: -70.640045}
+  - {x: -57.765556, y: -15.064444, z: -70.640045}
+  - {x: -57.765556, y: -10.064444, z: -70.640045}
+  - {x: -42.765556, y: -15.064444, z: -70.640045}
+  - {x: -42.765556, y: -10.064444, z: -70.640045}
+  - {x: -27.765556, y: -15.064444, z: -70.640045}
+  - {x: -27.765556, y: -10.064444, z: -70.640045}
+  - {x: -12.765556, y: -15.064444, z: -70.640045}
+  - {x: -12.765556, y: -10.064444, z: -70.640045}
+  - {x: 2.2344437, y: -15.064444, z: -70.640045}
+  - {x: 2.2344437, y: -10.064444, z: -70.640045}
+  - {x: 17.234444, y: -15.064444, z: -70.640045}
+  - {x: 17.234444, y: -10.064444, z: -70.640045}
+  - {x: 32.234444, y: -15.064444, z: -70.640045}
+  - {x: 32.234444, y: -10.064444, z: -70.640045}
+  - {x: 47.234444, y: -15.064444, z: -70.640045}
+  - {x: 47.234444, y: -10.064444, z: -70.640045}
+  - {x: -102.76556, y: -15.064444, z: -55.640045}
+  - {x: -102.76556, y: -10.064444, z: -55.640045}
+  - {x: -87.76556, y: -15.064444, z: -55.640045}
+  - {x: -87.76556, y: -10.064444, z: -55.640045}
+  - {x: -72.76556, y: -15.064444, z: -55.640045}
+  - {x: -72.76556, y: -10.064444, z: -55.640045}
+  - {x: -57.765556, y: -15.064444, z: -55.640045}
+  - {x: -57.765556, y: -10.064444, z: -55.640045}
+  - {x: -42.765556, y: -15.064444, z: -55.640045}
+  - {x: -42.765556, y: -10.064444, z: -55.640045}
+  - {x: -27.765556, y: -15.064444, z: -55.640045}
+  - {x: -27.765556, y: -10.064444, z: -55.640045}
+  - {x: -12.765556, y: -15.064444, z: -55.640045}
+  - {x: -12.765556, y: -10.064444, z: -55.640045}
+  - {x: 2.2344437, y: -15.064444, z: -55.640045}
+  - {x: 2.2344437, y: -10.064444, z: -55.640045}
+  - {x: 17.234444, y: -15.064444, z: -55.640045}
+  - {x: 17.234444, y: -10.064444, z: -55.640045}
+  - {x: 32.234444, y: -15.064444, z: -55.640045}
+  - {x: 32.234444, y: -10.064444, z: -55.640045}
+  - {x: 47.234444, y: -15.064444, z: -55.640045}
+  - {x: 47.234444, y: -10.064444, z: -55.640045}
+  - {x: -102.76556, y: -15.064444, z: -40.640045}
+  - {x: -102.76556, y: -10.064444, z: -40.640045}
+  - {x: -87.76556, y: -15.064444, z: -40.640045}
+  - {x: -87.76556, y: -10.064444, z: -40.640045}
+  - {x: -72.76556, y: -15.064444, z: -40.640045}
+  - {x: -72.76556, y: -10.064444, z: -40.640045}
+  - {x: -57.765556, y: -15.064444, z: -40.640045}
+  - {x: -57.765556, y: -10.064444, z: -40.640045}
+  - {x: -42.765556, y: -15.064444, z: -40.640045}
+  - {x: -42.765556, y: -10.064444, z: -40.640045}
+  - {x: -27.765556, y: -15.064444, z: -40.640045}
+  - {x: -27.765556, y: -10.064444, z: -40.640045}
+  - {x: -12.765556, y: -15.064444, z: -40.640045}
+  - {x: -12.765556, y: -10.064444, z: -40.640045}
+  - {x: 2.2344437, y: -15.064444, z: -40.640045}
+  - {x: 2.2344437, y: -10.064444, z: -40.640045}
+  - {x: 17.234444, y: -15.064444, z: -40.640045}
+  - {x: 17.234444, y: -10.064444, z: -40.640045}
+  - {x: 32.234444, y: -15.064444, z: -40.640045}
+  - {x: 32.234444, y: -10.064444, z: -40.640045}
+  - {x: 47.234444, y: -15.064444, z: -40.640045}
+  - {x: 47.234444, y: -10.064444, z: -40.640045}
+  - {x: -102.76556, y: -15.064444, z: -25.640045}
+  - {x: -102.76556, y: -10.064444, z: -25.640045}
+  - {x: -87.76556, y: -15.064444, z: -25.640045}
+  - {x: -87.76556, y: -10.064444, z: -25.640045}
+  - {x: -72.76556, y: -15.064444, z: -25.640045}
+  - {x: -72.76556, y: -10.064444, z: -25.640045}
+  - {x: -57.765556, y: -15.064444, z: -25.640045}
+  - {x: -57.765556, y: -10.064444, z: -25.640045}
+  - {x: -42.765556, y: -15.064444, z: -25.640045}
+  - {x: -42.765556, y: -10.064444, z: -25.640045}
+  - {x: -27.765556, y: -15.064444, z: -25.640045}
+  - {x: -27.765556, y: -10.064444, z: -25.640045}
+  - {x: -12.765556, y: -15.064444, z: -25.640045}
+  - {x: -12.765556, y: -10.064444, z: -25.640045}
+  - {x: 2.2344437, y: -15.064444, z: -25.640045}
+  - {x: 2.2344437, y: -10.064444, z: -25.640045}
+  - {x: 17.234444, y: -15.064444, z: -25.640045}
+  - {x: 17.234444, y: -10.064444, z: -25.640045}
+  - {x: 32.234444, y: -15.064444, z: -25.640045}
+  - {x: 32.234444, y: -10.064444, z: -25.640045}
+  - {x: 47.234444, y: -15.064444, z: -25.640045}
+  - {x: 47.234444, y: -10.064444, z: -25.640045}
+  - {x: -102.76556, y: -15.064444, z: -10.640045}
+  - {x: -102.76556, y: -10.064444, z: -10.640045}
+  - {x: -87.76556, y: -15.064444, z: -10.640045}
+  - {x: -87.76556, y: -10.064444, z: -10.640045}
+  - {x: -72.76556, y: -15.064444, z: -10.640045}
+  - {x: -72.76556, y: -10.064444, z: -10.640045}
+  - {x: -57.765556, y: -15.064444, z: -10.640045}
+  - {x: -57.765556, y: -10.064444, z: -10.640045}
+  - {x: -42.765556, y: -15.064444, z: -10.640045}
+  - {x: -42.765556, y: -10.064444, z: -10.640045}
+  - {x: -27.765556, y: -15.064444, z: -10.640045}
+  - {x: -27.765556, y: -10.064444, z: -10.640045}
+  - {x: -12.765556, y: -15.064444, z: -10.640045}
+  - {x: -12.765556, y: -10.064444, z: -10.640045}
+  - {x: 2.2344437, y: -15.064444, z: -10.640045}
+  - {x: 2.2344437, y: -10.064444, z: -10.640045}
+  - {x: 17.234444, y: -15.064444, z: -10.640045}
+  - {x: 17.234444, y: -10.064444, z: -10.640045}
+  - {x: 32.234444, y: -15.064444, z: -10.640045}
+  - {x: 32.234444, y: -10.064444, z: -10.640045}
+  - {x: 47.234444, y: -15.064444, z: -10.640045}
+  - {x: 47.234444, y: -10.064444, z: -10.640045}
+  - {x: -102.76556, y: -15.064444, z: 4.359955}
+  - {x: -102.76556, y: -10.064444, z: 4.359955}
+  - {x: -87.76556, y: -15.064444, z: 4.359955}
+  - {x: -87.76556, y: -10.064444, z: 4.359955}
+  - {x: -72.76556, y: -15.064444, z: 4.359955}
+  - {x: -72.76556, y: -10.064444, z: 4.359955}
+  - {x: -57.765556, y: -15.064444, z: 4.359955}
+  - {x: -57.765556, y: -10.064444, z: 4.359955}
+  - {x: -42.765556, y: -15.064444, z: 4.359955}
+  - {x: -42.765556, y: -10.064444, z: 4.359955}
+  - {x: -27.765556, y: -15.064444, z: 4.359955}
+  - {x: -27.765556, y: -10.064444, z: 4.359955}
+  - {x: -12.765556, y: -15.064444, z: 4.359955}
+  - {x: -12.765556, y: -10.064444, z: 4.359955}
+  - {x: 2.2344437, y: -15.064444, z: 4.359955}
+  - {x: 2.2344437, y: -10.064444, z: 4.359955}
+  - {x: 17.234444, y: -15.064444, z: 4.359955}
+  - {x: 17.234444, y: -10.064444, z: 4.359955}
+  - {x: 32.234444, y: -15.064444, z: 4.359955}
+  - {x: 32.234444, y: -10.064444, z: 4.359955}
+  - {x: 47.234444, y: -15.064444, z: 4.359955}
+  - {x: 47.234444, y: -10.064444, z: 4.359955}
+  - {x: -102.76556, y: -15.064444, z: 19.359955}
+  - {x: -102.76556, y: -10.064444, z: 19.359955}
+  - {x: -87.76556, y: -15.064444, z: 19.359955}
+  - {x: -87.76556, y: -10.064444, z: 19.359955}
+  - {x: -72.76556, y: -15.064444, z: 19.359955}
+  - {x: -72.76556, y: -10.064444, z: 19.359955}
+  - {x: -57.765556, y: -15.064444, z: 19.359955}
+  - {x: -57.765556, y: -10.064444, z: 19.359955}
+  - {x: -42.765556, y: -15.064444, z: 19.359955}
+  - {x: -42.765556, y: -10.064444, z: 19.359955}
+  - {x: -27.765556, y: -15.064444, z: 19.359955}
+  - {x: -27.765556, y: -10.064444, z: 19.359955}
+  - {x: -12.765556, y: -15.064444, z: 19.359955}
+  - {x: -12.765556, y: -10.064444, z: 19.359955}
+  - {x: 2.2344437, y: -15.064444, z: 19.359955}
+  - {x: 2.2344437, y: -10.064444, z: 19.359955}
+  - {x: 17.234444, y: -15.064444, z: 19.359955}
+  - {x: 17.234444, y: -10.064444, z: 19.359955}
+  - {x: 32.234444, y: -15.064444, z: 19.359955}
+  - {x: 32.234444, y: -10.064444, z: 19.359955}
+  - {x: 47.234444, y: -15.064444, z: 19.359955}
+  - {x: 47.234444, y: -10.064444, z: 19.359955}
+  - {x: -102.76556, y: -15.064444, z: 34.359955}
+  - {x: -102.76556, y: -10.064444, z: 34.359955}
+  - {x: -87.76556, y: -15.064444, z: 34.359955}
+  - {x: -87.76556, y: -10.064444, z: 34.359955}
+  - {x: -72.76556, y: -15.064444, z: 34.359955}
+  - {x: -72.76556, y: -10.064444, z: 34.359955}
+  - {x: -57.765556, y: -15.064444, z: 34.359955}
+  - {x: -57.765556, y: -10.064444, z: 34.359955}
+  - {x: -42.765556, y: -15.064444, z: 34.359955}
+  - {x: -42.765556, y: -10.064444, z: 34.359955}
+  - {x: -27.765556, y: -15.064444, z: 34.359955}
+  - {x: -27.765556, y: -10.064444, z: 34.359955}
+  - {x: -12.765556, y: -15.064444, z: 34.359955}
+  - {x: -12.765556, y: -10.064444, z: 34.359955}
+  - {x: 2.2344437, y: -15.064444, z: 34.359955}
+  - {x: 2.2344437, y: -10.064444, z: 34.359955}
+  - {x: 17.234444, y: -15.064444, z: 34.359955}
+  - {x: 17.234444, y: -10.064444, z: 34.359955}
+  - {x: 32.234444, y: -15.064444, z: 34.359955}
+  - {x: 32.234444, y: -10.064444, z: 34.359955}
+  - {x: 47.234444, y: -15.064444, z: 34.359955}
+  - {x: 47.234444, y: -10.064444, z: 34.359955}
+  - {x: -102.76556, y: -15.064444, z: 49.359955}
+  - {x: -102.76556, y: -10.064444, z: 49.359955}
+  - {x: -87.76556, y: -15.064444, z: 49.359955}
+  - {x: -87.76556, y: -10.064444, z: 49.359955}
+  - {x: -72.76556, y: -15.064444, z: 49.359955}
+  - {x: -72.76556, y: -10.064444, z: 49.359955}
+  - {x: -57.765556, y: -15.064444, z: 49.359955}
+  - {x: -57.765556, y: -10.064444, z: 49.359955}
+  - {x: -42.765556, y: -15.064444, z: 49.359955}
+  - {x: -42.765556, y: -10.064444, z: 49.359955}
+  - {x: -27.765556, y: -15.064444, z: 49.359955}
+  - {x: -27.765556, y: -10.064444, z: 49.359955}
+  - {x: -12.765556, y: -15.064444, z: 49.359955}
+  - {x: -12.765556, y: -10.064444, z: 49.359955}
+  - {x: 2.2344437, y: -15.064444, z: 49.359955}
+  - {x: 2.2344437, y: -10.064444, z: 49.359955}
+  - {x: 17.234444, y: -15.064444, z: 49.359955}
+  - {x: 17.234444, y: -10.064444, z: 49.359955}
+  - {x: 32.234444, y: -15.064444, z: 49.359955}
+  - {x: 32.234444, y: -10.064444, z: 49.359955}
+  - {x: 47.234444, y: -15.064444, z: 49.359955}
+  - {x: 47.234444, y: -10.064444, z: 49.359955}
+  - {x: -102.76556, y: -15.064444, z: 64.359955}
+  - {x: -102.76556, y: -10.064444, z: 64.359955}
+  - {x: -87.76556, y: -15.064444, z: 64.359955}
+  - {x: -87.76556, y: -10.064444, z: 64.359955}
+  - {x: -72.76556, y: -15.064444, z: 64.359955}
+  - {x: -72.76556, y: -10.064444, z: 64.359955}
+  - {x: -57.765556, y: -15.064444, z: 64.359955}
+  - {x: -57.765556, y: -10.064444, z: 64.359955}
+  - {x: -42.765556, y: -15.064444, z: 64.359955}
+  - {x: -42.765556, y: -10.064444, z: 64.359955}
+  - {x: -27.765556, y: -15.064444, z: 64.359955}
+  - {x: -27.765556, y: -10.064444, z: 64.359955}
+  - {x: -12.765556, y: -15.064444, z: 64.359955}
+  - {x: -12.765556, y: -10.064444, z: 64.359955}
+  - {x: 2.2344437, y: -15.064444, z: 64.359955}
+  - {x: 2.2344437, y: -10.064444, z: 64.359955}
+  - {x: 17.234444, y: -15.064444, z: 64.359955}
+  - {x: 17.234444, y: -10.064444, z: 64.359955}
+  - {x: 32.234444, y: -15.064444, z: 64.359955}
+  - {x: 32.234444, y: -10.064444, z: 64.359955}
+  - {x: 47.234444, y: -15.064444, z: 64.359955}
+  - {x: 47.234444, y: -10.064444, z: 64.359955}
+  - {x: -102.76556, y: -15.064444, z: 79.359955}
+  - {x: -102.76556, y: -10.064444, z: 79.359955}
+  - {x: -87.76556, y: -15.064444, z: 79.359955}
+  - {x: -87.76556, y: -10.064444, z: 79.359955}
+  - {x: -72.76556, y: -15.064444, z: 79.359955}
+  - {x: -72.76556, y: -10.064444, z: 79.359955}
+  - {x: -57.765556, y: -15.064444, z: 79.359955}
+  - {x: -57.765556, y: -10.064444, z: 79.359955}
+  - {x: -42.765556, y: -15.064444, z: 79.359955}
+  - {x: -42.765556, y: -10.064444, z: 79.359955}
+  - {x: -27.765556, y: -15.064444, z: 79.359955}
+  - {x: -27.765556, y: -10.064444, z: 79.359955}
+  - {x: -12.765556, y: -15.064444, z: 79.359955}
+  - {x: -12.765556, y: -10.064444, z: 79.359955}
+  - {x: 2.2344437, y: -15.064444, z: 79.359955}
+  - {x: 2.2344437, y: -10.064444, z: 79.359955}
+  - {x: 17.234444, y: -15.064444, z: 79.359955}
+  - {x: 17.234444, y: -10.064444, z: 79.359955}
+  - {x: 32.234444, y: -15.064444, z: 79.359955}
+  - {x: 32.234444, y: -10.064444, z: 79.359955}
+  - {x: 47.234444, y: -15.064444, z: 79.359955}
+  - {x: 47.234444, y: -10.064444, z: 79.359955}
+  - {x: -102.76556, y: -15.064444, z: 94.359955}
+  - {x: -102.76556, y: -10.064444, z: 94.359955}
+  - {x: -87.76556, y: -15.064444, z: 94.359955}
+  - {x: -87.76556, y: -10.064444, z: 94.359955}
+  - {x: -72.76556, y: -15.064444, z: 94.359955}
+  - {x: -72.76556, y: -10.064444, z: 94.359955}
+  - {x: -57.765556, y: -15.064444, z: 94.359955}
+  - {x: -57.765556, y: -10.064444, z: 94.359955}
+  - {x: -42.765556, y: -15.064444, z: 94.359955}
+  - {x: -42.765556, y: -10.064444, z: 94.359955}
+  - {x: -27.765556, y: -15.064444, z: 94.359955}
+  - {x: -27.765556, y: -10.064444, z: 94.359955}
+  - {x: -12.765556, y: -15.064444, z: 94.359955}
+  - {x: -12.765556, y: -10.064444, z: 94.359955}
+  - {x: 2.2344437, y: -15.064444, z: 94.359955}
+  - {x: 2.2344437, y: -10.064444, z: 94.359955}
+  - {x: 17.234444, y: -15.064444, z: 94.359955}
+  - {x: 17.234444, y: -10.064444, z: 94.359955}
+  - {x: 32.234444, y: -15.064444, z: 94.359955}
+  - {x: 32.234444, y: -10.064444, z: 94.359955}
+  - {x: 47.234444, y: -15.064444, z: 94.359955}
+  - {x: 47.234444, y: -10.064444, z: 94.359955}
+  m_Dering: 1
+--- !u!4 &265933379
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 265933377}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &266042458
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -39050,7 +39444,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 23
   m_IsActive: 1
 --- !u!23 &360771349
 MeshRenderer:
@@ -40382,7 +40776,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 23
   m_IsActive: 1
 --- !u!114 &370918514
 MonoBehaviour:
@@ -44048,7 +44442,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 23
   m_IsActive: 1
 --- !u!108 &412947194
 Light:
@@ -44100,7 +44494,7 @@ Light:
     serializedVersion: 2
     m_Bits: 4294967295
   m_RenderingLayerMask: 1
-  m_Lightmapping: 4
+  m_Lightmapping: 2
   m_LightShadowCasterMode: 0
   m_AreaSize: {x: 1, y: 1}
   m_BounceIntensity: 1
@@ -44190,7 +44584,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 23
   m_IsActive: 1
 --- !u!4 &413852209
 Transform:
@@ -45427,7 +45821,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 23
   m_IsActive: 0
 --- !u!4 &418114993
 Transform:
@@ -49374,7 +49768,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 23
   m_IsActive: 1
 --- !u!108 &452084927
 Light:
@@ -49426,7 +49820,7 @@ Light:
     serializedVersion: 2
     m_Bits: 4294967295
   m_RenderingLayerMask: 1
-  m_Lightmapping: 4
+  m_Lightmapping: 2
   m_LightShadowCasterMode: 0
   m_AreaSize: {x: 1, y: 1}
   m_BounceIntensity: 1
@@ -53835,7 +54229,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 23
   m_IsActive: 0
 --- !u!108 &495309486
 Light:
@@ -53887,7 +54281,7 @@ Light:
     serializedVersion: 2
     m_Bits: 4294967295
   m_RenderingLayerMask: 1
-  m_Lightmapping: 4
+  m_Lightmapping: 2
   m_LightShadowCasterMode: 0
   m_AreaSize: {x: 1, y: 1}
   m_BounceIntensity: 1
@@ -54470,7 +54864,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 23
   m_IsActive: 1
 --- !u!108 &497832638
 Light:
@@ -54522,7 +54916,7 @@ Light:
     serializedVersion: 2
     m_Bits: 4294967295
   m_RenderingLayerMask: 1
-  m_Lightmapping: 4
+  m_Lightmapping: 2
   m_LightShadowCasterMode: 0
   m_AreaSize: {x: 1, y: 1}
   m_BounceIntensity: 1
@@ -55142,7 +55536,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 23
   m_IsActive: 1
 --- !u!114 &505325667
 MonoBehaviour:
@@ -56167,7 +56561,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 23
   m_IsActive: 0
 --- !u!108 &512723863
 Light:
@@ -56219,7 +56613,7 @@ Light:
     serializedVersion: 2
     m_Bits: 4294967295
   m_RenderingLayerMask: 1
-  m_Lightmapping: 4
+  m_Lightmapping: 2
   m_LightShadowCasterMode: 0
   m_AreaSize: {x: 1, y: 1}
   m_BounceIntensity: 1
@@ -59415,7 +59809,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 23
   m_IsActive: 1
 --- !u!108 &543042194
 Light:
@@ -59467,7 +59861,7 @@ Light:
     serializedVersion: 2
     m_Bits: 4294967295
   m_RenderingLayerMask: 1
-  m_Lightmapping: 4
+  m_Lightmapping: 2
   m_LightShadowCasterMode: 0
   m_AreaSize: {x: 1, y: 1}
   m_BounceIntensity: 1
@@ -63136,7 +63530,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 23
   m_IsActive: 1
 --- !u!108 &576071612
 Light:
@@ -63188,7 +63582,7 @@ Light:
     serializedVersion: 2
     m_Bits: 4294967295
   m_RenderingLayerMask: 1
-  m_Lightmapping: 4
+  m_Lightmapping: 2
   m_LightShadowCasterMode: 0
   m_AreaSize: {x: 1, y: 1}
   m_BounceIntensity: 1
@@ -63229,7 +63623,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 23
   m_IsActive: 0
 --- !u!4 &576486027
 Transform:
@@ -67202,7 +67596,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 23
   m_IsActive: 1
 --- !u!4 &611067640
 Transform:
@@ -67467,7 +67861,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 23
   m_IsActive: 1
 --- !u!4 &615483859
 Transform:
@@ -68996,7 +69390,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 23
   m_IsActive: 1
 --- !u!4 &623945887
 Transform:
@@ -70280,7 +70674,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 23
   m_IsActive: 0
 --- !u!108 &638854549
 Light:
@@ -70332,7 +70726,7 @@ Light:
     serializedVersion: 2
     m_Bits: 4294967295
   m_RenderingLayerMask: 1
-  m_Lightmapping: 4
+  m_Lightmapping: 2
   m_LightShadowCasterMode: 0
   m_AreaSize: {x: 1, y: 1}
   m_BounceIntensity: 1
@@ -72059,7 +72453,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 23
   m_IsActive: 0
 --- !u!108 &655411621
 Light:
@@ -72111,7 +72505,7 @@ Light:
     serializedVersion: 2
     m_Bits: 4294967295
   m_RenderingLayerMask: 1
-  m_Lightmapping: 4
+  m_Lightmapping: 2
   m_LightShadowCasterMode: 0
   m_AreaSize: {x: 1, y: 1}
   m_BounceIntensity: 1
@@ -74766,7 +75160,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 23
   m_IsActive: 1
 --- !u!114 &684296373
 MonoBehaviour:
@@ -75597,19 +75991,19 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 320957241921734357, guid: 5038a7eed942de44aab50c40056b8fb2, type: 3}
       propertyPath: m_LocalRotation.w
-      value: 0.99766445
+      value: 0.9976644
       objectReference: {fileID: 0}
     - target: {fileID: 320957241921734357, guid: 5038a7eed942de44aab50c40056b8fb2, type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0.068306506
+      value: 0.06830651
       objectReference: {fileID: 0}
     - target: {fileID: 320957241921734357, guid: 5038a7eed942de44aab50c40056b8fb2, type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0.000000029964102
+      value: -1.196275e-15
       objectReference: {fileID: 0}
     - target: {fileID: 320957241921734357, guid: 5038a7eed942de44aab50c40056b8fb2, type: 3}
       propertyPath: m_LocalRotation.z
-      value: -0.0000000020515347
+      value: -1.3191648e-17
       objectReference: {fileID: 0}
     - target: {fileID: 673377194195212891, guid: 5038a7eed942de44aab50c40056b8fb2, type: 3}
       propertyPath: m_Orbits.Array.data[0].m_Height
@@ -75651,6 +76045,10 @@ PrefabInstance:
       propertyPath: m_FollowOffset.z
       value: -4
       objectReference: {fileID: 0}
+    - target: {fileID: 1472757564951326961, guid: 5038a7eed942de44aab50c40056b8fb2, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 23
+      objectReference: {fileID: 0}
     - target: {fileID: 3664085910200002170, guid: 5038a7eed942de44aab50c40056b8fb2, type: 3}
       propertyPath: m_LocalPosition.y
       value: 2.25
@@ -75685,11 +76083,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5841958721930331922, guid: 5038a7eed942de44aab50c40056b8fb2, type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0.0000000074097875
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5841958721930331922, guid: 5038a7eed942de44aab50c40056b8fb2, type: 3}
       propertyPath: m_LocalRotation.z
-      value: -7.7859724e-10
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6354352696772419481, guid: 5038a7eed942de44aab50c40056b8fb2, type: 3}
       propertyPath: m_Name
@@ -75705,15 +76103,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8171385795116506694, guid: 5038a7eed942de44aab50c40056b8fb2, type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0.086394355
+      value: 0.08639436
       objectReference: {fileID: 0}
     - target: {fileID: 8171385795116506694, guid: 5038a7eed942de44aab50c40056b8fb2, type: 3}
       propertyPath: m_LocalRotation.y
-      value: -0.0000000030745937
+      value: -1.6926319e-15
       objectReference: {fileID: 0}
     - target: {fileID: 8171385795116506694, guid: 5038a7eed942de44aab50c40056b8fb2, type: 3}
       propertyPath: m_LocalRotation.z
-      value: 2.6662447e-10
+      value: -1.2230822e-16
       objectReference: {fileID: 0}
     - target: {fileID: 8516631524712579504, guid: 5038a7eed942de44aab50c40056b8fb2, type: 3}
       propertyPath: m_LocalPosition.x
@@ -79172,7 +79570,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 23
   m_IsActive: 1
 --- !u!23 &724708226
 MeshRenderer:
@@ -79387,7 +79785,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 23
   m_IsActive: 1
 --- !u!108 &725513099
 Light:
@@ -79439,7 +79837,7 @@ Light:
     serializedVersion: 2
     m_Bits: 4294967295
   m_RenderingLayerMask: 1
-  m_Lightmapping: 4
+  m_Lightmapping: 2
   m_LightShadowCasterMode: 0
   m_AreaSize: {x: 1, y: 1}
   m_BounceIntensity: 1
@@ -85898,7 +86296,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 23
   m_IsActive: 1
 --- !u!108 &794700215
 Light:
@@ -85950,7 +86348,7 @@ Light:
     serializedVersion: 2
     m_Bits: 4294967295
   m_RenderingLayerMask: 1
-  m_Lightmapping: 4
+  m_Lightmapping: 2
   m_LightShadowCasterMode: 0
   m_AreaSize: {x: 1, y: 1}
   m_BounceIntensity: 1
@@ -92434,7 +92832,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 23
   m_IsActive: 1
 --- !u!108 &847940646
 Light:
@@ -92486,7 +92884,7 @@ Light:
     serializedVersion: 2
     m_Bits: 4294967295
   m_RenderingLayerMask: 1
-  m_Lightmapping: 4
+  m_Lightmapping: 2
   m_LightShadowCasterMode: 0
   m_AreaSize: {x: 1, y: 1}
   m_BounceIntensity: 1
@@ -92796,7 +93194,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 23
   m_IsActive: 1
 --- !u!108 &851643613
 Light:
@@ -92848,7 +93246,7 @@ Light:
     serializedVersion: 2
     m_Bits: 4294967295
   m_RenderingLayerMask: 1
-  m_Lightmapping: 4
+  m_Lightmapping: 2
   m_LightShadowCasterMode: 0
   m_AreaSize: {x: 1, y: 1}
   m_BounceIntensity: 1
@@ -93299,7 +93697,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 23
   m_IsActive: 1
 --- !u!4 &856633428
 Transform:
@@ -97849,7 +98247,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 23
   m_IsActive: 1
 --- !u!23 &899426928
 MeshRenderer:
@@ -98728,7 +99126,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 23
   m_IsActive: 0
 --- !u!23 &904698468
 MeshRenderer:
@@ -99282,7 +99680,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 23
   m_IsActive: 1
 --- !u!4 &909479516
 Transform:
@@ -99819,7 +100217,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 23
   m_IsActive: 1
 --- !u!108 &911332061
 Light:
@@ -99871,7 +100269,7 @@ Light:
     serializedVersion: 2
     m_Bits: 4294967295
   m_RenderingLayerMask: 1
-  m_Lightmapping: 4
+  m_Lightmapping: 2
   m_LightShadowCasterMode: 0
   m_AreaSize: {x: 1, y: 1}
   m_BounceIntensity: 1
@@ -100919,7 +101317,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 23
   m_IsActive: 1
 --- !u!108 &919555235
 Light:
@@ -100971,7 +101369,7 @@ Light:
     serializedVersion: 2
     m_Bits: 4294967295
   m_RenderingLayerMask: 1
-  m_Lightmapping: 4
+  m_Lightmapping: 2
   m_LightShadowCasterMode: 0
   m_AreaSize: {x: 1, y: 1}
   m_BounceIntensity: 1
@@ -104139,7 +104537,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 23
   m_IsActive: 0
 --- !u!108 &944488197
 Light:
@@ -104191,7 +104589,7 @@ Light:
     serializedVersion: 2
     m_Bits: 4294967295
   m_RenderingLayerMask: 1
-  m_Lightmapping: 4
+  m_Lightmapping: 2
   m_LightShadowCasterMode: 0
   m_AreaSize: {x: 1, y: 1}
   m_BounceIntensity: 1
@@ -104296,7 +104694,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 23
   m_IsActive: 1
 --- !u!4 &945317263
 Transform:
@@ -104363,7 +104761,7 @@ Light:
     serializedVersion: 2
     m_Bits: 4294967295
   m_RenderingLayerMask: 1
-  m_Lightmapping: 4
+  m_Lightmapping: 2
   m_LightShadowCasterMode: 0
   m_AreaSize: {x: 1, y: 1}
   m_BounceIntensity: 1
@@ -107652,7 +108050,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 23
   m_IsActive: 1
 --- !u!108 &971127139
 Light:
@@ -107704,7 +108102,7 @@ Light:
     serializedVersion: 2
     m_Bits: 4294967295
   m_RenderingLayerMask: 1
-  m_Lightmapping: 4
+  m_Lightmapping: 2
   m_LightShadowCasterMode: 0
   m_AreaSize: {x: 1, y: 1}
   m_BounceIntensity: 1
@@ -107947,7 +108345,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 23
   m_IsActive: 1
 --- !u!108 &974944406
 Light:
@@ -107999,7 +108397,7 @@ Light:
     serializedVersion: 2
     m_Bits: 4294967295
   m_RenderingLayerMask: 1
-  m_Lightmapping: 4
+  m_Lightmapping: 2
   m_LightShadowCasterMode: 0
   m_AreaSize: {x: 1, y: 1}
   m_BounceIntensity: 1
@@ -113421,7 +113819,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 23
   m_IsActive: 1
 --- !u!108 &1026498322
 Light:
@@ -113473,7 +113871,7 @@ Light:
     serializedVersion: 2
     m_Bits: 4294967295
   m_RenderingLayerMask: 1
-  m_Lightmapping: 4
+  m_Lightmapping: 2
   m_LightShadowCasterMode: 0
   m_AreaSize: {x: 1, y: 1}
   m_BounceIntensity: 1
@@ -115444,7 +115842,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 23
   m_IsActive: 1
 --- !u!4 &1039997394
 Transform:
@@ -116214,7 +116612,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 23
   m_IsActive: 0
 --- !u!23 &1048888424
 MeshRenderer:
@@ -117183,7 +117581,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 23
   m_IsActive: 1
 --- !u!108 &1058651801
 Light:
@@ -117235,7 +117633,7 @@ Light:
     serializedVersion: 2
     m_Bits: 4294967295
   m_RenderingLayerMask: 1
-  m_Lightmapping: 4
+  m_Lightmapping: 2
   m_LightShadowCasterMode: 0
   m_AreaSize: {x: 1, y: 1}
   m_BounceIntensity: 1
@@ -119485,7 +119883,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 23
   m_IsActive: 1
 --- !u!4 &1077888944
 Transform:
@@ -120678,7 +121076,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 23
   m_IsActive: 0
 --- !u!4 &1087507810
 Transform:
@@ -122912,7 +123310,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 23
   m_IsActive: 1
 --- !u!4 &1105293074
 Transform:
@@ -128436,7 +128834,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 23
   m_IsActive: 1
 --- !u!114 &1152694935
 MonoBehaviour:
@@ -133425,7 +133823,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 23
   m_IsActive: 1
 --- !u!4 &1195852207
 Transform:
@@ -134150,7 +134548,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 23
   m_IsActive: 1
 --- !u!108 &1200634576
 Light:
@@ -134202,7 +134600,7 @@ Light:
     serializedVersion: 2
     m_Bits: 4294967295
   m_RenderingLayerMask: 1
-  m_Lightmapping: 4
+  m_Lightmapping: 2
   m_LightShadowCasterMode: 0
   m_AreaSize: {x: 1, y: 1}
   m_BounceIntensity: 1
@@ -138066,7 +138464,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 23
   m_IsActive: 0
 --- !u!4 &1230198002
 Transform:
@@ -139450,7 +139848,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 23
   m_IsActive: 1
 --- !u!108 &1242905126
 Light:
@@ -139502,7 +139900,7 @@ Light:
     serializedVersion: 2
     m_Bits: 4294967295
   m_RenderingLayerMask: 1
-  m_Lightmapping: 4
+  m_Lightmapping: 2
   m_LightShadowCasterMode: 0
   m_AreaSize: {x: 1, y: 1}
   m_BounceIntensity: 1
@@ -145667,7 +146065,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 23
   m_IsActive: 1
 --- !u!114 &1307943756
 MonoBehaviour:
@@ -147957,7 +148355,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 23
   m_IsActive: 0
 --- !u!108 &1330500578
 Light:
@@ -148009,7 +148407,7 @@ Light:
     serializedVersion: 2
     m_Bits: 4294967295
   m_RenderingLayerMask: 1
-  m_Lightmapping: 4
+  m_Lightmapping: 2
   m_LightShadowCasterMode: 0
   m_AreaSize: {x: 1, y: 1}
   m_BounceIntensity: 1
@@ -151041,7 +151439,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 23
   m_IsActive: 0
 --- !u!108 &1356008646
 Light:
@@ -151093,7 +151491,7 @@ Light:
     serializedVersion: 2
     m_Bits: 4294967295
   m_RenderingLayerMask: 1
-  m_Lightmapping: 4
+  m_Lightmapping: 2
   m_LightShadowCasterMode: 0
   m_AreaSize: {x: 1, y: 1}
   m_BounceIntensity: 1
@@ -152013,7 +152411,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 23
   m_IsActive: 0
 --- !u!108 &1366586221
 Light:
@@ -152065,7 +152463,7 @@ Light:
     serializedVersion: 2
     m_Bits: 4294967295
   m_RenderingLayerMask: 1
-  m_Lightmapping: 4
+  m_Lightmapping: 2
   m_LightShadowCasterMode: 0
   m_AreaSize: {x: 1, y: 1}
   m_BounceIntensity: 1
@@ -152354,7 +152752,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 23
   m_IsActive: 0
 --- !u!108 &1369041604
 Light:
@@ -152406,7 +152804,7 @@ Light:
     serializedVersion: 2
     m_Bits: 4294967295
   m_RenderingLayerMask: 1
-  m_Lightmapping: 4
+  m_Lightmapping: 2
   m_LightShadowCasterMode: 0
   m_AreaSize: {x: 1, y: 1}
   m_BounceIntensity: 1
@@ -155011,7 +155409,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 23
   m_IsActive: 0
 --- !u!4 &1389470816
 Transform:
@@ -166380,7 +166778,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 23
   m_IsActive: 0
 --- !u!108 &1495089199
 Light:
@@ -166432,7 +166830,7 @@ Light:
     serializedVersion: 2
     m_Bits: 4294967295
   m_RenderingLayerMask: 1
-  m_Lightmapping: 4
+  m_Lightmapping: 2
   m_LightShadowCasterMode: 0
   m_AreaSize: {x: 1, y: 1}
   m_BounceIntensity: 1
@@ -168592,6 +168990,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1154105481}
     m_Modifications:
+    - target: {fileID: 296078173847482927, guid: cc23b2ac1eb84974b943aa29f91696ba, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 630096041292096031, guid: cc23b2ac1eb84974b943aa29f91696ba, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
@@ -169182,7 +169584,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 23
   m_IsActive: 0
 --- !u!108 &1514575110
 Light:
@@ -169234,7 +169636,7 @@ Light:
     serializedVersion: 2
     m_Bits: 4294967295
   m_RenderingLayerMask: 1
-  m_Lightmapping: 4
+  m_Lightmapping: 2
   m_LightShadowCasterMode: 0
   m_AreaSize: {x: 1, y: 1}
   m_BounceIntensity: 1
@@ -180202,7 +180604,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 23
   m_IsActive: 1
 --- !u!108 &1614098073
 Light:
@@ -180254,7 +180656,7 @@ Light:
     serializedVersion: 2
     m_Bits: 4294967295
   m_RenderingLayerMask: 1
-  m_Lightmapping: 4
+  m_Lightmapping: 2
   m_LightShadowCasterMode: 0
   m_AreaSize: {x: 1, y: 1}
   m_BounceIntensity: 1
@@ -180549,7 +180951,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 23
   m_IsActive: 1
 --- !u!108 &1616498510
 Light:
@@ -180601,7 +181003,7 @@ Light:
     serializedVersion: 2
     m_Bits: 4294967295
   m_RenderingLayerMask: 1
-  m_Lightmapping: 4
+  m_Lightmapping: 2
   m_LightShadowCasterMode: 0
   m_AreaSize: {x: 1, y: 1}
   m_BounceIntensity: 1
@@ -181156,7 +181558,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 23
   m_IsActive: 1
 --- !u!108 &1625029764
 Light:
@@ -181208,7 +181610,7 @@ Light:
     serializedVersion: 2
     m_Bits: 4294967295
   m_RenderingLayerMask: 1
-  m_Lightmapping: 4
+  m_Lightmapping: 2
   m_LightShadowCasterMode: 0
   m_AreaSize: {x: 1, y: 1}
   m_BounceIntensity: 1
@@ -182408,7 +182810,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 23
   m_IsActive: 1
 --- !u!4 &1633856050
 Transform:
@@ -182475,7 +182877,7 @@ Light:
     serializedVersion: 2
     m_Bits: 4294967295
   m_RenderingLayerMask: 1
-  m_Lightmapping: 4
+  m_Lightmapping: 2
   m_LightShadowCasterMode: 0
   m_AreaSize: {x: 1, y: 1}
   m_BounceIntensity: 1
@@ -186212,7 +186614,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 23
   m_IsActive: 1
 --- !u!114 &1660110423
 MonoBehaviour:
@@ -189223,7 +189625,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 23
   m_IsActive: 0
 --- !u!108 &1691146269
 Light:
@@ -189275,7 +189677,7 @@ Light:
     serializedVersion: 2
     m_Bits: 4294967295
   m_RenderingLayerMask: 1
-  m_Lightmapping: 4
+  m_Lightmapping: 2
   m_LightShadowCasterMode: 0
   m_AreaSize: {x: 1, y: 1}
   m_BounceIntensity: 1
@@ -189382,7 +189784,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 23
   m_IsActive: 1
 --- !u!108 &1691483681
 Light:
@@ -189434,7 +189836,7 @@ Light:
     serializedVersion: 2
     m_Bits: 4294967295
   m_RenderingLayerMask: 1
-  m_Lightmapping: 4
+  m_Lightmapping: 2
   m_LightShadowCasterMode: 0
   m_AreaSize: {x: 1, y: 1}
   m_BounceIntensity: 1
@@ -191250,7 +191652,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 23
   m_IsActive: 1
 --- !u!4 &1704822045
 Transform:
@@ -193764,7 +194166,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 23
   m_IsActive: 1
 --- !u!108 &1719248003
 Light:
@@ -193816,7 +194218,7 @@ Light:
     serializedVersion: 2
     m_Bits: 4294967295
   m_RenderingLayerMask: 1
-  m_Lightmapping: 4
+  m_Lightmapping: 2
   m_LightShadowCasterMode: 0
   m_AreaSize: {x: 1, y: 1}
   m_BounceIntensity: 1
@@ -195572,7 +195974,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 23
   m_IsActive: 1
 --- !u!114 &1737713695
 MonoBehaviour:
@@ -196901,7 +197303,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 23
   m_IsActive: 0
 --- !u!4 &1750414858
 Transform:
@@ -197623,7 +198025,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 23
   m_IsActive: 1
 --- !u!4 &1755229419
 Transform:
@@ -198086,7 +198488,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 23
   m_IsActive: 1
 --- !u!4 &1760319632
 Transform:
@@ -200144,7 +200546,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 23
   m_IsActive: 1
 --- !u!4 &1775155551
 Transform:
@@ -202664,7 +203066,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 23
   m_IsActive: 1
 --- !u!108 &1796102491
 Light:
@@ -202716,7 +203118,7 @@ Light:
     serializedVersion: 2
     m_Bits: 4294967295
   m_RenderingLayerMask: 1
-  m_Lightmapping: 4
+  m_Lightmapping: 2
   m_LightShadowCasterMode: 0
   m_AreaSize: {x: 1, y: 1}
   m_BounceIntensity: 1
@@ -206846,7 +207248,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 23
   m_IsActive: 0
 --- !u!4 &1834232918
 Transform:
@@ -217158,7 +217560,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 23
   m_IsActive: 0
 --- !u!4 &1924520121
 Transform:
@@ -223509,7 +223911,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 23
   m_IsActive: 1
 --- !u!108 &1973868216
 Light:
@@ -223561,7 +223963,7 @@ Light:
     serializedVersion: 2
     m_Bits: 4294967295
   m_RenderingLayerMask: 1
-  m_Lightmapping: 4
+  m_Lightmapping: 2
   m_LightShadowCasterMode: 0
   m_AreaSize: {x: 1, y: 1}
   m_BounceIntensity: 1
@@ -232432,7 +232834,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 23
   m_IsActive: 1
 --- !u!108 &2052884930
 Light:
@@ -232484,7 +232886,7 @@ Light:
     serializedVersion: 2
     m_Bits: 4294967295
   m_RenderingLayerMask: 1
-  m_Lightmapping: 4
+  m_Lightmapping: 2
   m_LightShadowCasterMode: 0
   m_AreaSize: {x: 1, y: 1}
   m_BounceIntensity: 1
@@ -234991,7 +235393,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 23
   m_IsActive: 1
 --- !u!4 &2073174563
 Transform:
@@ -235058,7 +235460,7 @@ Light:
     serializedVersion: 2
     m_Bits: 4294967295
   m_RenderingLayerMask: 1
-  m_Lightmapping: 4
+  m_Lightmapping: 2
   m_LightShadowCasterMode: 0
   m_AreaSize: {x: 1, y: 1}
   m_BounceIntensity: 1
@@ -239369,7 +239771,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 23
   m_IsActive: 0
 --- !u!108 &2106689894
 Light:
@@ -239421,7 +239823,7 @@ Light:
     serializedVersion: 2
     m_Bits: 4294967295
   m_RenderingLayerMask: 1
-  m_Lightmapping: 4
+  m_Lightmapping: 2
   m_LightShadowCasterMode: 0
   m_AreaSize: {x: 1, y: 1}
   m_BounceIntensity: 1
@@ -239694,7 +240096,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 23
   m_IsActive: 1
 --- !u!4 &2109831466
 Transform:
@@ -240482,7 +240884,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 23
   m_IsActive: 1
 --- !u!108 &2114236682
 Light:
@@ -240534,7 +240936,7 @@ Light:
     serializedVersion: 2
     m_Bits: 4294967295
   m_RenderingLayerMask: 1
-  m_Lightmapping: 4
+  m_Lightmapping: 2
   m_LightShadowCasterMode: 0
   m_AreaSize: {x: 1, y: 1}
   m_BounceIntensity: 1
@@ -242706,7 +243108,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 23
   m_IsActive: 1
 --- !u!108 &2129697933
 Light:
@@ -242758,7 +243160,7 @@ Light:
     serializedVersion: 2
     m_Bits: 4294967295
   m_RenderingLayerMask: 1
-  m_Lightmapping: 4
+  m_Lightmapping: 2
   m_LightShadowCasterMode: 0
   m_AreaSize: {x: 1, y: 1}
   m_BounceIntensity: 1
@@ -244449,6 +244851,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: UIManager
       objectReference: {fileID: 0}
+    - target: {fileID: 2068181425825571986, guid: 9e4c8f36f6dd4f05a7ed7a5798dc6a11, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 23
+      objectReference: {fileID: 0}
     - target: {fileID: 7983701979222040086, guid: 9e4c8f36f6dd4f05a7ed7a5798dc6a11, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0.4955181
@@ -244516,3 +244922,4 @@ SceneRoots:
   - {fileID: 336819688}
   - {fileID: 77033809}
   - {fileID: 1307943757}
+  - {fileID: 265933379}
