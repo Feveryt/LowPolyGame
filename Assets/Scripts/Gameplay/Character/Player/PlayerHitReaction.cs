@@ -80,8 +80,19 @@ public sealed class PlayerHitReaction : MonoBehaviour
     // 将有效伤害结果分流到受击动画或死亡动画。
     private void OnDamageReceived(DamageResult result)
     {
+        // 被弹反的攻击未造成任何伤害，由 PlayerGuard 负责全部反馈。
+        if (result.WasParried)
+            return;
+
         if (!result.WasApplied)
             return;
+
+        // 被格挡的穿透伤害不取消翻滚也不累计霸体计数，只播放举盾受击反应。
+        if (result.WasBlocked)
+        {
+            playerAnimation?.PlayBlockDamage();
+            return;
+        }
 
         if (result.WasLethal)
         {

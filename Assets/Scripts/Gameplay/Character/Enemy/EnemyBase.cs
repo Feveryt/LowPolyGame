@@ -30,6 +30,15 @@ public abstract class EnemyBase : MonoBehaviour
     private Vector3 spawnPosition;
     // 敌人首次激活时记录的返回朝向。
     private Quaternion spawnRotation;
+    // 追击速度倍率；二阶段狂暴等强化通过该值缩放。
+    private float speedMultiplier = 1f;
+
+    /// <summary>当前追击速度倍率；由阶段强化逻辑调整。</summary>
+    public float SpeedMultiplier
+    {
+        get => speedMultiplier;
+        set => speedMultiplier = Mathf.Max(0.1f, value);
+    }
 
     /// <summary>当前敌人的静态配置资产。</summary>
     public EnemyConfig Config => config;

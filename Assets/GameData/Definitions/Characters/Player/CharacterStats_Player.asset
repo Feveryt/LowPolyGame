@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   id: 1
   displayName: Player
-  maxHealth: 100
+  maxHealth: 1000
   attack: 20
   defense: 10
   maxStamina: 400

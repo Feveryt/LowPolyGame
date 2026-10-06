@@ -37,6 +37,16 @@ public sealed class PlayerAnimation : MonoBehaviour
     private static readonly int DamagedHash = Animator.StringToHash("Damaged");
     // Animator 中死亡触发器的哈希值。
     private static readonly int DeadHash = Animator.StringToHash("Dead");
+    // Animator 中举盾进入防御姿态触发器的哈希值。
+    private static readonly int BlockStartHash = Animator.StringToHash("BlockStart");
+    // Animator 中收盾退出防御姿态触发器的哈希值。
+    private static readonly int BlockEndHash = Animator.StringToHash("BlockEnd");
+    // Animator 中格挡受击反应触发器的哈希值。
+    private static readonly int BlockDamageHash = Animator.StringToHash("BlockDamage");
+    // Animator 中精准防御（弹反）触发器的哈希值。
+    private static readonly int PerfectGuardHash = Animator.StringToHash("PerfectGuard");
+    // Animator 中破防硬直触发器的哈希值。
+    private static readonly int GuardBreakHash = Animator.StringToHash("GuardBreak");
     // 受击状态的短名称与完整路径哈希，用于强制从头重播。
     private static readonly int HurtStateHash = Animator.StringToHash("Damage_01");
     private static readonly int HurtStatePathHash = Animator.StringToHash("Base Layer.Damage_01");
@@ -142,6 +152,60 @@ public sealed class PlayerAnimation : MonoBehaviour
         }
     }
 
+    /// <summary>触发举盾进入防御姿态动画。</summary>
+    public void StartGuard()
+    {
+        if (animator == null)
+            return;
+
+        ResetRollTriggers();
+        animator.ResetTrigger(BlockEndHash);
+        animator.SetTrigger(BlockStartHash);
+    }
+
+    /// <summary>触发收盾退出防御姿态动画。</summary>
+    public void EndGuard()
+    {
+        animator?.SetTrigger(BlockEndHash);
+    }
+
+    /// <summary>触发格挡受击反应动画（穿透伤害命中盾牌）。</summary>
+    public void PlayBlockDamage()
+    {
+        if (animator == null)
+            return;
+
+        animator.ResetTrigger(BlockStartHash);
+        animator.SetTrigger(BlockDamageHash);
+    }
+
+    /// <summary>触发精准防御（弹反）动画。</summary>
+    public void PlayPerfectGuard()
+    {
+        if (animator == null)
+            return;
+
+        animator.ResetTrigger(BlockDamageHash);
+        animator.SetTrigger(PerfectGuardHash);
+    }
+
+    /// <summary>触发破防硬直动画，并清空攻击与防御触发器。</summary>
+    public void PlayGuardBreak()
+    {
+        if (animator == null)
+            return;
+
+        animator.ResetTrigger(BlockStartHash);
+        animator.ResetTrigger(BlockEndHash);
+        animator.ResetTrigger(BlockDamageHash);
+        animator.ResetTrigger(HeavyAttackHash);
+        animator.ResetTrigger(HeavyAttackComboHash);
+        animator.ResetTrigger(LightAttackHash);
+        animator.ResetTrigger(LightAttackComboHash);
+        ResetRollTriggers();
+        animator.SetTrigger(GuardBreakHash);
+    }
+
     /// <summary>将 Animator 的攻击命中事件转发给 PlayerCombat。</summary>
     public void AnimationEvent_AttackHit()
     {
@@ -225,6 +289,11 @@ public sealed class PlayerAnimation : MonoBehaviour
         animator.SetFloat(MoveAmountHash, 0f);
         animator.SetBool(IsRunningHash, false);
         animator.ResetTrigger(DamagedHash);
+        animator.ResetTrigger(BlockStartHash);
+        animator.ResetTrigger(BlockEndHash);
+        animator.ResetTrigger(BlockDamageHash);
+        animator.ResetTrigger(PerfectGuardHash);
+        animator.ResetTrigger(GuardBreakHash);
         animator.ResetTrigger(HeavyAttackHash);
         animator.ResetTrigger(HeavyAttackComboHash);
         animator.ResetTrigger(LightAttackHash);

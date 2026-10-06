@@ -26,6 +26,12 @@ public abstract class CharacterStats : MonoBehaviour, IDamageable
     /// <summary>生命值首次降至零时触发。</summary>
     public event Action<CharacterStats> Died;
 
+    /// <summary>
+    /// 入站伤害拦截器（格挡、弹反、石肤等）；非空时伤害先经其处理，
+    /// 返回非空结果即视为已完全结算，基类只负责广播事件。
+    /// </summary>
+    public IIncomingDamageHandler IncomingDamageHandler { get; set; }
+
     /// <summary>当前使用的静态数值配置。</summary>
     public CharacterStatsDefinition Definition => definition;
 
@@ -142,6 +148,31 @@ public abstract class CharacterStats : MonoBehaviour, IDamageable
         if (!IsAlive)
             return DamageResult.Ignored;
 
+        // 格挡/弹反/石肤等拦截器优先；返回非空表示已自行结算资源。
+        if (IncomingDamageHandler != null)
+        {
+            DamageResult? intercepted = IncomingDamageHandler.HandleDamage(request, this);
+            if (intercepted.HasValue)
+            {
+                DamageResult result = intercepted.Value;
+                DamageReceived?.Invoke(result);
+
+                if (result.WasLethal)
+                    Died?.Invoke(this);
+
+                return result;
+            }
+        }
+
+        return TakeDamageUninterrupted(request);
+    }
+
+    /// <summary>跳过拦截器按标准公式结算；供破防等"格挡失败"路径调用。</summary>
+    public DamageResult TakeDamageUninterrupted(DamageRequest request)
+    {
+        if (!IsAlive)
+            return DamageResult.Ignored;
+
         DamageResult result = DamageSystem.Calculate(request, Defense);
         if (!result.WasApplied)
             return result;
@@ -154,6 +185,15 @@ public abstract class CharacterStats : MonoBehaviour, IDamageable
             Died?.Invoke(this);
 
         return result;
+    }
+
+    /// <summary>由拦截器直接结算已折算的穿透伤害（不触发受击公式，只扣生命并广播资源变化）。</summary>
+    public void ApplySettledDamage(int finalDamage)
+    {
+        if (finalDamage <= 0)
+            return;
+
+        SetResource(ResourceType.Health, currentHealth - finalDamage);
     }
 
     // 供子类处理持续消耗时按当前剩余资源尽可能扣除。

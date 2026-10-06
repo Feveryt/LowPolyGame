@@ -39,6 +39,8 @@ public sealed class EnemyAI : MonoBehaviour
     private StateMachine<EnemyAI, EnemyState> stateMachine;
     // 攻击结束后允许再次攻击的绝对时间。
     private float nextAttackAllowedTime;
+    // 弹反/破防硬直结束的绝对时间；Hurt 状态在其之前不允许退出。
+    private float parryStunUntil = float.NegativeInfinity;
     // 非致命伤害到达时由 DamageReceived 事件置位。
     private bool hurtRequested;
     // 受击动画未启动时的保底截止时间。
@@ -106,6 +108,18 @@ public sealed class EnemyAI : MonoBehaviour
         enemy?.SetTarget(target);
     }
 
+    /// <summary>
+    /// 强制敌人进入硬直（被弹反或石肤被击碎）。
+    /// 硬直期间禁止移动与攻击，持续 duration 秒。
+    /// </summary>
+    public void Stagger(float duration)
+    {
+        parryStunUntil = Time.time + Mathf.Max(0.1f, duration);
+
+        if (stateMachine != null && CurrentState != EnemyState.Hurt && CurrentState != EnemyState.Dead)
+            hurtRequested = true;
+    }
+
     // 创建站岗、巡逻、战斗和终止状态及其转移条件。
     private void CreateStateMachine()
     {
@@ -125,7 +139,7 @@ public sealed class EnemyAI : MonoBehaviour
             EnemyState.Hurt,
             new State<EnemyAI>(
                 onEnter: _ => EnterHurt(),
-                canExit: _ => IsHurtFinished()));
+                canExit: _ => IsHurtFinished() && Time.time >= parryStunUntil));
         stateMachine.AddState(EnemyState.Dead, new State<EnemyAI>(onEnter: _ => EnterDead()));
         stateMachine.SetStartState(GetNonCombatState());
 
@@ -256,7 +270,7 @@ public sealed class EnemyAI : MonoBehaviour
             return;
 
         agent.isStopped = false;
-        agent.speed = enemy.Config.ChaseSpeed;
+        agent.speed = enemy.Config.ChaseSpeed * enemy.SpeedMultiplier;
         agent.stoppingDistance = enemy.AttackBehaviour.AttackRange * 0.9f;
         agent.SetDestination(GetTargetPosition());
     }

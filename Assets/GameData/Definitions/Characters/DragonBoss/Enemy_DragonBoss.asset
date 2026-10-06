@@ -1,0 +1,33 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 97c0a662856a77b4da137b95dcba757a, type: 3}
+  m_Name: Enemy_DragonBoss
+  m_EditorClassIdentifier: 
+  statsDefinition: {fileID: 11400000, guid: c9a384ea383bf9e4c821812d8a6d03e8, type: 2}
+  behaviourType: 0
+  patrolRadius: 5
+  patrolWaitMin: 1
+  patrolWaitMax: 3
+  detectionRange: 14
+  loseTargetRange: 24
+  sightHeight: 1.5
+  requireLineOfSight: 0
+  obstacleMask:
+    serializedVersion: 2
+    m_Bits: 0
+  chaseSpeed: 3.8
+  returnSpeed: 3
+  acceleration: 12
+  angularSpeed: 180
+  returnArrivalDistance: 0.5
+  hurtFallbackDuration: 0.35
+  deathDespawnTimeout: 8

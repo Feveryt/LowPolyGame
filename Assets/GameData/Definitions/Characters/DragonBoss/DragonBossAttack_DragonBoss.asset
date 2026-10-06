@@ -1,0 +1,53 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cee071bbf2159f147b2c8c23392b5d7f, type: 3}
+  m_Name: DragonBossAttack_DragonBoss
+  m_EditorClassIdentifier: 
+  biteDamageMultiplier: 1.3
+  biteHitOffset: {x: 0, y: 1.2, z: 2.4}
+  biteRadius: 1.6
+  biteHitWindowStart: 0.45
+  biteHitWindowEnd: 0.65
+  biteGuardStamina: 15
+  fireballDamageMultiplier: 1.2
+  fireballRange: 12
+  fireballSpeed: 12
+  fireballLifetime: 2
+  fireballCooldown: 4
+  fireballGuardStamina: 18
+  fireballVisualPrefab: {fileID: 188748, guid: 9844404222ea7574cbdd3fe075ea2560, type: 3}
+  fireballSpawnOffset: {x: 0, y: 1.6, z: 2}
+  fireballImpactPrefab: {fileID: 110446, guid: e859383d9fb42a7419df30c9afd4cf64, type: 3}
+  fireBreathVfxPrefab: {fileID: 100000, guid: 3e672ac5adb4bcf4081b9aad12579758, type: 3}
+  spellAoEDamageMultiplier: 1.6
+  spellAoERange: {x: 3, y: 9}
+  spellAoERadius: 2.6
+  spellAoETelegraphDelay: 0.8
+  spellAoECooldown: 7
+  spellAoEGuardStamina: 30
+  spellAoEWavePrefab: {fileID: 100000, guid: 630b1735bbf55c64998f16c894b7e140, type: 3}
+  spellAoEDustPrefab: {fileID: 176918, guid: 7e848074bbc36994d82d2fc75db4f197, type: 3}
+  fireBreathDamageMultiplier: 2.2
+  fireBreathRange: 8
+  fireBreathHalfAngle: 35
+  fireBreathCooldown: 9
+  attackRange: 4.5
+  attackIntervalMin: 0.8
+  attackIntervalMax: 1.6
+  actionStartTimeout: 0.5
+  phaseTwoHealthThreshold: 0.6
+  phaseTwoIntervalScale: 0.75
+  phaseTwoSpeedScale: 1.2
+  phaseTwoUnlocksBreath: 1
+  damageableMask:
+    serializedVersion: 2
+    m_Bits: 64

@@ -34,6 +34,8 @@ public sealed class PlayerCombat : MonoBehaviour
     [SerializeField] private PlayerStats playerStats;
     // 提供翻滚状态，防止翻滚期间发起或缓存攻击。
     [SerializeField] private PlayerRoll playerRoll;
+    // 提供防御与破防状态，防御期间禁止出手。
+    [SerializeField] private PlayerGuard playerGuard;
     // 负责范围型攻击判定的通用检测组件，保留给拳头和范围技能。
     [SerializeField] private HitDetection hitDetection;
     // 负责当前实体武器 Trigger 命中窗口的组件。
@@ -69,6 +71,7 @@ public sealed class PlayerCombat : MonoBehaviour
         animator = animator != null ? animator : GetComponentInChildren<Animator>();
         playerStats = playerStats != null ? playerStats : GetComponent<PlayerStats>();
         playerRoll = playerRoll != null ? playerRoll : GetComponent<PlayerRoll>();
+        playerGuard = playerGuard != null ? playerGuard : GetComponent<PlayerGuard>();
         hitDetection = hitDetection != null ? hitDetection : GetComponent<HitDetection>();
         weaponHitbox = weaponHitbox != null ? weaponHitbox : GetComponentInChildren<WeaponHitbox>(true);
         attackOrigin = attackOrigin != null ? attackOrigin : transform;
@@ -161,7 +164,8 @@ public sealed class PlayerCombat : MonoBehaviour
     private void OnHeavyAttackPressed()
     {
         if (playerAnimation == null || (playerStats != null && !playerStats.IsAlive) ||
-            (playerRoll != null && playerRoll.IsRolling))
+            (playerRoll != null && playerRoll.IsRolling) ||
+            (playerGuard != null && (playerGuard.IsGuarding || playerGuard.IsStunned)))
             return;
 
         if (!playerAnimation.IsEquipped)
@@ -195,7 +199,8 @@ public sealed class PlayerCombat : MonoBehaviour
     private void OnLightAttackPressed()
     {
         if (playerAnimation == null || (playerStats != null && !playerStats.IsAlive) ||
-            (playerRoll != null && playerRoll.IsRolling))
+            (playerRoll != null && playerRoll.IsRolling) ||
+            (playerGuard != null && (playerGuard.IsGuarding || playerGuard.IsStunned)))
             return;
 
         if (!playerAnimation.IsEquipped)
@@ -239,8 +244,11 @@ public sealed class PlayerCombat : MonoBehaviour
         if (currentAttack.AttackType == AttackType.HeavyAttack)
             AudioManager.Instance?.PlayPlayerHeavySwing();
 
+        // 精准防御后的惩罚窗口内提升本次攻击的伤害倍率。
+        float riposteMultiplier = playerGuard != null ? playerGuard.RiposteDamageMultiplier : 1f;
+
         hitDetection?.BeginAttack();
-        weaponHitbox?.BeginAttack(playerStats, currentAttack);
+        weaponHitbox?.BeginAttack(playerStats, currentAttack, riposteMultiplier);
     }
 
     /// <summary>由动画事件关闭当前攻击段的实体武器命中窗口。</summary>

@@ -38,6 +38,8 @@ public sealed class InputManager : MonoBehaviour
     private InputAction lightAttackAction;
     // 战斗状态下触发四方向翻滚的动作。
     private InputAction rollAction;
+    // 按住进入防御姿态的动作。
+    private InputAction blockAction;
     // 锁定目标动作。
     private InputAction lockOnAction;
     // 打开或关闭背包界面的动作。
@@ -61,6 +63,8 @@ public sealed class InputManager : MonoBehaviour
     public Vector2 Look => lookInputEnabled ? lookAction?.ReadValue<Vector2>() ?? Vector2.zero : Vector2.zero;
     // 当前是否按住奔跑键或手柄按键。
     public bool SprintHeld => sprintAction?.IsPressed() ?? false;
+    // 当前是否按住防御键。
+    public bool BlockHeld => blockAction?.IsPressed() ?? false;
     // 当前主导移动或视角动作的设备是否为手柄。
     public bool UsingGamepad => Gamepad.current != null &&
         (moveAction?.activeControl?.device is Gamepad || lookAction?.activeControl?.device is Gamepad);
@@ -77,6 +81,10 @@ public sealed class InputManager : MonoBehaviour
     public event Action LightAttackPressed;
     // 翻滚动作完成时触发。
     public event Action RollPressed;
+    // 按下防御键时触发。
+    public event Action BlockPressed;
+    // 松开防御键时触发。
+    public event Action BlockReleased;
     // 锁定动作完成时触发。
     public event Action LockOnPressed;
     // 背包动作完成时触发。
@@ -114,6 +122,11 @@ public sealed class InputManager : MonoBehaviour
             lightAttackAction.performed += OnLightAttackPerformed;
         if (rollAction != null)
             rollAction.performed += OnRollPerformed;
+        if (blockAction != null)
+        {
+            blockAction.performed += OnBlockPerformed;
+            blockAction.canceled += OnBlockCanceled;
+        }
         if (lockOnAction != null)
             lockOnAction.performed += OnLockOnPerformed;
         if (uiCancelAction != null)
@@ -135,6 +148,11 @@ public sealed class InputManager : MonoBehaviour
             lightAttackAction.performed -= OnLightAttackPerformed;
         if (rollAction != null)
             rollAction.performed -= OnRollPerformed;
+        if (blockAction != null)
+        {
+            blockAction.performed -= OnBlockPerformed;
+            blockAction.canceled -= OnBlockCanceled;
+        }
         if (lockOnAction != null)
             lockOnAction.performed -= OnLockOnPerformed;
         if (uiCancelAction != null)
@@ -180,6 +198,7 @@ public sealed class InputManager : MonoBehaviour
         heavyAttackAction = playerMap.FindAction("HeavyAttack", false);
         lightAttackAction = playerMap.FindAction("LightAttack", false);
         rollAction = playerMap.FindAction("Roll", false);
+        blockAction = playerMap.FindAction("Block", false);
         lockOnAction = playerMap.FindAction("LockOn", false);
         inventoryAction = playerMap.FindAction("Inventory", false);
         questAction = playerMap.FindAction("Quest", false);
@@ -261,6 +280,18 @@ public sealed class InputManager : MonoBehaviour
     private void OnRollPerformed(InputAction.CallbackContext context)
     {
         RollPressed?.Invoke();
+    }
+
+    // 将防御按下动作转发为 C# 事件。
+    private void OnBlockPerformed(InputAction.CallbackContext context)
+    {
+        BlockPressed?.Invoke();
+    }
+
+    // 将防御松开动作转发为 C# 事件。
+    private void OnBlockCanceled(InputAction.CallbackContext context)
+    {
+        BlockReleased?.Invoke();
     }
 
     // 将 Input System 的锁定完成回调转发为 C# 事件。

@@ -43,21 +43,44 @@ public readonly struct DamageRequest
     public int AttackId { get; }
     /// <summary>造成伤害的来源对象。</summary>
     public object Source { get; }
+    /// <summary>目标格挡本次攻击需要支付的体力；零表示该攻击不产生格挡消耗。</summary>
+    public float GuardStamina { get; }
+    /// <summary>本次攻击是否为不可格挡的红光攻击。</summary>
+    public bool IsUnblockable { get; }
+    /// <summary>本次攻击是否允许被精准防御（弹反）。</summary>
+    public bool IsParryable { get; }
 
     /// <summary>使用基础攻击力和可选倍率创建伤害请求。</summary>
     public DamageRequest(float attackPower, float multiplier = 1f)
-        : this(attackPower, multiplier, AttackType.Skill, 0, null)
+        : this(attackPower, multiplier, AttackType.Skill, 0, null, 0f, false, true)
     {
     }
 
     /// <summary>创建包含攻击类别、配置 ID 和来源的完整伤害请求。</summary>
     public DamageRequest(float attackPower, float multiplier, AttackType attackType, int attackId, object source = null)
+        : this(attackPower, multiplier, attackType, attackId, source, 0f, false, true)
+    {
+    }
+
+    /// <summary>创建包含格挡规则（破防体力、可否格挡/弹反）的完整伤害请求。</summary>
+    public DamageRequest(
+        float attackPower,
+        float multiplier,
+        AttackType attackType,
+        int attackId,
+        object source,
+        float guardStamina,
+        bool isUnblockable,
+        bool isParryable)
     {
         AttackPower = attackPower;
         Multiplier = multiplier;
         AttackType = attackType;
         AttackId = attackId;
         Source = source;
+        GuardStamina = Mathf.Max(0f, guardStamina);
+        IsUnblockable = isUnblockable;
+        IsParryable = isParryable && !isUnblockable;
     }
 }
 
@@ -78,23 +101,71 @@ public readonly struct DamageResult
     /// <summary>本次伤害是否使目标生命值降至零。</summary>
     public bool WasLethal { get; }
 
+    /// <summary>本次伤害是否被普通格挡吸收（目标已支付体力并只承受穿透伤害）。</summary>
+    public bool WasBlocked { get; }
+
+    /// <summary>本次攻击是否被精准防御（弹反）化解。</summary>
+    public bool WasParried { get; }
+
     /// <summary>表示无有效伤害的结果。</summary>
-    public static DamageResult Ignored => new(0f, 0, false, false);
+    public static DamageResult Ignored => new(0f, 0, false, false, false, false);
+
+    /// <summary>构造一次被弹反化解的攻击结果。</summary>
+    public static DamageResult Parried(float rawDamage) =>
+        new(rawDamage, 0, false, false, false, true);
+
+    /// <summary>构造一次被普通格挡吸收的攻击结果。</summary>
+    public static DamageResult Blocked(float rawDamage, int chipDamage) =>
+        new(rawDamage, Mathf.Max(0, chipDamage), true, false, true, false);
 
     /// <summary>使用计算出的伤害值创建结果。</summary>
     public DamageResult(float rawDamage, int finalDamage, bool wasApplied, bool wasLethal)
+        : this(rawDamage, finalDamage, wasApplied, wasLethal, false, false)
+    {
+    }
+
+    /// <summary>使用完整字段创建结果。</summary>
+    public DamageResult(
+        float rawDamage,
+        int finalDamage,
+        bool wasApplied,
+        bool wasLethal,
+        bool wasBlocked,
+        bool wasParried)
     {
         RawDamage = rawDamage;
         FinalDamage = finalDamage;
         WasApplied = wasApplied;
         WasLethal = wasLethal;
+        WasBlocked = wasBlocked;
+        WasParried = wasParried;
     }
 
     /// <summary>返回包含目标死亡状态的新结果。</summary>
     public DamageResult WithLethal(bool wasLethal)
     {
-        return new DamageResult(RawDamage, FinalDamage, WasApplied, wasLethal);
+        return new DamageResult(RawDamage, FinalDamage, WasApplied, wasLethal, WasBlocked, WasParried);
     }
+}
+
+/// <summary>
+/// 入站伤害拦截器：在伤害公式结算前决定拦截、格挡或放行。
+/// 返回 null 表示放行，按标准公式结算；返回非空结果表示已完全结算
+/// （拦截器自行修改生命/体力），CharacterStats 只负责广播事件。
+/// </summary>
+public interface IIncomingDamageHandler
+{
+    /// <summary>处理一次入站伤害请求；返回 null 表示放行。</summary>
+    DamageResult? HandleDamage(DamageRequest request, CharacterStats target);
+}
+
+/// <summary>
+/// 可被玩家精准防御（弹反）的对象；由敌人宿主实现以进入硬直。
+/// </summary>
+public interface IParriable
+{
+    /// <summary>被弹反命中后调用；返回是否已进入硬直。</summary>
+    bool OnParried(Vector3 parrierPosition);
 }
 
 /// <summary>

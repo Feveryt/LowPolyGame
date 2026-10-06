@@ -16,6 +16,8 @@ public sealed class WeaponHitbox : MonoBehaviour
     private PlayerStats attacker;
     // 当前攻击使用的伤害与分类配置。
     private PlayerAttackDefinition currentAttack;
+    // 本次攻击窗口的额外伤害倍率（精准防御后的增伤惩罚窗口）。
+    private float damageMultiplierOverride = 1f;
 
     /// <summary>当前武器命中窗口是否已经开启。</summary>
     public bool IsActive => hitboxCollider != null && hitboxCollider.enabled && currentAttack != null;
@@ -36,10 +38,11 @@ public sealed class WeaponHitbox : MonoBehaviour
     }
 
     /// <summary>开始一个新的武器攻击窗口并清空该段的命中记录。</summary>
-    public void BeginAttack(PlayerStats owner, PlayerAttackDefinition attack)
+    public void BeginAttack(PlayerStats owner, PlayerAttackDefinition attack, float damageMultiplierOverride = 1f)
     {
         attacker = owner;
         currentAttack = attack;
+        this.damageMultiplierOverride = Mathf.Max(0f, damageMultiplierOverride);
         hitTargets.Clear();
         SetHitboxEnabled(true);
     }
@@ -51,6 +54,7 @@ public sealed class WeaponHitbox : MonoBehaviour
         hitTargets.Clear();
         attacker = null;
         currentAttack = null;
+        damageMultiplierOverride = 1f;
     }
 
     // 仅在有效攻击窗口内处理进入武器触发器的目标。
@@ -77,7 +81,7 @@ public sealed class WeaponHitbox : MonoBehaviour
 
         DamageResult result = target.TakeDamage(new DamageRequest(
             attacker.Attack,
-            currentAttack.DamageMultiplier,
+            currentAttack.DamageMultiplier * damageMultiplierOverride,
             currentAttack.AttackType,
             currentAttack.AttackId,
             attacker));

@@ -30,6 +30,8 @@ public sealed class PlayerRoll : MonoBehaviour
     [SerializeField] private PlayerStats playerStats;
     // 提供攻击中限制条件的战斗组件。
     [SerializeField] private PlayerCombat playerCombat;
+    // 提供防御姿态状态；翻滚会立即取消防御。
+    [SerializeField] private PlayerGuard playerGuard;
 
     // 当前翻滚的世界平面方向，开始后保持不变。
     private Vector3 rollDirection;
@@ -50,6 +52,7 @@ public sealed class PlayerRoll : MonoBehaviour
         playerAnimation = playerAnimation != null ? playerAnimation : GetComponent<PlayerAnimation>();
         playerStats = playerStats != null ? playerStats : GetComponent<PlayerStats>();
         playerCombat = playerCombat != null ? playerCombat : GetComponent<PlayerCombat>();
+        playerGuard = playerGuard != null ? playerGuard : GetComponent<PlayerGuard>();
     }
 
     // 启用时订阅翻滚输入和死亡通知。
@@ -129,6 +132,7 @@ public sealed class PlayerRoll : MonoBehaviour
         if (IsRolling || playerController == null || playerStats == null ||
             !playerController.IsGameplayInputEnabled || !playerController.IsEquipped ||
             !playerStats.IsAlive || (playerCombat != null && playerCombat.IsAttacking) ||
+            (playerGuard != null && playerGuard.IsStunned) ||
             (playerAnimation != null && playerAnimation.IsPlayingHurt()))
         {
             return;
@@ -136,6 +140,9 @@ public sealed class PlayerRoll : MonoBehaviour
 
         if (!playerStats.TrySpendStamina(staminaCost))
             return;
+
+        // 翻滚从防御姿态无缝起手：立即取消防御，保持攻击判定关闭。
+        playerGuard?.CancelGuardImmediate();
 
         PlayerRollDirection direction = ResolveDirection(input != null ? input.Move : Vector2.zero);
         rollDirection = ResolveWorldDirection(direction);

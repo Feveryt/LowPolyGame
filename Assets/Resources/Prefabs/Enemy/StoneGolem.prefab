@@ -2199,6 +2199,8 @@ GameObject:
   - component: {fileID: 4470569105567791867}
   - component: {fileID: 7366020192983833465}
   - component: {fileID: 7036732125047607204}
+  - component: {fileID: 1786453397552856097}
+  - component: {fileID: 1729527316971715309}
   m_Layer: 7
   m_Name: StoneGolem
   m_TagString: Untagged
@@ -2288,6 +2290,8 @@ MonoBehaviour:
   definition: {fileID: 11400000, guid: b830a40fce34cb7479523160aaa2098f, type: 2}
   enemyAnimation: {fileID: 4591360521630508451}
   animator: {fileID: 5299820206492650332}
+  telegraph: {fileID: 0}
+  defend: {fileID: 0}
 --- !u!114 &5658916220402370314
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2335,6 +2339,7 @@ MonoBehaviour:
   enemyAnimation: {fileID: 4591360521630508451}
   navigationAgent: {fileID: 4470569105567791867}
   attackBehaviour: {fileID: 5357759702899381757}
+  parriedStunDuration: 1.3
 --- !u!114 &4591360521630508451
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2409,6 +2414,43 @@ MonoBehaviour:
   eventType: 1
   interactionRange: 1.5
   player: {fileID: 0}
+--- !u!114 &1786453397552856097
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8603576503534742130}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 473f6d7191c60cc4aafe45126784fe0b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  definition: {fileID: 0}
+  animationBehaviour: {fileID: 0}
+  stats: {fileID: 0}
+  enemyAi: {fileID: 0}
+  telegraph: {fileID: 0}
+--- !u!114 &1729527316971715309
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8603576503534742130}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f083bd157205b7645980d2f75f5ec9a1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  groundRingPrefab: {fileID: 177120, guid: 8fddca1ea1c00ca4d8f50aa93f290fad, type: 3}
+  groundWavePrefab: {fileID: 100000, guid: 630b1735bbf55c64998f16c894b7e140, type: 3}
+  wavePulseInterval: 0.35
+  groundWaveLifetime: 1.1
+  groundWaveScale: 0.7
+  lightHeight: 2
+  lightIntensity: 4
+  lightRange: 6
 --- !u!1 &8667347325424593032
 GameObject:
   m_ObjectHideFlags: 0

@@ -14,11 +14,53 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   punchWeight: 1
   doublePunchWeight: 1
-  attackRange: 2.2
-  attackCooldown: 2
-  actionStartTimeout: 0.5
   punchDamageMultiplier: 1
   doublePunchDamageMultiplier: 1.5
+  enableComboChains: 1
+  comboChainChance: 0.45
+  comboLinkDelay: 0.35
+  slamWeight: 0.6
+  slamDamageMultiplier: 1.6
+  slamRadius: 2.8
+  slamHitOffset: {x: 0, y: 0.2, z: 1.6}
+  slamGuardStamina: 35
+  shockwaveWeight: 1
+  shockwaveDamageMultiplier: 1.2
+  shockwaveRange: 9
+  shockwaveSpeed: 10
+  shockwaveLifetime: 1.2
+  shockwaveGuardStamina: 22
+  shockwaveVisualPrefab: {fileID: 177632, guid: ea1005eee93229642a97e7e4f3d01e00, type: 3}
+  shockwaveSpawnOffset: {x: 0, y: 1.2, z: 1}
+  shockwaveVisualScale: 0.35
+  shockwaveSpinSpeed: 720
+  debrisPrefabs:
+  - {fileID: 140864, guid: 7717b0cc406cc31468116059bfe0ce93, type: 3}
+  - {fileID: 134016, guid: e0577017f63704c439abab026bf6dd72, type: 3}
+  - {fileID: 166958, guid: b94d6f588878de4499065fc6b17e6e15, type: 3}
+  - {fileID: 183728, guid: b7131fd20b519e24980ce9178a77d63c, type: 3}
+  - {fileID: 164194, guid: c0ba893510e6e8a43aa7babaee5852d9, type: 3}
+  debrisCount: 10
+  impactDustPrefab: {fileID: 176918, guid: 7e848074bbc36994d82d2fc75db4f197, type: 3}
+  impactWavePrefab: {fileID: 100000, guid: 630b1735bbf55c64998f16c894b7e140, type: 3}
+  jumpSlamChance: 0.25
+  jumpSlamMinRange: 2.2
+  jumpSlamMaxRange: 4.5
+  jumpSlamDamageMultiplier: 2
+  jumpSlamRadius: 3.2
+  defendTriggerHits: 2
+  defendDuration: 1.4
+  defendDamageReduction: 1
+  defendCooldown: 7
+  defendMaxRange: 4.5
+  phaseTwoHealthThreshold: 0.5
+  phaseTwoIntervalScale: 0.8
+  phaseTwoSpeedScale: 1.15
+  phaseTwoExtendedCombo: 1
+  attackRange: 2.2
+  attackIntervalMin: 1
+  attackIntervalMax: 2
+  actionStartTimeout: 0.5
   meleeHitOffset: {x: 0, y: 1, z: 1.2}
   meleeHitRadius: 0.8
   damageableMask:

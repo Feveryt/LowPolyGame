@@ -16,6 +16,8 @@ public sealed class StoneGolemAnimation : EnemyAnimationBehaviour
     private static readonly int RunBackwardHash = Animator.StringToHash("Run Backward");
     private static readonly int StrafeLeftHash = Animator.StringToHash("Strafe Left");
     private static readonly int StrafeRightHash = Animator.StringToHash("Strafe Right");
+    // 石肤格挡姿态布尔参数哈希值。
+    private static readonly int DefendHash = Animator.StringToHash("Defend");
     // 敌人通用受击和死亡动作使用的触发器参数哈希值。
     private static readonly int TakeDamageHash = Animator.StringToHash("Take Damage");
     private static readonly int DieHash = Animator.StringToHash("Die");
@@ -103,6 +105,17 @@ public sealed class StoneGolemAnimation : EnemyAnimationBehaviour
     public void AnimationEvent_DealDamage()
     {
         AttackHitFrame?.Invoke();
+    }
+
+    /// <summary>切换石肤格挡姿态（控制器 Defend 布尔参数）。</summary>
+    public void SetDefending(bool defending)
+    {
+        if (animator == null)
+            return;
+
+        if (defending)
+            ResetMovement();
+        animator.SetBool(DefendHash, defending);
     }
 
     // 将所有移动 Bool 重置为 false，保证 Animator 同时只播放一种移动状态。
