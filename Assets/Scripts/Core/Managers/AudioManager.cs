@@ -42,7 +42,7 @@ public sealed class AudioManager : MonoBehaviour
         twoDimensionalSource.playOnAwake = false;
         twoDimensionalSource.spatialBlend = 0f;
         // 二维声源的整体响度由音效通道统一控制，单次播放只负责素材自身音量。
-        twoDimensionalSource.volume = AudioVolumeSettings.SfxVolume;
+        twoDimensionalSource.volume = AudioVolumeSettings.EffectiveSfxVolume;
         AudioVolumeSettings.Changed += OnVolumeSettingsChanged;
     }
 
@@ -97,11 +97,11 @@ public sealed class AudioManager : MonoBehaviour
             Instance = null;
     }
 
-    // 音效通道音量变化时立即同步二维声源；三维声源在下次播放时取用新值。
+    // 音效通道音量或静音状态变化时立即同步二维声源；三维声源在下次播放时取用新值。
     private void OnVolumeSettingsChanged()
     {
         if (twoDimensionalSource != null)
-            twoDimensionalSource.volume = AudioVolumeSettings.SfxVolume;
+            twoDimensionalSource.volume = AudioVolumeSettings.EffectiveSfxVolume;
     }
 
     /// <summary>播放通用 UI 确认声。</summary>
@@ -128,6 +128,27 @@ public sealed class AudioManager : MonoBehaviour
     public void PlayPlayerRoll() => PlayTwoDimensional(soundLibrary != null ? soundLibrary.PlayerRoll : null);
     /// <summary>播放玩家命中石材目标的反馈声。</summary>
     public void PlayPlayerStoneHit() => PlayTwoDimensional(soundLibrary != null ? soundLibrary.PlayerStoneHit : null);
+    /// <summary>播放轻攻击命中敌人的打击声；未配置时回退到石材命中声。</summary>
+    public void PlayPlayerLightHit()
+    {
+        SoundDefinition fallback = soundLibrary != null ? soundLibrary.PlayerStoneHit : null;
+        SoundDefinition definition = soundLibrary != null ? soundLibrary.PlayerLightHit : null;
+        PlayTwoDimensional(definition.HasValidClip ? definition : fallback);
+    }
+    /// <summary>播放重攻击命中敌人的打击声；未配置时回退到石材命中声。</summary>
+    public void PlayPlayerHeavyHit()
+    {
+        SoundDefinition fallback = soundLibrary != null ? soundLibrary.PlayerStoneHit : null;
+        SoundDefinition definition = soundLibrary != null ? soundLibrary.PlayerHeavyHit : null;
+        PlayTwoDimensional(definition.HasValidClip ? definition : fallback);
+    }
+    /// <summary>播放玩家被命中时的受击声；未配置时回退到石材命中声。</summary>
+    public void PlayPlayerHurtImpact()
+    {
+        SoundDefinition fallback = soundLibrary != null ? soundLibrary.PlayerStoneHit : null;
+        SoundDefinition definition = soundLibrary != null ? soundLibrary.PlayerHurtImpact : null;
+        PlayTwoDimensional(definition.HasValidClip ? definition : fallback);
+    }
     /// <summary>在守卫位置播放攻击起手预警声。</summary>
     public void PlayStoneGolemAttackWindup(Vector3 position) => PlaySpatial(soundLibrary != null ? soundLibrary.StoneGolemAttackWindup : null, position);
     /// <summary>在守卫位置播放攻击落点声。</summary>
@@ -167,7 +188,7 @@ public sealed class AudioManager : MonoBehaviour
         source.rolloffMode = AudioRolloffMode.Logarithmic;
         source.minDistance = definition.MinDistance;
         source.maxDistance = definition.MaxDistance;
-        source.volume = volume * AudioVolumeSettings.SfxVolume;
+        source.volume = volume * AudioVolumeSettings.EffectiveSfxVolume;
         source.pitch = pitch;
         source.loop = false;
         source.clip = clip;

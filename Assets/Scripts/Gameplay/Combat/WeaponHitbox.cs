@@ -86,8 +86,24 @@ public sealed class WeaponHitbox : MonoBehaviour
             currentAttack.AttackId,
             attacker));
 
-        if (result.WasApplied)
+        if (!result.WasApplied)
+            return;
+
+        // 打击感：确认扣血后按命中类型播放音效与分级屏幕震动。
+        if (result.WasBlocked)
+        {
             AudioManager.Instance?.PlayPlayerStoneHit();
+        }
+        else if (currentAttack.AttackType == AttackType.HeavyAttack)
+        {
+            AudioManager.Instance?.PlayPlayerHeavyHit();
+        }
+        else
+        {
+            AudioManager.Instance?.PlayPlayerLightHit();
+        }
+
+        HitFeedbackController.Instance?.TriggerHit(currentAttack.AttackType, result.WasBlocked);
     }
 
     // 安全切换 Collider，兼容 Inspector 尚未绑定的预制体配置阶段。

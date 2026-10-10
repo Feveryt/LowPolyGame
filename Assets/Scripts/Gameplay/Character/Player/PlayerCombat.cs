@@ -291,4 +291,15 @@ public sealed class PlayerCombat : MonoBehaviour
     {
         return IsHeavyAttackState(state) || IsLightAttackState(state);
     }
+
+    /// <summary>换装后重新定位武器命中组件（旧武器实例销毁时调用）。</summary>
+    public void RefreshWeaponHitbox(WeaponHitbox newHitbox)
+    {
+        weaponHitbox = newHitbox;
+        if (weaponHitbox == null)
+            weaponHitbox = GetComponentInChildren<WeaponHitbox>(true);
+
+        if (!IsAttacking)
+            weaponHitbox?.EndAttack();
+    }
 }

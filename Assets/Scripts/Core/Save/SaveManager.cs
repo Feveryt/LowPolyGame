@@ -131,6 +131,12 @@ public sealed class SaveManager : MonoBehaviour
             Debug.LogWarning($"[{nameof(SaveManager)}] Save has more inventory slots than the current capacity; extra slots will be skipped.", this);
 
         playerInventory.RestoreFromSave(pendingSave.gold, ResolveInventorySlots(pendingSave.inventorySlots));
+
+        // 恢复装备外观（装备中的物品不在背包快照里，必须单独还原）。
+        PlayerOutfit outfit = playerInventory.GetComponent<PlayerOutfit>();
+        if (outfit != null)
+            outfit.RestoreEquipped(pendingSave.equippedWeaponItemId, pendingSave.equippedShieldItemId);
+
         Debug.Log($"[{nameof(SaveManager)}] Game loaded from {pendingSave.sceneName}.", this);
         return true;
     }
@@ -204,6 +210,7 @@ public sealed class SaveManager : MonoBehaviour
                 : default;
         }
 
+        PlayerOutfit outfit = playerInventory.GetComponent<PlayerOutfit>();
         return new SaveData
         {
             schemaVersion = CurrentSchemaVersion,
@@ -217,6 +224,8 @@ public sealed class SaveManager : MonoBehaviour
             currentStamina = playerStats.CurrentStamina,
             currentMana = playerStats.CurrentMana,
             gold = playerInventory.Gold,
+            equippedWeaponItemId = outfit != null ? outfit.EquippedWeaponItemId : 0,
+            equippedShieldItemId = outfit != null ? outfit.EquippedShieldItemId : 0,
             inventorySlots = savedSlots,
         };
     }

@@ -163,6 +163,42 @@ MonoBehaviour:
     spatial: 0
     minDistance: 1
     maxDistance: 20
+  playerLightHit:
+    clips:
+    - {fileID: 8300000, guid: 38e03ac1eec05bf44a6cb2f5dc83c619, type: 3}
+    minVolume: 1
+    maxVolume: 1
+    minPitch: 1
+    maxPitch: 1
+    cooldown: 0
+    maxSimultaneous: 1
+    spatial: 0
+    minDistance: 1
+    maxDistance: 20
+  playerHeavyHit:
+    clips:
+    - {fileID: 8300000, guid: 10bd909a24f0e174293ff24d7bb6f931, type: 3}
+    minVolume: 1
+    maxVolume: 1
+    minPitch: 1
+    maxPitch: 1
+    cooldown: 0
+    maxSimultaneous: 1
+    spatial: 0
+    minDistance: 1
+    maxDistance: 20
+  playerHurtImpact:
+    clips:
+    - {fileID: 8300000, guid: c9fedd464be26124fbbea11403c249e7, type: 3}
+    minVolume: 1
+    maxVolume: 1
+    minPitch: 1
+    maxPitch: 1
+    cooldown: 0
+    maxSimultaneous: 1
+    spatial: 0
+    minDistance: 1
+    maxDistance: 20
   stoneGolemAttackWindup:
     clips:
     - {fileID: 8300000, guid: 5193d08424532fb4a9bfb42897c220a9, type: 3}

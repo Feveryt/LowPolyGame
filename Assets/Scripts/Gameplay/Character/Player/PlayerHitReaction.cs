@@ -94,6 +94,10 @@ public sealed class PlayerHitReaction : MonoBehaviour
             return;
         }
 
+        // 打击感：被命中的受击音效与屏幕震动。
+        AudioManager.Instance?.PlayPlayerHurtImpact();
+        HitFeedbackController.Instance?.TriggerHurt();
+
         if (result.WasLethal)
         {
             consecutiveHitCount = 0;

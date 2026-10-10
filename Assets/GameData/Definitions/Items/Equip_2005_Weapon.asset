@@ -1,0 +1,30 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2161c59fbc773454ba41e7dd7188d012, type: 3}
+  m_Name: Equip_2005_Weapon
+  m_EditorClassIdentifier: 
+  id: 2005
+  displayName: "\u77ED\u9524"
+  icon: {fileID: 21300000, guid: 70f01c80a65ceb141a72d08263d43b80, type: 3}
+  category: 2
+  quality: 0
+  description: "\u77ED\u9524\uFF1A\u53EF\u88C5\u5907\u5230\u4E3B\u624B\u6B66\u5668\u69FD\u4F4D\u3002"
+  maxStack: 1
+  buyPrice: 0
+  sellPrice: 0
+  effectType: 0
+  effectValue: 0
+  equipmentSlot: 1
+  equipmentPrefab: {fileID: 177728, guid: e5b3aeecd5587dd4c97be8dc299437ad, type: 3}
+  equipmentPosition: {x: 9, y: 3.6, z: 0}
+  equipmentEuler: {x: -90, y: 90, z: 0}
+  equipmentScale: 100

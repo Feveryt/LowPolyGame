@@ -34,6 +34,24 @@ public sealed class UISettings : SingletonPanel<UISettings>
     [Header("Scene Settings")]
     [SerializeField] private string mainMenuScenePath = "Assets/Scenes/GameScene/GameStart.unity";
 
+    // —— 面板重排用的设计尺寸（参考分辨率 1920×1080 下的像素值）——
+    // 原面板 550×480 的内嵌区域被石质边框（popup_bg 九宫格边界约 160）严重挤压，
+    // 导致按钮与音频行压在边框花纹上；这里按"标题 + 声音卡片 + 按钮列"的实际需要放大面板。
+    private const float PanelWidth = 620f;
+    private const float PanelHeight = 600f;
+    // 按钮尺寸与纵向排布（距面板顶部）。
+    private const float ButtonWidth = 300f;
+    private const float ButtonHeight = 54f;
+    private const float ButtonTopOffset = 300f;
+    private const float ButtonGap = 14f;
+
+    // 音频设置卡片根节点（Awake 时动态构建，样式取自石质主题）。
+    private RectTransform audioSectionRoot;
+    // 面板本体（"Settings Panel" 子节点），用于重排尺寸与画布自适应。
+    private RectTransform panelRect;
+    // 石质主题配置（与 SceneLoader/对话面板同一获取方式）。
+    private StoneUiTheme stoneUiTheme;
+
     // 当前场景的玩家输入转发组件。
     private InputManager inputManager;
     // 当前场景的鼠标锁定管理组件。
@@ -56,8 +74,77 @@ public sealed class UISettings : SingletonPanel<UISettings>
 
         SetPanelVisible(false);
         WireButtons();
+        BuildAudioSection();
+        ApplyPanelLayout();
         SceneManager.sceneLoaded += OnSceneLoaded;
         RefreshSceneReferences();
+    }
+
+    // 在设置面板顶部构建声音设置卡片（石质主题风格，复用 AudioVolumeSettings 持久化管线）。
+    private void BuildAudioSection()
+    {
+        RectTransform settingsPanel = transform as RectTransform;
+        if (settingsPanel == null)
+            return;
+
+        // 面板本体是"Settings Panel"子节点，音频卡片挂到它下面。
+        Transform panelHost = transform.Find("Settings Panel");
+        if (panelHost == null)
+            panelHost = transform;
+
+        panelRect = panelHost as RectTransform ?? settingsPanel;
+        stoneUiTheme = Resources.Load<StoneUiTheme>("UI/StoneUiTheme");
+        audioSectionRoot = UISettingsAudioSection.Build(
+            panelRect,
+            stoneUiTheme,
+            stoneUiTheme != null ? stoneUiTheme.ChineseFont : null);
+    }
+
+    /// <summary>
+    /// 重排设置面板：放大面板本体、把三个按钮下移到声音卡片下方并统一尺寸与间距，
+    /// 最后按画布尺寸做等比自适应，保证超宽屏等矮画布分辨率下面板不溢出、内部对齐不破坏。
+    /// </summary>
+    private void ApplyPanelLayout()
+    {
+        if (panelRect == null)
+            return;
+
+        panelRect.anchorMin = new Vector2(0.5f, 0.5f);
+        panelRect.anchorMax = new Vector2(0.5f, 0.5f);
+        panelRect.pivot = new Vector2(0.5f, 0.5f);
+        panelRect.anchoredPosition = Vector2.zero;
+        panelRect.sizeDelta = new Vector2(PanelWidth, PanelHeight);
+        panelRect.localScale = Vector3.one;
+
+        // 三个按钮自上而下等距排列：继续游戏 / 保存游戏 / 回到菜单。
+        float top = ButtonTopOffset;
+        LayoutButton(continueButton, top);
+        top += ButtonHeight + ButtonGap;
+        LayoutButton(saveButton, top);
+        top += ButtonHeight + ButtonGap;
+        LayoutButton(returnToMenuButton, top);
+
+        // 主菜单场景只显示"返回"，放在按钮列中段，视觉重心与三按钮布局一致。
+        LayoutButton(returnButton, ButtonTopOffset + ButtonHeight + ButtonGap);
+
+        UIRuntimeGraphics.FitPanelToCanvas(panelRect, new Vector2(PanelWidth, PanelHeight));
+    }
+
+    // 把按钮按"距面板顶部固定距离"排布：顶部居中锚点 + 固定尺寸，避免受面板高度变化影响。
+    private static void LayoutButton(Button button, float topOffset)
+    {
+        if (button == null)
+            return;
+
+        RectTransform rect = button.transform as RectTransform;
+        if (rect == null)
+            return;
+
+        rect.anchorMin = new Vector2(0.5f, 1f);
+        rect.anchorMax = new Vector2(0.5f, 1f);
+        rect.pivot = new Vector2(0.5f, 1f);
+        rect.sizeDelta = new Vector2(ButtonWidth, ButtonHeight);
+        rect.anchoredPosition = new Vector2(0f, -topOffset);
     }
 
     // 释放输入和场景事件订阅，并清理单例引用。
@@ -83,6 +170,8 @@ public sealed class UISettings : SingletonPanel<UISettings>
         context = SettingsContext.Gameplay;
         isOpen = true;
         AudioManager.Instance?.PlayUiOpen();
+        // 分辨率可能在运行期间变化，每次打开时重新做一次画布自适应。
+        ApplyPanelLayout();
         SetContextButtons();
         SetPanelVisible(true);
         inputManager.SetPlayerInputEnabled(false);
@@ -105,6 +194,7 @@ public sealed class UISettings : SingletonPanel<UISettings>
         context = SettingsContext.MainMenu;
         isOpen = true;
         AudioManager.Instance?.PlayUiOpen();
+        ApplyPanelLayout();
         SetContextButtons();
         SetPanelVisible(true);
         Cursor.lockState = CursorLockMode.None;

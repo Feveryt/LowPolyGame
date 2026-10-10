@@ -313,9 +313,12 @@ public sealed class DragonBossAttack : EnemyAttackBehaviour
                 animationBehaviour?.PlaySpellAoE();
                 break;
             case MoveType.FireBreath:
-                telegraph?.Flash(Color.red, 0.9f,
-                    GetGroundPoint(transform.position + transform.forward * 3f),
-                    definition.FireBreathRange * 0.4f);
+                // 龙息是锥形范围技，用扇形预警标出射程与张角（原来的圆环既对不上形状也对不上距离）。
+                telegraph?.FlashCone(Color.red, 0.9f,
+                    GetGroundPoint(transform.position),
+                    transform.forward,
+                    definition.FireBreathRange,
+                    definition.FireBreathHalfAngle);
                 BreathFireVfx();
                 animationBehaviour?.PlayFireBreath();
                 break;

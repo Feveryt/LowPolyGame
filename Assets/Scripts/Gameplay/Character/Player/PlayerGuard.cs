@@ -4,8 +4,13 @@ using UnityEngine;
 /// <summary>
 /// 玩家防御与精准防御（弹反）组件。
 /// 按住 Block 进入防御：正面攻击被格挡为穿透伤害并消耗体力，
-/// 体力不足触发破防硬直；命中前 perfectGuardWindow 秒内按下格挡判定为精准防御，
+/// 体力不足触发破防硬直；命中前 perfectGuardWindow 秒内进入防御判定为精准防御，
 /// 化解攻击并使可弹反的敌人进入硬直。
+///
+/// 防御判定依据"右键是否处于按住状态"而不是单次按下瞬间：
+/// 攻击、翻滚、受击等动作期间按住防御会被记挂，动作一结束立即自动接上防御，
+/// 并在接上的那一刻开启精准防御窗口（即"预输入/输入缓冲"）。
+/// 窗口开启时会闪一道蓝光提示可弹反时机。
 /// 通过 PlayerStats.IncomingDamageHandler 接入统一伤害管线。
 /// </summary>
 [DisallowMultipleComponent]
@@ -14,7 +19,7 @@ using UnityEngine;
 [RequireComponent(typeof(PlayerAnimation))]
 public sealed class PlayerGuard : MonoBehaviour, IIncomingDamageHandler
 {
-    // 判定精准防御的时间窗口：命中时距按下格挡不超过该值即为弹反，单位为秒。
+    // 判定精准防御的时间窗口：进入防御后该时间内被命中即为弹反，单位为秒。
     [SerializeField, Range(0.05f, 0.5f)] private float perfectGuardWindow = 0.2f;
     // 普通格挡吸收的伤害比例；0.8 表示只承受 20% 穿透伤害。
     [SerializeField, Range(0f, 1f)] private float blockAbsorption = 0.8f;
@@ -32,6 +37,8 @@ public sealed class PlayerGuard : MonoBehaviour, IIncomingDamageHandler
     [SerializeField] private GameObject perfectGuardEffectPrefab;
     // 特效生成位置相对角色的高度偏移，单位为米。
     [SerializeField, Min(0f)] private float effectHeight = 1.2f;
+    // 精准防御窗口的蓝光提示（为空时运行期自动挂到角色上）。
+    [SerializeField] private PerfectGuardWindowFX perfectGuardWindowFx;
 
     // 提供格挡按键与移动轴输入的组件。
     [SerializeField] private InputManager input;
@@ -48,7 +55,7 @@ public sealed class PlayerGuard : MonoBehaviour, IIncomingDamageHandler
     // 提供弹反与破防顿帧反馈的组件。
     [SerializeField] private CombatFeedback combatFeedback;
 
-    // 最近一次按下格挡键的游戏时间，用于精准防御判定。
+    // 最近一次进入防御姿态的游戏时间，用于精准防御判定。
     private float lastBlockPressTime = float.NegativeInfinity;
     // 破防硬直结束的游戏时间。
     private float guardBreakEndsAt = float.NegativeInfinity;
@@ -83,6 +90,13 @@ public sealed class PlayerGuard : MonoBehaviour, IIncomingDamageHandler
         playerRoll = playerRoll != null ? playerRoll : GetComponent<PlayerRoll>();
         playerController = playerController != null ? playerController : GetComponent<PlayerController>();
         combatFeedback = combatFeedback != null ? combatFeedback : GetComponent<CombatFeedback>();
+
+        // 窗口蓝光提示：优先用 Inspector 指派，否则复用角色上已有的，最后兜底自动挂载。
+        perfectGuardWindowFx = perfectGuardWindowFx != null
+            ? perfectGuardWindowFx
+            : GetComponent<PerfectGuardWindowFX>();
+        if (perfectGuardWindowFx == null)
+            perfectGuardWindowFx = gameObject.AddComponent<PerfectGuardWindowFX>();
     }
 
     // 启用时注册输入事件并接入伤害管线。
@@ -126,7 +140,7 @@ public sealed class PlayerGuard : MonoBehaviour, IIncomingDamageHandler
         CancelGuardImmediate();
     }
 
-    // 每帧处理松键兜底与破防硬直结束。
+    // 每帧处理松键兜底、破防硬直结束与"按住待命"的防御补接。
     private void Update()
     {
         if (guarding && input != null && !input.BlockHeld)
@@ -134,9 +148,14 @@ public sealed class PlayerGuard : MonoBehaviour, IIncomingDamageHandler
 
         if (IsStunned && Time.time >= guardBreakEndsAt)
             guardBreakEndsAt = float.NegativeInfinity;
+
+        // 防御判定看的是"按键是否按住"，而不是按下的那一瞬间：
+        // 攻击/翻滚/受击动作期间按住右键会被记挂，动作一结束立刻接上防御（并开启精准防御窗口）。
+        if (!guarding && !IsStunned && input != null && input.BlockHeld)
+            TryStartGuard();
     }
 
-    // 响应格挡按下，进入防御姿态。
+    // 响应格挡按下：允许时立即进入防御。
     private void OnBlockPressed()
     {
         TryStartGuard();
@@ -164,8 +183,14 @@ public sealed class PlayerGuard : MonoBehaviour, IIncomingDamageHandler
         }
 
         guarding = true;
+        // 精准防御窗口从"真正进入防御"的那一刻开始计时，
+        // 这样按住右键等攻击动作收招后自动接上的防御同样带有弹反判定。
         lastBlockPressTime = Time.time;
         playerAnimation?.StartGuard();
+
+        // 闪一道蓝光，把"可以弹反"的时间段明确标出来。
+        // guarding 已置位，所以同一段持续防御不会重复闪。
+        perfectGuardWindowFx?.Flash(perfectGuardWindow);
     }
 
     // 松开格挡或被翻滚/受击打断时结束防御。

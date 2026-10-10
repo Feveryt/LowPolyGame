@@ -382,7 +382,12 @@ public sealed class StoneGolemAttack : EnemyAttackBehaviour
                 animator.SetTrigger(SlamTriggerHash);
                 break;
             case MoveType.Shockwave:
-                telegraph?.Flash(Color.yellow, 0.7f);
+                // 震波是贴地弹道：用细长扇形把整条飞行路径标出来，否则玩家只看到一团黄光不知道会飞向哪。
+                telegraph?.FlashCone(Color.yellow, 0.7f,
+                    GetGroundPoint(transform.position),
+                    transform.forward,
+                    definition.ShockwaveRange,
+                    9f);
                 AudioManager.Instance?.PlayStoneGolemAttackWindup(transform.position);
                 animator.SetTrigger(ShockwaveTriggerHash);
                 break;

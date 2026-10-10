@@ -19,6 +19,8 @@ public sealed class SoundDefinition
 
     /// <summary>相邻两次播放之间的最短间隔。</summary>
     public float Cooldown => cooldown;
+    /// <summary>是否配置了至少一个可用片段。</summary>
+    public bool HasValidClip => TryGetRandomClip(out _);
     /// <summary>同一音效允许同时存在的最大播放数。</summary>
     public int MaxSimultaneous => maxSimultaneous;
     /// <summary>是否按三维距离衰减播放。</summary>
@@ -104,6 +106,12 @@ public sealed class SoundLibrary : ScriptableObject
     [SerializeField] private SoundDefinition playerHeavySwing = new SoundDefinition();
     [SerializeField] private SoundDefinition playerRoll = new SoundDefinition();
     [SerializeField] private SoundDefinition playerStoneHit = new SoundDefinition();
+    // 轻攻击命中敌人（确认扣血）的打击音。
+    [SerializeField] private SoundDefinition playerLightHit = new SoundDefinition();
+    // 重攻击命中敌人（确认扣血）的打击音。
+    [SerializeField] private SoundDefinition playerHeavyHit = new SoundDefinition();
+    // 玩家被敌人命中（确认扣血）的受击音。
+    [SerializeField] private SoundDefinition playerHurtImpact = new SoundDefinition();
     [Header("Stone Golem")]
     [SerializeField] private SoundDefinition stoneGolemAttackWindup = new SoundDefinition();
     [SerializeField] private SoundDefinition stoneGolemImpact = new SoundDefinition();
@@ -135,6 +143,12 @@ public sealed class SoundLibrary : ScriptableObject
     public SoundDefinition PlayerRoll => playerRoll;
     /// <summary>玩家攻击石材目标成功的命中音效。</summary>
     public SoundDefinition PlayerStoneHit => playerStoneHit;
+    /// <summary>轻攻击命中敌人的打击音。</summary>
+    public SoundDefinition PlayerLightHit => playerLightHit;
+    /// <summary>重攻击命中敌人的打击音。</summary>
+    public SoundDefinition PlayerHeavyHit => playerHeavyHit;
+    /// <summary>玩家被命中时的受击音。</summary>
+    public SoundDefinition PlayerHurtImpact => playerHurtImpact;
     /// <summary>石头守卫攻击起手预警音效。</summary>
     public SoundDefinition StoneGolemAttackWindup => stoneGolemAttackWindup;
     /// <summary>石头守卫攻击落点音效。</summary>

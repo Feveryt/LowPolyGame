@@ -253,7 +253,7 @@ public sealed class BgmManager : MonoBehaviour
     private void RefreshTargetVolume()
     {
         targetVolume = currentTrack != null
-            ? Mathf.Clamp01(currentTrack.Volume) * AudioVolumeSettings.BgmVolume
+            ? Mathf.Clamp01(currentTrack.Volume) * AudioVolumeSettings.EffectiveBgmVolume
             : 0f;
     }
 

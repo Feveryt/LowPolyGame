@@ -34,6 +34,16 @@ public sealed class PlayerInventory : MonoBehaviour
     public int Gold => gold;
     /// <summary>只读访问当前所有槽位。</summary>
     public IReadOnlyList<InventorySlot> Slots => model?.Slots;
+
+    /// <summary>读取指定槽位的内容。</summary>
+    public bool TryGetItem(int slotIndex, out InventorySlot slot)
+    {
+        if (model != null)
+            return model.TryGetItem(slotIndex, out slot);
+
+        slot = default;
+        return false;
+    }
     /// <summary>背包槽位或物品状态发生变化时触发。</summary>
     public event Action<InventoryChangedEvent> InventoryChanged;
     /// <summary>金币发生变化时触发。</summary>

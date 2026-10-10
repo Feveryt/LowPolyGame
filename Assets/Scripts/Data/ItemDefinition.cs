@@ -9,8 +9,28 @@ public enum ItemCategory
     Consumable,
     /// <summary>用于合成或任务的材料。</summary>
     Material,
-    /// <summary>当前版本仅展示信息的装备物品。</summary>
+    /// <summary>可穿戴/可手持的装备物品。</summary>
     Equipment,
+}
+
+/// <summary>
+/// 装备槽位类型。素材库当前只有武器与盾牌的完整模型，
+/// 头盔/护甲/配饰槽位为扩展预留。
+/// </summary>
+public enum EquipmentSlotType
+{
+    /// <summary>不属于任何装备槽位。</summary>
+    None,
+    /// <summary>主手武器。</summary>
+    Weapon,
+    /// <summary>副手盾牌。</summary>
+    Shield,
+    /// <summary>头部装备（预留）。</summary>
+    Helmet,
+    /// <summary>身体护甲（预留）。</summary>
+    Armor,
+    /// <summary>配饰（预留）。</summary>
+    Accessory,
 }
 
 /// <summary>
@@ -81,6 +101,19 @@ public class ItemDefinition : ScriptableObject
     [Min(0f)]
     [SerializeField] private float effectValue;
 
+    // 装备配置：仅 Equipment 类物品使用。
+    [Header("装备配置")]
+    // 装备槽位类型，决定该物品可穿到哪个装备格。
+    [SerializeField] private EquipmentSlotType equipmentSlot = EquipmentSlotType.None;
+    // 装备外观模型预制体（换装时实例化到角色挂点）。
+    [SerializeField] private GameObject equipmentPrefab;
+    // 挂点本地位置偏移（不同模型轴心不同，可按物品微调）。
+    [SerializeField] private Vector3 equipmentPosition;
+    // 挂点本地欧拉角。
+    [SerializeField] private Vector3 equipmentEuler;
+    // 挂点本地缩放（武器类通常 100，取决于模型导入单位）。
+    [SerializeField] private float equipmentScale = 1f;
+
     /// <summary>物品稳定 ID。</summary>
     public int Id => id;
     /// <summary>物品显示名称。</summary>
@@ -103,6 +136,19 @@ public class ItemDefinition : ScriptableObject
     public ItemEffectType EffectType => effectType;
     /// <summary>单次使用的效果数值。</summary>
     public float EffectValue => Mathf.Max(0f, effectValue);
+    /// <summary>装备槽位类型。</summary>
+    public EquipmentSlotType EquipmentSlot => equipmentSlot;
+    /// <summary>装备外观模型预制体。</summary>
+    public GameObject EquipmentPrefab => equipmentPrefab;
+    /// <summary>挂点本地位置偏移。</summary>
+    public Vector3 EquipmentPosition => equipmentPosition;
+    /// <summary>挂点本地欧拉角。</summary>
+    public Vector3 EquipmentEuler => equipmentEuler;
+    /// <summary>挂点本地缩放。</summary>
+    public float EquipmentScale => Mathf.Max(0.001f, equipmentScale);
+    /// <summary>是否为可装备物品。</summary>
+    public bool IsEquippable =>
+        category == ItemCategory.Equipment && equipmentSlot != EquipmentSlotType.None;
 
     /// <summary>判断物品是否可以堆叠。</summary>
     public bool IsStackable => MaxStack > 1;

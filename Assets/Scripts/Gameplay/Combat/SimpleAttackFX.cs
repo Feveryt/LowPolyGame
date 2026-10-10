@@ -41,6 +41,11 @@ public static class SimpleAttackFX
         go.transform.position = position;
 
         ParticleSystem particles = go.AddComponent<ParticleSystem>();
+        // AddComponent 会立刻让系统进入播放状态，此时再改 duration 会触发 Unity 的
+        // "Setting the duration while system is still playing is not supported" Assert 并刷屏；
+        // 先彻底停掉再配置，最后统一 Play。
+        particles.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+
         ParticleSystem.MainModule main = particles.main;
         main.duration = 0.5f;
         main.loop = false;

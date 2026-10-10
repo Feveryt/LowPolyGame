@@ -2447,10 +2447,10 @@ MonoBehaviour:
   groundWavePrefab: {fileID: 100000, guid: 630b1735bbf55c64998f16c894b7e140, type: 3}
   wavePulseInterval: 0.35
   groundWaveLifetime: 1.1
-  groundWaveScale: 0.7
+  groundWaveScale: 0.85
   lightHeight: 2
-  lightIntensity: 4
-  lightRange: 6
+  lightIntensity: 8
+  lightRange: 10
 --- !u!1 &8667347325424593032
 GameObject:
   m_ObjectHideFlags: 0

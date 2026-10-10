@@ -32,6 +32,10 @@ public sealed class SaveData
     public float currentMana;
     // 保存时持有的金币数量。
     public int gold;
+    // 已装备武器的物品 ID；0 表示未装备（使用默认外观）。
+    public int equippedWeaponItemId;
+    // 已装备盾牌的物品 ID；0 表示未装备。
+    public int equippedShieldItemId;
     // 按固定背包槽位顺序保存的物品数据。
     public InventorySlotSaveData[] inventorySlots;
 

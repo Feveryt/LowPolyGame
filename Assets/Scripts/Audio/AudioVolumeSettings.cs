@@ -11,6 +11,8 @@ public static class AudioVolumeSettings
     public const string SfxVolumeKey = "Audio.SfxVolume";
     /// <summary>背景音乐通道音量的持久化键。</summary>
     public const string BgmVolumeKey = "Audio.BgmVolume";
+    /// <summary>全局静音开关的持久化键。</summary>
+    public const string MutedKey = "Audio.Muted";
     /// <summary>未保存过设置时使用的音效默认音量，保持既有音效响度不变。</summary>
     public const float DefaultSfxVolume = 1f;
     /// <summary>未保存过设置时使用的音乐默认音量，代表曲目配置中的设计音量。</summary>
@@ -21,8 +23,10 @@ public static class AudioVolumeSettings
     // 两条通道的当前音量，取值范围 0 到 1。
     private static float sfxVolume = DefaultSfxVolume;
     private static float bgmVolume = DefaultBgmVolume;
+    // 全局静音开关。
+    private static bool muted;
 
-    /// <summary>任意一条通道音量变化后触发，监听方自行读取需要的通道。</summary>
+    /// <summary>任意一条通道音量或静音状态变化后触发，监听方自行读取需要的通道。</summary>
     public static event Action Changed;
 
     /// <summary>音效通道音量，取值 0 到 1。</summary>
@@ -43,6 +47,35 @@ public static class AudioVolumeSettings
             EnsureLoaded();
             return bgmVolume;
         }
+    }
+
+    /// <summary>全局静音开关。</summary>
+    public static bool Muted
+    {
+        get
+        {
+            EnsureLoaded();
+            return muted;
+        }
+    }
+
+    /// <summary>音效通道实际生效音量（静音时为 0），供音频播放端直接取用。</summary>
+    public static float EffectiveSfxVolume => Muted ? 0f : SfxVolume;
+
+    /// <summary>音乐通道实际生效音量（静音时为 0），供音频播放端直接取用。</summary>
+    public static float EffectiveBgmVolume => Muted ? 0f : BgmVolume;
+
+    /// <summary>设置全局静音开关并写入 PlayerPrefs。</summary>
+    public static void SetMuted(bool value)
+    {
+        EnsureLoaded();
+        if (muted == value)
+            return;
+
+        muted = value;
+        PlayerPrefs.SetInt(MutedKey, value ? 1 : 0);
+        PlayerPrefs.Save();
+        Changed?.Invoke();
     }
 
     /// <summary>设置音效通道音量，自动钳制到 0 到 1 并写入 PlayerPrefs。</summary>
@@ -73,15 +106,17 @@ public static class AudioVolumeSettings
         Changed?.Invoke();
     }
 
-    /// <summary>恢复两条通道的默认音量，并清除已保存的设置。</summary>
+    /// <summary>恢复两条通道的默认音量并解除静音，同时清除已保存的设置。</summary>
     public static void ResetToDefaults()
     {
         EnsureLoaded();
         PlayerPrefs.DeleteKey(SfxVolumeKey);
         PlayerPrefs.DeleteKey(BgmVolumeKey);
+        PlayerPrefs.DeleteKey(MutedKey);
         PlayerPrefs.Save();
         sfxVolume = DefaultSfxVolume;
         bgmVolume = DefaultBgmVolume;
+        muted = false;
         Changed?.Invoke();
     }
 
@@ -102,5 +137,6 @@ public static class AudioVolumeSettings
         loaded = true;
         sfxVolume = Mathf.Clamp01(PlayerPrefs.GetFloat(SfxVolumeKey, DefaultSfxVolume));
         bgmVolume = Mathf.Clamp01(PlayerPrefs.GetFloat(BgmVolumeKey, DefaultBgmVolume));
+        muted = PlayerPrefs.GetInt(MutedKey, 0) == 1;
     }
 }
