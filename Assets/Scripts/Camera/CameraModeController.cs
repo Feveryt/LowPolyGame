@@ -81,18 +81,29 @@ public class CameraModeController : MonoBehaviour, IController
             .UnRegisterWhenGameObjectDestroyed(gameObject);
     }
 
-    // 订阅视角输入开关，确保暂停 UI 打开当帧停止 FreeLook 轴输入。
+    // 订阅视角输入开关与编辑器热保存，分别处理暂停输入和临时轨道参数。
     private void OnEnable()
     {
         if (input != null)
             input.LookInputEnabledChanged += OnLookInputEnabledChanged;
+
+#if UNITY_EDITOR
+        // Cinemachine 保存运行参数前还原设计半径，避免把避障缩放写回场景。
+        SaveDuringPlay.SaveDuringPlay.OnHotSave -= RestoreBaseOrbitRadii;
+        SaveDuringPlay.SaveDuringPlay.OnHotSave += RestoreBaseOrbitRadii;
+#endif
     }
 
-    // 取消视角输入开关订阅，避免控制器销毁后残留回调。
+    // 取消事件订阅并还原基础轨道，避免临时距离留在相机上。
     private void OnDisable()
     {
         if (input != null)
             input.LookInputEnabledChanged -= OnLookInputEnabledChanged;
+
+#if UNITY_EDITOR
+        SaveDuringPlay.SaveDuringPlay.OnHotSave -= RestoreBaseOrbitRadii;
+#endif
+        RestoreBaseOrbitRadii();
     }
 
     // 每帧处理水平和垂直视角输入或锁定朝向。
@@ -250,6 +261,23 @@ public class CameraModeController : MonoBehaviour, IController
         baseOrbitRadii = new float[explorationCamera.m_Orbits.Length];
         for (int i = 0; i < baseOrbitRadii.Length; i++)
             baseOrbitRadii[i] = explorationCamera.m_Orbits[i].m_Radius;
+    }
+
+    // 在退出运行或停用控制器时移除锁定及避障产生的临时半径偏移。
+    private void RestoreBaseOrbitRadii()
+    {
+        if (explorationCamera == null || baseOrbitRadii == null)
+            return;
+
+        for (int i = 0; i < baseOrbitRadii.Length && i < explorationCamera.m_Orbits.Length; i++)
+        {
+            CinemachineFreeLook.Orbit orbit = explorationCamera.m_Orbits[i];
+            orbit.m_Radius = baseOrbitRadii[i];
+            explorationCamera.m_Orbits[i] = orbit;
+        }
+
+        orbitScale = 1f;
+        currentLockExtraRadius = 0f;
     }
 
     // 将自由状态的水平输入交给 FreeLook 水平轴更新。

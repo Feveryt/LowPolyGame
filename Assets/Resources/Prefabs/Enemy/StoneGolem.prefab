@@ -2201,6 +2201,7 @@ GameObject:
   - component: {fileID: 7036732125047607204}
   - component: {fileID: 1786453397552856097}
   - component: {fileID: 1729527316971715309}
+  - component: {fileID: 7139623724299283566}
   m_Layer: 7
   m_Name: StoneGolem
   m_TagString: Untagged
@@ -2451,6 +2452,19 @@ MonoBehaviour:
   lightHeight: 2
   lightIntensity: 8
   lightRange: 10
+--- !u!114 &7139623724299283566
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8603576503534742130}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 210bf83ebd3347440881cb1eaea182d6, type: 3}
+  m_Name:
+  m_EditorClassIdentifier:
+  displayNameOverride: "\u77F3\u5934\u4EBA"
 --- !u!1 &8667347325424593032
 GameObject:
   m_ObjectHideFlags: 0

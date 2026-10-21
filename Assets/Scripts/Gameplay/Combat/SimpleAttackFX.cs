@@ -5,11 +5,32 @@ using UnityEngine;
 /// 程序化简易攻击特效：完全不依赖美术资源与 ShaderGraph。
 /// SlashArc：程序生成 120° 扇环"斩击弧"网格（Sprites/Default 支持顶点色半透明），
 ///           命中瞬间在攻击者前方快速放大并淡出。
+/// MeleeArc：以命中区为中心、半径按世界米计算的朝前近战弧线。
 /// CubeBurst：彩色方块粒子爆（Unity 默认粒子即为方块），作为一切命中的兜底反馈。
 /// 所有材质运行时创建、用后即焚；片段数少、生命周期短，性能开销可忽略。
 /// </summary>
 public static class SimpleAttackFX
 {
+    /// <summary>以实际命中区为中心显示朝前的近战弧线；半径按米计算，供敌人拳击和撕咬出手反馈使用。</summary>
+    public static void MeleeArc(Vector3 center, Vector3 forward, float radius, Color color)
+    {
+        Shader shader = Shader.Find("Sprites/Default");
+        if (radius <= 0f || shader == null || forward.sqrMagnitude < 0.0001f)
+            return;
+
+        GameObject host = new GameObject("MeleeArc");
+        host.transform.position = center - forward.normalized * (radius * 0.4f);
+        host.transform.rotation = Quaternion.LookRotation(forward.normalized, Vector3.up) * Quaternion.Euler(90f, 0f, 0f);
+        Mesh mesh = BuildArcMesh(1f);
+        host.AddComponent<MeshFilter>().sharedMesh = mesh;
+        MeshRenderer renderer = host.AddComponent<MeshRenderer>();
+        Material material = new Material(shader) { color = color };
+        renderer.sharedMaterial = material;
+        renderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+        renderer.receiveShadows = false;
+        host.AddComponent<FXLifetime>().Initialize(material, mesh, 0.24f, radius * 0.65f, radius);
+    }
+
     /// <summary>在 origin 前方立起一道弧形斩击特效（竖直平面，朝 forward 方向）。</summary>
     public static void SlashArc(Vector3 origin, Vector3 forward, float radius, Color color)
     {

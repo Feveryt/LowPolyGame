@@ -104,3 +104,10 @@ MonoBehaviour:
     - Assets/Scenes/GameScene/Demo 1.unity
     keepAlive: 1
     activateOnEnsure: 0
+  - id: EnemyBossHealth
+    prefab: {fileID: 8966556128108427925, guid: b5a5e770e8f82724eb2abbc3b32190eb, type: 3}
+    scenePaths:
+    - Assets/Scenes/GameScene/Demo 1.unity
+    - Assets/Scenes/GameScene/TestAct.unity
+    keepAlive: 0
+    activateOnEnsure: 1

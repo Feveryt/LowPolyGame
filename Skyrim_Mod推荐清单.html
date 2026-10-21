@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>上古卷轴5 天际 · Nexus Mod 推荐清单</title>
+<style>
+  :root{
+    --bg:#0e1013;
+    --panel:#171a1f;
+    --panel-2:#1d2128;
+    --line:#2a2f38;
+    --txt:#e8eaee;
+    --txt-2:#a3aab6;
+    --txt-3:#6f7784;
+    --accent:#d9a441;
+    --accent-2:#7fb3d5;
+    --green:#5fbf7f;
+    --purple:#a98fdb;
+    --red:#e06c6c;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{
+    background:radial-gradient(1200px 600px at 50% -200px,#1b2028 0%,var(--bg) 60%);
+    color:var(--txt);
+    font-family:"Segoe UI","Microsoft YaHei",system-ui,-apple-system,sans-serif;
+    line-height:1.65;
+    padding:48px 20px 80px;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:1080px;margin:0 auto;}
+
+  header{text-align:center;margin-bottom:44px;}
+  header .kicker{
+    display:inline-block;
+    font-size:12px;letter-spacing:3px;text-transform:uppercase;
+    color:var(--accent);border:1px solid rgba(217,164,65,.35);
+    padding:5px 14px;border-radius:999px;margin-bottom:18px;
+  }
+  header h1{font-size:34px;font-weight:700;letter-spacing:.5px;margin-bottom:12px;}
+  header h1 span{color:var(--accent);}
+  header p{color:var(--txt-2);font-size:15px;max-width:720px;margin:0 auto;}
+  header .note{
+    margin-top:18px;font-size:13px;color:var(--txt-3);
+  }
+  header .note b{color:var(--txt-2);font-weight:600;}
+
+  .section{margin-top:52px;}
+  .section > h2{
+    font-size:20px;font-weight:700;display:flex;align-items:center;gap:11px;
+    padding-bottom:12px;margin-bottom:22px;border-bottom:1px solid var(--line);
+  }
+  .section > h2 .dot{width:9px;height:9px;border-radius:3px;flex:0 0 auto;}
+  .section > h2 small{font-size:13px;font-weight:400;color:var(--txt-3);margin-left:auto;}
+
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:15px;}
+
+  .card{
+    background:linear-gradient(180deg,var(--panel) 0%,var(--panel-2) 100%);
+    border:1px solid var(--line);border-radius:12px;
+    padding:17px 18px;position:relative;
+    transition:border-color .18s ease,transform .18s ease,box-shadow .18s ease;
+  }
+  .card:hover{
+    border-color:rgba(217,164,65,.45);
+    transform:translateY(-2px);
+    box-shadow:0 10px 28px -14px rgba(0,0,0,.8);
+  }
+  .card .top{display:flex;align-items:flex-start;gap:9px;margin-bottom:8px;}
+  .card h3{font-size:15.5px;font-weight:650;line-height:1.4;}
+  .card h3 a{color:var(--txt);text-decoration:none;}
+  .card h3 a:hover{color:var(--accent);text-decoration:underline;}
+  .card p{font-size:13px;color:var(--txt-2);}
+  .card .meta{
+    margin-top:11px;display:flex;flex-wrap:wrap;gap:7px;align-items:center;
+  }
+  .tag{
+    font-size:11px;padding:2.5px 9px;border-radius:6px;
+    background:rgba(255,255,255,.05);color:var(--txt-3);
+    border:1px solid var(--line);white-space:nowrap;
+  }
+  .tag.id{font-family:ui-monospace,Consolas,monospace;color:var(--accent-2);}
+  .tag.must{color:var(--green);border-color:rgba(95,191,127,.3);background:rgba(95,191,127,.08);}
+  .tag.core{color:var(--purple);border-color:rgba(169,143,219,.3);background:rgba(169,143,219,.08);}
+  .tag.opt{color:var(--txt-3);}
+
+  a.link{
+    display:inline-flex;align-items:center;gap:5px;
+    margin-top:12px;font-size:12.5px;font-weight:600;
+    color:var(--accent);text-decoration:none;
+  }
+  a.link:hover{text-decoration:underline;}
+  a.link svg{width:12px;height:12px;}
+
+  .callout{
+    background:rgba(217,164,65,.06);border:1px solid rgba(217,164,65,.25);
+    border-left:3px solid var(--accent);
+    border-radius:10px;padding:16px 18px;margin-top:20px;
+    font-size:13.5px;color:var(--txt-2);
+  }
+  .callout b{color:var(--txt);}
+  .callout ol{margin:8px 0 0 20px;}
+  .callout li{margin:3px 0;}
+
+  footer{
+    margin-top:60px;padding-top:22px;border-top:1px solid var(--line);
+    text-align:center;font-size:12.5px;color:var(--txt-3);
+  }
+  footer b{color:var(--txt-2);}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div class="kicker">Nexus Mods · Skyrim SE / AE</div>
+    <h1>上古卷轴5 天际 <span>Mod 推荐清单</span></h1>
+    <p>按「画质」与「功能性」两大类整理，全部来自 Nexus Mods（N 网），以《天际 特别版 / 周年纪念版》(SE/AE) 为准。</p>
+    <div class="note">默认面向 <b>Special Edition / Anniversary Edition</b>。若你玩的是老版本 Legendary Edition (LE)，Mod ID 不同，需另找对应版本页面。</div>
+  </header>
+
+  <!-- ===== 前置基础 ===== -->
+  <section class="section">
+    <h2><span class="dot" style="background:var(--green)"></span>零、前置基础 <small>不装这些，绝大多数 Mod 都跑不起来</small></h2>
+    <div class="grid">
+
+      <div class="card">
+        <div class="top"><h3><a href="https://skse.silverlock.org/" target="_blank">SKSE64</a></h3></div>
+        <p>脚本扩展器，几乎一切高级 Mod 的地基。不在 N 网，需去官方站下载对应游戏版本的包。</p>
+        <div class="meta"><span class="tag must">必装</span><span class="tag core">框架</span></div>
+        <a class="link" href="https://skse.silverlock.org/" target="_blank">前往官方站下载 →</a>
+      </div>
+
+      <div class="card">
+        <div class="top"><h3><a href="https://www.nexusmods.com/skyrimspecialedition/mods/32444" target="_blank">Address Library for SKSE Plugins</a></h3></div>
+        <p>SKSE 插件的地址库，SSE Engine Fixes 等大量插件都依赖它。</p>
+        <div class="meta"><span class="tag must">必装</span><span class="tag id">ID 32444</span></div>
+        <a class="link" href="https://www.nexusmods.com/skyrimspecialedition/mods/32444" target="_blank">Nexus 页面 →</a>
+      </div>
+
+      <div class="card">
+        <div class="top"><h3><a href="https://www.nexusmods.com/skyrimspecialedition/mods/266" target="_blank">Unofficial Skyrim Special Edition Patch (USSEP)</a></h3></div>
+        <p>社区非官方修复补丁，修掉官方几万个 Bug。几乎所有 Mod 列表的基线，强烈建议第一个装。</p>
+        <div class="meta"><span class="tag must">必装</span><span class="tag id">ID 266</span></div>
+        <a class="link" href="https://www.nexusmods.com/skyrimspecialedition/mods/266" target="_blank">Nexus 页面 →</a>
+      </div>
+
+      <div class="card">
+        <div class="top"><h3><a href="https://www.nexusmods.com/skyrimspecialedition/mods/17230" target="_blank">SSE Engine Fixes</a></h3></div>
+        <p>修复引擎层 Bug：无限读盘、内存泄漏、崩溃。重度装 Mod 时几乎是稳定性的关键。</p>
+        <div class="meta"><span class="tag must">必装</span><span class="tag id">ID 17230</span></div>
+        <a class="link" href="https://www.nexusmods.com/skyrimspecialedition/mods/17230" target="_blank">Nexus 页面 →</a>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ===== 画质 ===== -->
+  <section class="section">
+    <h2><span class="dot" style="background:var(--accent)"></span>一、画质 Mod <small>纹理 / 模型 / 光照 / 天气 / 后处理</small></h2>
+    <div class="grid">
+
+      <div class="card">
+        <div class="top"><h3><a href="https://www.nexusmods.com/skyrimspecialedition/mods/659" target="_blank">Static Mesh Improvement Mod (SMIM)</a></h3></div>
+        <p>画质地基。把原版大量粗糙的低模（桶、绳索、家具、建筑细节、链条等）重建为精细模型，覆盖上万处。</p>
+        <div class="meta"><span class="tag core">模型·必装</span><span class="tag id">ID 659</span></div>
+        <a class="link" href="https://www.nexusmods.com/skyrimspecialedition/mods/659" target="_blank">Nexus 页面 →</a>
+      </div>
+
+      <div class="card">
+        <div class="top"><h3><a href="https://www.nexusmods.com/skyrimspecialedition/mods/34179" target="_blank">Skyland AIO</a></h3></div>
+        <p>一次性到位的高清纹理大包，覆盖地表、建筑、物件。省去装几十个独立材质包，性价比最高。装在 SMIM 之后让它覆盖。</p>
+        <div class="meta"><span class="tag core">纹理·推荐</span><span class="tag id">ID 34179</span></div>
+        <a class="link" href="https://www.nexusmods.com/skyrimspecialedition/mods/34179" target="_blank">Nexus 页面 →</a>
+      </div>
+
+      <div class="card">
+        <div class="top"><h3><a href="https://www.nexusmods.com/skyrimspecialedition/mods/2347" target="_blank">Skyrim 202X (Pfuscher)</a></h3></div>
+        <p>SE 下载量最高的高清材质包之一，城市、地牢、武器、护甲全面重制。可选 2K/4K，按显存挑。</p>
+        <div class="meta"><span class="tag">纹理·经典</span><span class="tag id">ID 2347</span></div>
+        <a class="link" href="https://www.nexusmods.com/skyrimspecialedition/mods/2347" target="_blank">Nexus 页面 →</a>
+      </div>
+
+      <div class="card">
+        <div class="top"><h3><a href="https://www.nexusmods.com/skyrimspecialedition/mods/5870" target="_blank">Ruins Clutter Improved</a></h3></div>
+        <p>专门优化地牢/遗迹里的杂物（罐子、骨头、挂饰）高清化，配合 SMIM 观感更统一。</p>
+        <div class="meta"><span class="tag">纹理</span><span class="tag id">ID 5870</span></div>
+        <a class="link" href="https://www.nexusmods.com/skyrimspecialedition/mods/5870" target="_blank">Nexus 页面 →</a>
+      </div>
+
+      <div class="card">
+        <div class="top"><h3><a href="https://www.nexusmods.com/skyrimspecialedition/mods/43158" target="_blank">Lux</a></h3></div>
+        <p>室内光照革命。重做所有室内光源，产生真实阴影与体积感——旅店温暖、墓穴阴森。需配 Patch Hub 补丁。</p>
+        <div class="meta"><span class="tag core">光照·推荐</span><span class="tag id">ID 43158</span></div>
+        <a class="link" href="https://www.nexusmods.com/skyrimspecialedition/mods/43158" target="_blank">Nexus 页面 →</a>
+      </div>
+
+      <div class="card">
+        <div class="top"><h3><a href="https://www.nexusmods.com/skyrimspecialedition/mods/56095" target="_blank">Lux Orbis</a></h3></div>
+        <p>Lux 的室外篇，重做室外光照。与 Lux 同作者、完美兼容，通常一起装。</p>
+        <div class="meta"><span class="tag">光照·室外</span><span class="tag id">ID 56095</span></div>
+        <a class="link" href="https://www.nexusmods.com/skyrimspecialedition/mods/56095" target="_blank">Nexus 页面 →</a>
+      </div>
+
+      <div class="card">
+        <div class="top"><h3><a href="https://www.nexusmods.com/skyrimspecialedition/mods/63588" target="_blank">Lux Via</a></h3></div>
+        <p>给道路/荒野添加大量路边灯光与地标灯，夜晚赶路氛围感拉满。Lux 套件第三件。</p>
+        <div class="meta"><span class="tag">光照·道路</span><span class="tag id">ID 63588</span></div>
+        <a class="link" href="https://www.nexusmods.com/skyrimspecialedition/mods/63588" target="_blank">Nexus 页面 →</a>
+      </div>
+
+      <div class="card">
+        <div class="top"><h3><a href="https://www.nexusmods.com/skyrimspecialedition/mods/24791" target="_blank">Cathedral Weathers and Seasons</a></h3></div>
+        <p>天气与季节大修，性能友好。日落、晨雾、暴雪都极具质感，是搭配 ENB 的主流底盘。</p>
+        <div class="meta"><span class="tag core">天气·推荐</span><span class="tag id">ID 24791</span></div>
+        <a class="link" href="https://www.nexusmods.com/skyrimspecialedition/mods/24791" target="_blank">Nexus 页面 →</a>
+      </div>
+
+      <div class="card">
+        <div class="top"><h3><a href="https://www.nexusmods.com/skyrimspecialedition/mods/42731" target="_blank">Azurite Weathers and Seasons</a></h3></div>
+        <p>近年很火的天气包，风格更写实通透，与 Community Shaders 组合效果极佳。</p>
+        <div class="meta"><span class="tag">天气</span><span class="tag id">ID 42731</span></div>
+        <a class="link" href="https://www.nexusmods.com/skyrimspecialedition/mods/42731" target="_blank">Nexus 页面 →</a>
+      </div>
+
+      <div class="card">
+        <div class="top"><h3><a href="https://www.nexusmods.com/skyrimspecialedition/mods/2182" target="_blank">Realistic Water Two SE</a></h3></div>
+        <p>不依赖 ENB 的水体大修，替换全图水面/河流/瀑布，色彩与流动更自然。</p>
+        <div class="meta"><span class="tag">水体</span><span class="tag id">ID 2182</span></div>
+        <a class="link" href="https://www.nexusmods.com/skyrimspecialedition/mods/2182" target="_blank">Nexus 页面 →</a>
+      </div>
+
+      <div class="card">
+        <div class="top"><h3><a href="https://www.nexusmods.com/skyrimspecialedition/mods/37061" target="_blank">Water for ENB</a></h3></div>
+        <p>如果你用 ENB / Community Shaders，这款水体效果更出色（需 ENB 或 CS 支持）。</p>
+        <div class="meta"><span class="tag">水体·ENB</span><span class="tag id">ID 37061</span></div>
+        <a class="link" href="https://www.nexusmods.com/skyrimspecialedition/mods/37061" target="_blank">Nexus 页面 →</a>
+      </div>
+
+      <div class="card">
+        <div class="top"><h3><a href="https://www.nexusmods.com/skyrimspecialedition/mods/50961" target="_blank">Happy Little Trees</a></h3></div>
+        <p>高质量且性能友好的树木模型替换，森林密度与轮廓大幅提升，几乎不拖帧。</p>
+        <div class="meta"><span class="tag core">植被·推荐</span><span class="tag id">ID 50961</span></div>
+        <a class="link" href="https://www.nexusmods.com/skyrimspecialedition/mods/50961" target="_blank">Nexus 页面 →</a>
+      </div>
+
+      <div class="card">
+        <div class="top"><h3><a href="https://www.nexusmods.com/skyrimspecialedition/search/?gsearch=Folkvangr" target="_blank">Folkvangr – Grass and Landscape Overhaul</a></h3></div>
+        <p>让原版稀疏草地变得茂密丰富，平原与森林观感完全不同（吃性能，注意取舍）。</p>
+        <div class="meta"><span class="tag">草地</span><span class="tag opt">N 网搜索</span></div>
+        <a class="link" href="https://www.nexusmods.com/skyrimspecialedition/search/?gsearch=Folkvangr" target="_blank">Nexus 搜索 →</a>
+      </div>
+
+      <div class="card">
+        <div class="top"><h3><a href="https://www.nexusmods.com/skyrimspecialedition/mods/37085" target="_blank">Embers XD</a></h3></div>
+        <p>火焰/余烬特效重制，篝火、熔炉、火把的粒子效果更真实细腻。</p>
+        <div class="meta"><span class="tag">特效</span><span class="tag id">ID 37085</span></div>
+        <a class="link" href="https://www.nexusmods.com/skyrimspecialedition/mods/37085" target="_blank">Nexus 页面 →</a>
+      </div>
+
+      <div class="card">
+        <div class="top"><h3><a href="https://www.nexusmods.com/skyrimspecialedition/mods/86492" target="_blank">Community Shaders</a></h3></div>
+        <p>ENB 的性能友好替代方案，社区维护的着色器框架。显存/显卡一般时的首选后处理底座。</p>
+        <div class="meta"><span class="tag core">后处理·推荐</span><span class="tag id">ID 86492</span></div>
+        <a class="link" href="https://www.nexusmods.com/skyrimspecialedition/mods/86492" target="_blank">Nexus 页面 →</a>
+      </div>
+
+      <div class="card">
+        <div class="top"><h3><a href="https://www.nexusmods.com/skyrimspecialedition/mods/39113" target="_blank">Rudy ENB for Cathedral Weathers</a></h3></div>
+        <p>最经典的 ENB 预设之一，配合 Cathedral Weathers 即开即用，电影级调色与景深。需先装 ENBSeries 主体。</p>
+        <div class="meta"><span class="tag">ENB 预设</span><span class="tag id">ID 39113</span></div>
+        <a class="link" href="https://www.nexusmods.com/skyrimspecialedition/mods/39113" target="_blank">Nexus 页面 →</a>
+      </div>
+
+      <div class="card">
+        <div class="top"><h3><a href="https://www.nexusmods.com/skyrimspecialedition/mods/68518" target="_blank">DynDOLOD 3 Alpha</a></h3></div>
+        <p>远景 LOD 生成工具，解决原版「远处树山凭空消失」的问题。装完其他画质 Mod 后最后生成。</p>
+        <div class="meta"><span class="tag core">远景·进阶</span><span class="tag id">ID 68518</span></div>
+        <a class="link" href="https://www.nexusmods.com/skyrimspecialedition/mods/68518" target="_blank">Nexus 页面 →</a>
+      </div>
+
+    </div>
+
+    <div class="callout">
+      <b>画质 Mod 安装顺序建议（从下往上覆盖）：</b>
+      <ol>
+        <li>USSEP → SMIM（先把模型修好）</li>
+        <li>Skyland AIO / Skyrim 202X（纹理，覆盖 SMIM）</li>
+        <li>Happy Little Trees、草 Mod</li>
+        <li>Lux → Lux Orbis → Lux Via（同一套光照，别和 ELFX 混用）</li>
+        <li>天气（Cathedral / Azurite，二选一）</li>
+        <li>Community Shaders 或 ENB → 水体 Mod</li>
+        <li>最后跑 DynDOLOD 生成远景</li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- ===== 功能性 ===== -->
+  <section class="section">
+    <h2><span class="dot" style="background:var(--accent-2)"></span>二、功能性 Mod <small>UI / 修复 / 玩法 / 便利性</small></h2>
+    <div class="grid">
+
+      <div class="card">
+        <div class="top"><h3><a href="https://www.nexusmods.com/skyrimspecialedition/mods/12604" target="_blank">SkyUI</a></h3></div>
+        <p>最重要的 UI Mod。重做物品栏/魔法/交易界面，支持排序、搜索、筛选，并带来 MCM 菜单——上百个 Mod 靠它配置。需 SKSE64。</p>
+        <div class="meta"><span class="tag must">必装</span><span class="tag id">ID 12604</span></div>
+        <a class="link" href="https://www.nexusmods.com/skyrimspecialedition/mods/12604" target="_blank">Nexus 页面 →</a>
+      </div>
+
+      <div class="card">
+        <div class="top"><h3><a href="https://www.nexusmods.com/skyrimspecialedition/mods/5804" target="_blank">A Quality World Map</a></h3></div>
+        <p>给世界地图加上手绘道路与高清贴图，找路、找目标点一目了然，还包含索瑟姆地图。</p>
+        <div class="meta"><span class="tag must">强烈推荐</span><span class="tag id">ID 5804</span></div>
+        <a class="link" href="https://www.nexusmods.com/skyrimspecialedition/mods/5804" target="_blank">Nexus 页面 →</a>
+      </div>
+
+      <div class="card">
+        <div class="top"><h3><a href="https://www.nexusmods.com/skyrimspecialedition/mods/64339" target="_blank">Better Third Person Selection</a></h3></div>
+        <p>修复第三人称下选不中物体/对话对象的问题，操作手感提升明显。</p>
+        <div class="meta"><span class="tag">UI / 操作</span><span class="tag id">ID 64339</span></div>
+        <a class="link" href="https://www.nexusmods.com/skyrimspecialedition/mods/64339" target="_blank">Nexus 页面 →</a>
+      </div>
+
+      <div class="card">
+        <div class="top"><h3><a href="https://www.nexusmods.com/skyrimspecialedition/mods/21085" target="_blank">QuickLoot RE</a></h3></div>
+        <p>把《辐射4》的快速拾取界面搬进天际，鼠标悬停即可拿取容器物品，不用点开菜单。</p>
+        <div class="meta"><span class="tag">UI / 便利</span><span class="tag id">ID 21085</span></div>
+        <a class="link" href="https://www.nexusmods.com/skyrimspecialedition/mods/21085" target="_blank">Nexus 页面 →</a>
+      </div>
+
+      <div class="card">
+        <div class="top"><h3><a href="https://www.nexusmods.com/skyrimspecialedition/mods/33261" target="_blank">Bug Fixes SSE</a></h3></div>
+        <p>USSEP 之外的一批引擎/脚本 Bug 修复，进一步降低崩溃与任务卡死概率。</p>
+        <div class="meta"><span class="tag">修复</span><span class="tag id">ID 33261</span></div>
+        <a class="link" href="https://www.nexusmods.com/skyrimspecialedition/mods/33261" target="_blank">Nexus 页面 →</a>
+      </div>
+
+      <div class="card">
+        <div class="top"><h3><a href="https://www.nexusmods.com/skyrimspecialedition/mods/59818" target="_blank">Crash Logger SSE</a></h3></div>
+        <p>崩溃日志工具。崩溃时生成详细日志，帮你定位是哪个 Mod/脚本导致 CTD，重度装 Mod 必备。</p>
+        <div class="meta"><span class="tag">修复 / 排错</span><span class="tag id">ID 59818</span></div>
+        <a class="link" href="https://www.nexusmods.com/skyrimspecialedition/mods/59818" target="_blank">Nexus 页面 →</a>
+      </div>
+
+      <div class="card">
+        <div class="top"><h3><a href="https://www.nexusmods.com/skyrimspecialedition/mods/34705" target="_blank">SSE Display Tweaks</a></h3></div>
+        <p>解锁帧率、修复高帧率下的物理异常、减少卡顿，并改善超宽屏支持。性能取向必备。</p>
+        <div class="meta"><span class="tag must">性能</span><span class="tag id">ID 34705</span></div>
+        <a class="link" href="https://www.nexusmods.com/skyrimspecialedition/mods/34705" target="_blank">Nexus 页面 →</a>
+      </div>
+
+      <div class="card">
+        <div class="top"><h3><a href="https://www.nexusmods.com/skyrimspecialedition/mods/1137" target="_blank">Ordinator – Perks of Skyrim</a></h3></div>
+        <p>技能天赋树大修，约 400 个新天赋，让每个流派都能玩出花样（陷阱弓、亡灵法、声波诗人…）。</p>
+        <div class="meta"><span class="tag core">玩法·推荐</span><span class="tag id">ID 1137</span></div>
+        <a class="link" href="https://www.nexusmods.com/skyrimspecialedition/mods/1137" target="_blank">Nexus 页面 →</a>
+      </div>
+
+      <div class="card">
+        <div class="top"><h3><a href="https://www.nexusmods.com/skyrimspecialedition/mods/1090" target="_blank">Apocalypse – Magic of Skyrim</a></h3></div>
+        <p>新增约 150+ 个平衡、贴合世界观的法术，法师体验直接升级，与 Ordinator 完美搭配。</p>
+        <div class="meta"><span class="tag core">玩法·推荐</span><span class="tag id">ID 1090</span></div>
+        <a class="link" href="https://www.nexusmods.com/skyrimspecialedition/mods/1090" target="_blank">Nexus 页面 →</a>
+      </div>
+
+      <div class="card">
+        <div class="top"><h3><a href="https://www.nexusmods.com/skyrimspecialedition/mods/272" target="_blank">Alternate Start – Live Another Life</a></h3></div>
+        <p>跳过冗长的开场，直接以不同身份开始（坐船抵达、囚犯、旅人、逃犯…），重开新档神器。</p>
+        <div class="meta"><span class="tag">玩法 / 开局</span><span class="tag id">ID 272</span></div>
+        <a class="link" href="https://www.nexusmods.com/skyrimspecialedition/mods/272" target="_blank">Nexus 页面 →</a>
+      </div>
+
+      <div class="card">
+        <div class="top"><h3><a href="https://www.nexusmods.com/skyrimspecialedition/mods/276" target="_blank">Cutting Room Floor</a></h3></div>
+        <p>恢复大量被官方删减的剧情、NPC、任务与地点，内容自然融入原版，几乎无违和感。</p>
+        <div class="meta"><span class="tag core">内容</span><span class="tag id">ID 276</span></div>
+        <a class="link" href="https://www.nexusmods.com/skyrimspecialedition/mods/276" target="_blank">Nexus 页面 →</a>
+      </div>
+
+      <div class="card">
+        <div class="top"><h3><a href="https://www.nexusmods.com/skyrimspecialedition/mods/173" target="_blank">Immersive Citizens – AI Overhaul</a></h3></div>
+        <p>让 NPC 作息、反应更真实：有日程、会对事件作出反应，世界一下子「活」了。注意读兼容说明。</p>
+        <div class="meta"><span class="tag">沉浸 / AI</span><span class="tag id">ID 173</span></div>
+        <a class="link" href="https://www.nexusmods.com/skyrimspecialedition/mods/173" target="_blank">Nexus 页面 →</a>
+      </div>
+
+      <div class="card">
+        <div class="top"><h3><a href="https://www.nexusmods.com/skyrimspecialedition/mods/2272" target="_blank">Run For Your Lives</a></h3></div>
+        <p>屠龙时让平民跑进屋里躲，而不是拎着铁剑冲上去送死——村庄 NPC 存活率大幅提升。</p>
+        <div class="meta"><span class="tag">沉浸 / 便利</span><span class="tag id">ID 2272</span></div>
+        <a class="link" href="https://www.nexusmods.com/skyrimspecialedition/mods/2272" target="_blank">Nexus 页面 →</a>
+      </div>
+
+      <div class="card">
+        <div class="top"><h3><a href="https://www.nexusmods.com/skyrimspecialedition/mods/11802" target="_blank">Legacy of the Dragonborn</a></h3></div>
+        <p>超大型内容 Mod：新增公会、任务、以及一座可陈列你所有收藏的博物馆。被誉为「必装之一」的大作。</p>
+        <div class="meta"><span class="tag">内容·大型</span><span class="tag id">ID 11802</span></div>
+        <a class="link" href="https://www.nexusmods.com/skyrimspecialedition/mods/11802" target="_blank">Nexus 页面 →</a>
+      </div>
+
+      <div class="card">
+        <div class="top"><h3><a href="https://www.nexusmods.com/skyrimspecialedition/mods/19080" target="_blank">RaceMenu</a></h3></div>
+        <p>强化版角色创建器：更细致的捏脸、身体涂装、发型预设，搭配外观 Mod 几乎是标配。</p>
+        <div class="meta"><span class="tag">外观 / 捏脸</span><span class="tag id">ID 19080</span></div>
+        <a class="link" href="https://www.nexusmods.com/skyrimspecialedition/mods/19080" target="_blank">Nexus 页面 →</a>
+      </div>
+
+      <div class="card">
+        <div class="top"><h3><a href="https://www.nexusmods.com/skyrimspecialedition/mods/2424" target="_blank">Enhanced Lights and FX (ELFX)</a></h3></div>
+        <p>另一套经典光照大修（与 Lux 二选一，别同时装）。让光源更真实、加入体积光与烟雾。</p>
+        <div class="meta"><span class="tag">光照·备选</span><span class="tag id">ID 2424</span></div>
+        <a class="link" href="https://www.nexusmods.com/skyrimspecialedition/mods/2424" target="_blank">Nexus 页面 →</a>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ===== 提示 ===== -->
+  <section class="section">
+    <h2><span class="dot" style="background:var(--red)"></span>三、装 Mod 前必须知道的几件事</h2>
+    <div class="callout">
+      <ol>
+        <li><b>用 Mod 管理器</b>：强烈推荐 <b>Mod Organizer 2 (MO2)</b> 或 <b>Vortex</b>，别手动往游戏目录里丢文件。</li>
+        <li><b>排序工具</b>：用 <b>LOOT</b> 自动整理加载顺序（load order），能避免大量冲突与闪退。</li>
+        <li><b>版本要对上</b>：SKSE64、Address Library、各类 SKSE 插件的版本必须和你的游戏版本一致，否则直接闪退。</li>
+        <li><b>光照别混用</b>：Lux 系列 和 ELFX 二选一；天气 Mod 也只留一个。</li>
+        <li><b>先少后多</b>：一次装一个、装完进游戏测一下，出问题好定位。</li>
+        <li><b>多读 Mod 描述页</b>：需求（Requirements）和兼容性（Compatibility）栏能帮你避开 90% 的坑。</li>
+      </ol>
+    </div>
+  </section>
+
+  <footer>
+    <b>提示</b>：以上均面向《天际 特别版 / 周年纪念版》(SE/AE)。链接与 Mod ID 整理自公开资料，下载前请以 Nexus 页面实际最新版为准。<br>
+    建议登录 N 网账号并给作者 <b>Endorse（点赞）</b>，这是对 Mod 作者最好的支持。
+  </footer>
+
+</div>
+</body>
+</html>

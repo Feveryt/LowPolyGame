@@ -321,6 +321,7 @@ public sealed class EnemyAI : MonoBehaviour
     private void EnterHurt()
     {
         hurtRequested = false;
+        enemy.AttackBehaviour.CancelAttack();
         StopNavigation();
         hurtStartDeadline = Time.time + enemy.Config.HurtFallbackDuration;
         enemy.Animation?.PlayHurt();
@@ -341,6 +342,8 @@ public sealed class EnemyAI : MonoBehaviour
 
         deathDespawnScheduled = true;
         deathAnimationFinished = false;
+        hurtRequested = false;
+        enemy.AttackBehaviour.CancelAttack();
         StopNavigation();
         enemy.Animation?.PlayDie();
         StartCoroutine(DestroyAfterDeathAnimation());
@@ -395,11 +398,11 @@ public sealed class EnemyAI : MonoBehaviour
         Destroy(enemy != null ? enemy.gameObject : gameObject);
     }
 
-    // 响应非致命伤害并请求下次状态机逻辑切换到受击。
+    // 普通伤害在攻击期间只结算生命值，不缓存受击；弹反等显式硬直仍由 Stagger 请求。
     private void OnDamageReceived(DamageResult result)
     {
-        // 受击状态中的后续伤害仍由数值层结算，但不缓存新的动画请求。
-        if (result.WasApplied && !result.WasLethal && CurrentState != EnemyState.Hurt)
+        if (result.WasApplied && !result.WasLethal &&
+            CurrentState != EnemyState.Attack && CurrentState != EnemyState.Hurt && CurrentState != EnemyState.Dead)
             hurtRequested = true;
     }
 
@@ -454,15 +457,21 @@ public sealed class EnemyAI : MonoBehaviour
         if (enemy == null)
             enemy = GetComponent<EnemyBase>();
 
-        if (enemy?.Stats != null)
-            enemy.Stats.DamageReceived += OnDamageReceived;
+        // 部分预制体未序列化 Stats 引用，OnEnable 可能先于 EnemyBase.Awake 执行。
+        EnemyStats stats = enemy != null && enemy.Stats != null ? enemy.Stats : GetComponent<EnemyStats>();
+        if (stats != null)
+        {
+            stats.DamageReceived -= OnDamageReceived;
+            stats.DamageReceived += OnDamageReceived;
+        }
     }
 
     // 取消敌人数值组件的受击事件订阅。
     private void UnsubscribeEvents()
     {
-        if (enemy?.Stats != null)
-            enemy.Stats.DamageReceived -= OnDamageReceived;
+        EnemyStats stats = enemy != null && enemy.Stats != null ? enemy.Stats : GetComponent<EnemyStats>();
+        if (stats != null)
+            stats.DamageReceived -= OnDamageReceived;
 
         if (enemy?.Animation != null)
             enemy.Animation.DeathAnimationFinished -= OnDeathAnimationFinished;

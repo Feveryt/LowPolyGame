@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>上古卷轴5 天际 · Mod 安装全流程指南</title>
+<style>
+  :root{
+    --bg:#0e1013; --panel:#171a1f; --panel2:#1d2128; --line:#2a2f38;
+    --txt:#e8eaee; --txt2:#a3aab6; --txt3:#6f7784;
+    --gold:#d9a441; --blue:#7fb3d5; --green:#5fbf7f; --purple:#a98fdb; --red:#e06c6c;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{background:radial-gradient(1200px 600px at 50% -200px,#1b2028 0%,var(--bg) 60%);
+    color:var(--txt);font-family:"Segoe UI","Microsoft YaHei",system-ui,sans-serif;line-height:1.68;
+    padding:44px 20px 90px;-webkit-font-smoothing:antialiased;}
+  .wrap{max-width:1080px;margin:0 auto;}
+  header{text-align:center;margin-bottom:40px;}
+  .kicker{display:inline-block;font-size:12px;letter-spacing:3px;text-transform:uppercase;
+    color:var(--gold);border:1px solid rgba(217,164,65,.35);padding:5px 14px;border-radius:999px;margin-bottom:16px;}
+  header h1{font-size:32px;font-weight:700;margin-bottom:10px;}
+  header h1 span{color:var(--gold);}
+  header p{color:var(--txt2);font-size:15px;max-width:760px;margin:0 auto;}
+
+  .hero{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin:26px 0 8px;}
+  .hero div{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px 14px;font-size:13px;color:var(--txt2);}
+  .hero div b{color:var(--txt);display:block;font-size:13.5px;margin-bottom:2px;}
+
+  .section{margin-top:46px;}
+  .section>h2{font-size:20px;font-weight:700;display:flex;align-items:center;gap:11px;
+    padding-bottom:12px;margin-bottom:20px;border-bottom:1px solid var(--line);}
+  .section>h2 .n{width:26px;height:26px;border-radius:8px;background:var(--gold);color:#161616;
+    font-size:14px;font-weight:800;display:flex;align-items:center;justify-content:center;flex:0 0 auto;}
+  .section>h2 small{font-size:13px;font-weight:400;color:var(--txt3);margin-left:auto;}
+
+  .card{background:linear-gradient(180deg,var(--panel) 0%,var(--panel2) 100%);
+    border:1px solid var(--line);border-radius:12px;padding:16px 18px;margin-bottom:13px;
+    display:flex;gap:14px;align-items:flex-start;}
+  .card .idx{font-family:ui-monospace,Consolas,monospace;color:var(--gold);font-size:13px;
+    font-weight:700;flex:0 0 34px;padding-top:2px;}
+  .card .body{flex:1;min-width:0;}
+  .card h3{font-size:15.5px;font-weight:650;margin-bottom:4px;}
+  .card h3 a{color:var(--txt);text-decoration:none;}
+  .card h3 a:hover{color:var(--gold);text-decoration:underline;}
+  .card p{font-size:13px;color:var(--txt2);}
+  .card .file{font-size:12.5px;color:var(--blue);margin-top:6px;font-family:ui-monospace,Consolas,monospace;}
+  .tags{margin-top:9px;display:flex;flex-wrap:wrap;gap:6px;}
+  .tag{font-size:11px;padding:2.5px 9px;border-radius:6px;background:rgba(255,255,255,.05);
+    color:var(--txt3);border:1px solid var(--line);white-space:nowrap;}
+  .tag.must{color:var(--green);border-color:rgba(95,191,127,.35);background:rgba(95,191,127,.08);}
+  .tag.rec{color:var(--gold);border-color:rgba(217,164,65,.35);background:rgba(217,164,65,.08);}
+  .tag.opt{color:var(--txt3);}
+  .tag.dll{color:var(--purple);border-color:rgba(169,143,219,.35);background:rgba(169,143,219,.08);}
+  .tag.id{font-family:ui-monospace,Consolas,monospace;color:var(--blue);}
+
+  .callout{background:rgba(217,164,65,.06);border:1px solid rgba(217,164,65,.25);
+    border-left:3px solid var(--gold);border-radius:10px;padding:15px 18px;margin:16px 0;font-size:13.5px;color:var(--txt2);}
+  .callout.warn{background:rgba(224,108,108,.07);border-color:rgba(224,108,108,.28);border-left-color:var(--red);}
+  .callout.ok{background:rgba(95,191,127,.07);border-color:rgba(95,191,127,.28);border-left-color:var(--green);}
+  .callout b{color:var(--txt);}
+  .callout ol,.callout ul{margin:8px 0 0 20px;}
+  .callout li{margin:4px 0;}
+  code{background:#0b0d10;border:1px solid var(--line);border-radius:5px;padding:1px 6px;
+    font-family:ui-monospace,Consolas,monospace;font-size:12.5px;color:var(--gold);}
+
+  .step{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px 18px;margin-bottom:14px;}
+  .step h3{font-size:15.5px;margin-bottom:8px;color:var(--gold);}
+  .step p,.step li{font-size:13.5px;color:var(--txt2);}
+  .step ol,.step ul{margin:8px 0 0 20px;}
+
+  .grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:14px;}
+  table{width:100%;border-collapse:collapse;font-size:13px;margin-top:8px;}
+  th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line);}
+  th{color:var(--txt3);font-weight:600;font-size:12px;text-transform:uppercase;letter-spacing:.5px;}
+  td{color:var(--txt2);}
+  td b{color:var(--txt);}
+  footer{margin-top:56px;padding-top:22px;border-top:1px solid var(--line);
+    text-align:center;font-size:12.5px;color:var(--txt3);}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div class="kicker">Skyrim SE/AE · 自动化装 Mod 方案</div>
+    <h1>上古卷轴5 天际 <span>Mod 安装全流程指南</span></h1>
+    <p>针对你的机器（RTX 4060 Laptop 8GB / 16GB 内存 / 1080p）定制。目标：稳定、好看、开箱即玩。</p>
+    <div class="hero">
+      <div><b>你的配置</b>R7 7735H · RTX 4060 Laptop 8GB · 16GB · 1080p</div>
+      <div><b>当前游戏版本</b>1.7.104（2026-08 新补丁）</div>
+      <div><b>目标版本</b>降到 1.6.1170（保留周年纪念版内容）</div>
+      <div><b>管理工具</b>Mod Organizer 2（已装到 D:\Modding\MO2）</div>
+      <div><b>Steam 时长</b>✅ 正常记录，不受降级影响</div>
+      <div><b>后处理方案</b>ENB（1.6.1170 不支持 Community Shaders）</div>
+    </div>
+  </header>
+
+  <!-- ================= 第一步 ================= -->
+  <section class="section">
+    <h2><span class="n">1</span>降级到 1.6.1170 <small>你只需下载 1 个文件</small></h2>
+
+    <div class="callout ok">
+      <b>为什么不用 Steam 控制台下载 15GB？</b> 因为你用的是 <b>周年纪念版</b>，用「Best of Both Worlds」补丁只需一个 36MB 的小工具，它只替换游戏 exe 和几个 DLL，<b>保留你的全部周年纪念版内容</b>，还会自动备份、自动清理会导致闪退的 <code>ContentCatalog.txt</code>。
+    </div>
+
+    <div class="card">
+      <div class="idx">1</div>
+      <div class="body">
+        <h3><a href="https://www.nexusmods.com/skyrimspecialedition/mods/169962?tab=files" target="_blank">Best of Both Worlds 降级补丁</a></h3>
+        <p>把 1.7.104 降级成 1.6.1170 的 exe（保留 1.7.104 的数据文件与 AE 内容）。官方注明「仅适用于 Steam 版 1.7.104」——正好是你的版本。</p>
+        <div class="file">下载文件：1.7.104 to 1.6.1170 Downgrade Patcher（36.3MB）</div>
+        <div class="tags"><span class="tag must">必下</span><span class="tag id">ID 169962</span></div>
+      </div>
+    </div>
+
+    <div class="callout">
+      <b>下载后怎么放？</b> 用迅雷下载后，把压缩包（或解压出的文件）放到 <code>D:\Modding\_downloads\</code> 里，然后告诉我。剩下的解压、放入游戏目录、执行补丁、校验版本，全部我来做。
+    </div>
+  </section>
+
+  <!-- ================= 第二步 ================= -->
+  <section class="section">
+    <h2><span class="n">2</span>前置框架 <small>这些不装，后面的 Mod 会闪退</small></h2>
+
+    <div class="callout ok">
+      <b>SKSE64 2.2.6 我已经自动装好了</b>（对应 1.6.1170，已放入游戏根目录 + 脚本已就位）。剩下的你下载，我来装。
+    </div>
+
+    <div class="card">
+      <div class="idx">2</div>
+      <div class="body">
+        <h3><a href="https://www.nexusmods.com/skyrimspecialedition/mods/32444?tab=files" target="_blank">Address Library for SKSE Plugins</a></h3>
+        <p>SKSE 插件的「地址库」，Engine Fixes 等一大堆插件都依赖它。</p>
+        <div class="file">下载文件：Address Library All in One (1.7.104.0) v13 — 说明写着「适用于直到 1.7.104 的所有版本」，1.6.1170 也能用</div>
+        <div class="tags"><span class="tag must">必下</span><span class="tag id">ID 32444</span></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="idx">3</div>
+      <div class="body">
+        <h3><a href="https://www.nexusmods.com/skyrimspecialedition/mods/17230?tab=files" target="_blank">SSE Engine Fixes</a></h3>
+        <p>引擎级 Bug 修复（假存档损坏、崩溃、内存泄漏），并能在装 Mod 的情况下解锁 Steam 成就。分两部分。</p>
+        <div class="file">Part 1：选「for 1.6.629 and newer」= 6.1.1<br>Part 2：Engine Fixes - skse64 Preloader and TBB Lib (2020.3)</div>
+        <div class="tags"><span class="tag must">必下</span><span class="tag dll">DLL 需装 1.6.1170 版</span><span class="tag id">ID 17230</span></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="idx">4</div>
+      <div class="body">
+        <h3><a href="https://www.nexusmods.com/skyrimspecialedition/mods/59818?tab=files" target="_blank">Crash Logger SSE</a> <span style="color:var(--txt3);font-weight:400">（可选但强烈建议）</span></h3>
+        <p>崩溃时生成详细日志，万一出问题能快速定位。选 1.6.1170 对应版本。</p>
+        <div class="tags"><span class="tag rec">推荐</span><span class="tag dll">DLL</span><span class="tag id">ID 59818</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= 第三步 ================= -->
+  <section class="section">
+    <h2><span class="n">3</span>画质 Mod <small>1080p / 8GB 显存 · 以 2K 材质为主</small></h2>
+
+    <div class="callout">
+      <b>显存提示：</b> 你是 <b>8GB 显存 + 16GB 内存</b>。选材质时优先 <b>2K</b>，不要盲目上 4K；草地 Mod 别叠加太多、enbseries 特效别全开最高。这样能在 1080p 稳定 55–70 帧。
+    </div>
+
+    <div class="card">
+      <div class="idx">5</div>
+      <div class="body">
+        <h3><a href="https://www.nexusmods.com/skyrimspecialedition/mods/659" target="_blank">Static Mesh Improvement Mod (SMIM)</a></h3>
+        <p>画质地基。重建上千个粗糙的 3D 模型（桶、绳索、家具、建筑细节）。必须最先装。</p>
+        <div class="tags"><span class="tag must">必下</span><span class="tag id">ID 659</span></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="idx">6</div>
+      <div class="body">
+        <h3><a href="https://www.nexusmods.com/skyrimspecialedition/mods/34179" target="_blank">Skyland AIO</a></h3>
+        <p>一次性到位的高清纹理大包（地表、建筑、物件）。省去装几十个独立材质包。装在 SMIM 之后覆盖它。</p>
+        <div class="file">FOMOD 安装时选 2K</div>
+        <div class="tags"><span class="tag rec">强烈推荐</span><span class="tag id">ID 34179</span></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="idx">7</div>
+      <div class="body">
+        <h3><a href="https://www.nexusmods.com/skyrimspecialedition/mods/43158" target="_blank">Lux</a> + <a href="https://www.nexusmods.com/skyrimspecialedition/mods/63588" target="_blank">Lux Via</a></h3>
+        <p>室内 + 道路光照大修，光源更真实、阴影有体积感。两个是一套，配合使用。</p>
+        <div class="tags"><span class="tag rec">强烈推荐</span><span class="tag id">43158 / 63588</span></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="idx">8</div>
+      <div class="body">
+        <h3><a href="https://www.nexusmods.com/skyrimspecialedition/mods/24791" target="_blank">Cathedral Weathers and Seasons</a></h3>
+        <p>天气与季节大修，性能友好，日落/晨雾/暴雪质感出色。是 Rudy ENB 的推荐搭档。</p>
+        <div class="tags"><span class="tag rec">强烈推荐</span><span class="tag id">ID 24791</span></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="idx">9</div>
+      <div class="body">
+        <h3><a href="https://www.nexusmods.com/skyrimspecialedition/mods/2182" target="_blank">Realistic Water Two SE</a></h3>
+        <p>水面/河流/瀑布大修，色彩与流动更自然。</p>
+        <div class="tags"><span class="tag rec">推荐</span><span class="tag id">ID 2182</span></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="idx">10</div>
+      <div class="body">
+        <h3><a href="https://www.nexusmods.com/skyrimspecialedition/mods/50961" target="_blank">Happy Little Trees</a></h3>
+        <p>高质量、性能友好的树木替换，森林观感大幅提升，几乎不拖帧。</p>
+        <div class="tags"><span class="tag rec">推荐</span><span class="tag id">ID 50961</span></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="idx">11</div>
+      <div class="body">
+        <h3><a href="https://www.nexusmods.com/skyrimspecialedition/search/?gsearch=Folkvangr" target="_blank">Folkvangr – Grass and Landscape Overhaul</a></h3>
+        <p>让稀疏草地变茂密。草地最吃性能——若帧数不理想，先从这里降配。</p>
+        <div class="tags"><span class="tag opt">可选</span><span class="tag">按 N 网搜索</span></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="idx">12</div>
+      <div class="body">
+        <h3><a href="https://www.nexusmods.com/skyrimspecialedition/mods/37085" target="_blank">Embers XD</a></h3>
+        <p>火焰与余烬特效重制，篝火、熔炉、火把更真实细腻。</p>
+        <div class="tags"><span class="tag opt">可选</span><span class="tag id">ID 37085</span></div>
+      </div>
+    </div>
+
+    <div class="callout warn">
+      <b>ENB 后处理（可选，观感提升最大，但也最折腾）</b><br>
+      1.6.1170 用不了 Community Shaders，想上「电影感」就得用 ENB。三个文件：<br>
+      ① ENB 二进制 v0.505 —— 官网 <code>enbdev.com</code> 的 Skyrim SE 页（此文件禁止转载，必须去官网下）<br>
+      ② <a href="https://www.nexusmods.com/skyrimspecialedition/mods/39113" target="_blank" style="color:var(--gold)">Rudy ENB for Cathedral Weathers</a>（ID 39113，选 Cathedral Weathers 版）<br>
+      ③ <a href="https://www.nexusmods.com/skyrimspecialedition/mods/23174" target="_blank" style="color:var(--gold)">ENB Helper SE</a>（ID 23174，选 1.6.1170 版）<br>
+      建议在本体 Mod 全部跑通后再加 ENB，避免同时排查太多问题。
+    </div>
+  </section>
+
+  <!-- ================= 第四步 ================= -->
+  <section class="section">
+    <h2><span class="n">4</span>功能性 & 体验 Mod <small>照顾首次游玩，尽量少改玩法</small></h2>
+
+    <div class="callout">
+      <b>设计原则：</b> 你是第一次玩，所以这一栏<b>刻意不装</b> Ordinator/Apocalypse 这类大改玩法的 Mod，也<b>不装</b> Frostfall 这种硬核生存 Mod——保留原版体验，只补足「原版做得不好」的地方。
+    </div>
+
+    <div class="card">
+      <div class="idx">13</div>
+      <div class="body">
+        <h3><a href="https://www.nexusmods.com/skyrimspecialedition/mods/12604" target="_blank">SkyUI</a></h3>
+        <p>最重要的 Mod。重做物品栏/交易界面，支持排序、搜索、筛选，并提供 MCM 配置菜单——很多 Mod 靠它调设置。</p>
+        <div class="tags"><span class="tag must">必下</span><span class="tag id">ID 12604</span></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="idx">14</div>
+      <div class="body">
+        <h3><a href="https://www.nexusmods.com/skyrimspecialedition/mods/53000?tab=files" target="_blank">MCM Helper</a></h3>
+        <p>让 Mod 的 MCM 菜单能保存设置，SkyUI 生态的常见依赖。</p>
+        <div class="file">选 1.6.1170 对应版本</div>
+        <div class="tags"><span class="tag rec">推荐</span><span class="tag dll">DLL</span><span class="tag id">ID 53000</span></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="idx">15</div>
+      <div class="body">
+        <h3><a href="https://www.nexusmods.com/skyrimspecialedition/mods/5804" target="_blank">A Quality World Map</a></h3>
+        <p>给世界地图加上手绘道路与高清贴图，找路、找目标点一目了然。</p>
+        <div class="tags"><span class="tag rec">强烈推荐</span><span class="tag id">ID 5804</span></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="idx">16</div>
+      <div class="body">
+        <h3><a href="https://www.nexusmods.com/skyrimspecialedition/mods/34705?tab=files" target="_blank">SSE Display Tweaks</a></h3>
+        <p>解锁帧率上限、修复高帧率下的物理异常（如开局马车飞天）。选 1.6.1170 版本。</p>
+        <div class="tags"><span class="tag rec">推荐</span><span class="tag dll">DLL</span><span class="tag id">ID 34705</span></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="idx">17</div>
+      <div class="body">
+        <h3><a href="https://www.nexusmods.com/skyrimspecialedition/mods/64339?tab=files" target="_blank">Better Third Person Selection</a></h3>
+        <p>修复第三人称下选不中物体/对话对象的问题。选 1.6.1170 版本。</p>
+        <div class="tags"><span class="tag opt">可选</span><span class="tag dll">DLL</span><span class="tag id">ID 64339</span></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="idx">18</div>
+      <div class="body">
+        <h3><a href="https://www.nexusmods.com/skyrimspecialedition/mods/21085?tab=files" target="_blank">QuickLoot RE</a></h3>
+        <p>把《辐射4》的快速拾取界面搬进来，鼠标悬停即可拿取物品。选 1.6.1170 版本。</p>
+        <div class="tags"><span class="tag opt">可选</span><span class="tag dll">DLL</span><span class="tag id">ID 21085</span></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="idx">19</div>
+      <div class="body">
+        <h3><a href="https://www.nexusmods.com/skyrimspecialedition/mods/19080" target="_blank">RaceMenu</a></h3>
+        <p>强化版捏脸，更细致的脸型/发型/涂装。选 1.6.1170 版本。</p>
+        <div class="tags"><span class="tag opt">可选</span><span class="tag id">ID 19080</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= 第五步 ================= -->
+  <section class="section">
+    <h2><span class="n">5</span>内容扩展 Mod <small>可选 · 首次通关后可加</small></h2>
+
+    <div class="card">
+      <div class="idx">20</div>
+      <div class="body">
+        <h3><a href="https://www.nexusmods.com/skyrimspecialedition/mods/276" target="_blank">Cutting Room Floor</a></h3>
+        <p>恢复被官方删减的剧情、NPC、任务与地点，自然融入原版。</p>
+        <div class="tags"><span class="tag opt">可选</span><span class="tag id">ID 276</span></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="idx">21</div>
+      <div class="body">
+        <h3><a href="https://www.nexusmods.com/skyrimspecialedition/mods/272" target="_blank">Alternate Start – Live Another Life</a></h3>
+        <p>跳过开场，以不同身份开局。注意：它会跳过经典开场动画，首次玩想体验原版开场的话先别装。</p>
+        <div class="tags"><span class="tag opt">可选</span><span class="tag id">ID 272</span></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="idx">22</div>
+      <div class="body">
+        <h3><a href="https://www.nexusmods.com/skyrimspecialedition/mods/2272" target="_blank">Run For Your Lives</a></h3>
+        <p>屠龙时让平民躲进屋里，而不是冲上去送死。</p>
+        <div class="tags"><span class="tag opt">可选</span><span class="tag id">ID 2272</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= 使用指南 ================= -->
+  <section class="section">
+    <h2><span class="n">6</span>使用指南 <small>装完 Mod 怎么玩</small></h2>
+
+    <div class="step">
+      <h3>① 下载怎么放</h3>
+      <p>用迅雷下载的所有 Mod 压缩包 <b>不要解压</b>，直接丢进 <code>D:\Modding\MO2\downloads\</code>（或先放 <code>D:\Modding\_downloads\</code>，我来帮你归位）。MO2 能识别 .7z / .zip / .rar。</p>
+    </div>
+
+    <div class="step">
+      <h3>② 在 MO2 里安装</h3>
+      <ol>
+        <li>运行 <code>D:\Modding\MO2\ModOrganizer.exe</code>，首次会让你选游戏 → 选 <b>Skyrim Special Edition</b>，实例类型选 <b>Portable（便携）</b>。</li>
+        <li>右侧「下载」标签里双击压缩包 → 出现安装向导 → 按需选择（如 2K 材质）→ 确定。</li>
+        <li>安装后在左侧列表里<b>勾选启用</b>。带 DLL 的 Mod 顺序要正确（我会给排序建议）。</li>
+      </ol>
+    </div>
+
+    <div class="step">
+      <h3>③ 排序（关键）</h3>
+      <p>MO2 右上角有个「排序」按钮，用的是内置 LOOT。点它自动排加载顺序。大原则：<b>SMIM 在前 → Skyland 覆盖 SMIM → 光照/天气 → 补丁最后</b>。</p>
+    </div>
+
+    <div class="step">
+      <h3>④ 启动游戏</h3>
+      <p>MO2 右上角可执行程序下拉里选 <code>SKSE</code>，点「运行」。<b>以后都用这个方式启动</b>，不要直接点 Steam 的「开始游戏」。</p>
+      <div class="callout ok" style="margin-top:10px">
+        <b>关于 Steam 时长：</b> 只要 Steam 客户端在后台运行，通过 SKSE/MO2 启动照样记录时长、也能用 Steam 覆盖层。放心。
+      </div>
+    </div>
+
+    <div class="step">
+      <h3>⑤ 防止 Steam 把版本更新回去</h3>
+      <ol>
+        <li>Steam 库 → 右键天际 → 属性 → 更新 → 把「自动更新」改成 <b>「只在我启动游戏时更新」</b>。</li>
+        <li><b>永远用 MO2/SKSE 启动</b>，不要点 Steam 的「开始游戏」，否则可能触发更新、把 1.6.1170 覆盖回 1.7.104。</li>
+        <li>（进阶）把 <code>D:\steam\steamapps\appmanifest_489830.acf</code> 设为只读，彻底锁死更新。</li>
+      </ol>
+    </div>
+
+    <div class="step">
+      <h3>⑥ 首次进游戏的小提示</h3>
+      <ul>
+        <li>第一次启动会「编译着色器」，可能黑屏/卡住十几秒到 1 分钟，属正常。</li>
+        <li>进游戏后按 <code>Esc</code> → 若有「Mod Configuration (MCM)」菜单，进去可调整各 Mod 设置（首次进入后稍等，MCM 需要时间加载）。</li>
+        <li>ENB 若装了：游戏内按 <code>Shift+Enter</code> 打开 ENB 设置面板。</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ================= 排错 ================= -->
+  <section class="section">
+    <h2><span class="n">7</span>万一出问题 <small>按这个顺序排查</small></h2>
+    <table>
+      <tr><th>症状</th><th>最可能的原因</th></tr>
+      <tr><td><b>启动几秒就闪退</b></td><td>DLL 插件版本不匹配（尤其 Engine Fixes / Address Library）。用 1.6.1170 版本。</td></tr>
+      <tr><td><b>SKSE 没生效</b></td><td>必须用 MO2 里的 SKSE 启动，或确认游戏根目录有 <code>skse64_loader.exe</code> 和 <code>skse64_1_6_1170.dll</code>。</td></tr>
+      <tr><td><b>界面没变化</b></td><td>SkyUI 没启用，或没用 SKSE 启动（SkyUI 依赖 SKSE）。</td></tr>
+      <tr><td><b>某些 Mod 在 MCM 里不显示</b></td><td>缺 MCM Helper，或 MCM 还在加载（多等一会）。</td></tr>
+      <tr><td><b>帧数偏低</b></td><td>先关草地 Mod 或降 ENB 特效质量，其次把材质从 4K 换 2K。</td></tr>
+    </table>
+    <div class="callout">
+      崩溃日志在 <code>Documents\My Games\Skyrim Special Edition\SKSE\</code>（装了 Crash Logger 的话）。出问题把这些日志发我。
+    </div>
+  </section>
+
+  <footer>
+    链接与 Mod ID 整理自公开资料（2026-10 核对）。下载前请以 Nexus 页面最新版本为准。<br>
+    记得给 Mod 作者点 <b>Endorse</b> 支持他们。
+  </footer>
+
+</div>
+</body>
+</html>

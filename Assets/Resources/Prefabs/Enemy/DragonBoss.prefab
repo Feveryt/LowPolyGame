@@ -16,6 +16,7 @@ GameObject:
   - component: {fileID: 3290799114834287039}
   - component: {fileID: 639973007564520903}
   - component: {fileID: 3658779458379152526}
+  - component: {fileID: 5665817444936523277}
   m_Layer: 7
   m_Name: DragonBoss
   m_TagString: Untagged
@@ -168,6 +169,19 @@ MonoBehaviour:
   lightHeight: 2
   lightIntensity: 8
   lightRange: 10
+--- !u!114 &5665817444936523277
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3184578915224619669}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 210bf83ebd3347440881cb1eaea182d6, type: 3}
+  m_Name:
+  m_EditorClassIdentifier:
+  displayNameOverride:
 --- !u!1001 &6664456100201436351
 PrefabInstance:
   m_ObjectHideFlags: 0

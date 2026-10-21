@@ -37,6 +37,8 @@ public sealed class PlayerController : MonoBehaviour, IController, ICanSendEvent
     [SerializeField] private PlayerRoll playerRoll;
     // 提供防御姿态状态，格挡时降低移动速度并禁用奔跑。
     [SerializeField] private PlayerGuard playerGuard;
+    // 管理武器外观在手上/背部两个挂点间搬运的换装组件。
+    [SerializeField] private PlayerOutfit playerOutfit;
 
     [Header("Movement")]
     // 探索或战斗慢走时的水平速度，单位为米每秒。
@@ -104,6 +106,7 @@ public sealed class PlayerController : MonoBehaviour, IController, ICanSendEvent
         playerStats = playerStats != null ? playerStats : GetComponent<PlayerStats>();
         playerRoll = playerRoll != null ? playerRoll : GetComponent<PlayerRoll>();
         playerGuard = playerGuard != null ? playerGuard : GetComponent<PlayerGuard>();
+        playerOutfit = playerOutfit != null ? playerOutfit : GetComponent<PlayerOutfit>();
         isEquipped = playerAnimation != null && playerAnimation.IsEquipped;
 
         this.RegisterEvent<GameStateChangedEvent>(OnGameStateChanged)
@@ -269,17 +272,24 @@ public sealed class PlayerController : MonoBehaviour, IController, ICanSendEvent
         controller.Move(motion * Time.deltaTime);
     }
 
-    // 响应装备键，切换持武器状态并广播表现层事件。
+    // 响应装备键，在探索姿态与战斗姿态之间切换。
+    // 过渡动画播完前忽略重复输入，否则武器挂点会与动画进度错位。
     private void OnEquipPressed()
     {
         if (!inputEnabled || (playerStats != null && !playerStats.IsAlive) ||
             (playerCombat != null && playerCombat.IsAttacking) || IsRolling)
             return;
 
-        playerAnimation?.ToggleEquipped();
+        if (playerOutfit != null && playerOutfit.IsStanceTransitioning)
+            return;
+
+        // 目标姿态与当前持武器状态相反；动画参数与武器挂点由两个组件分别承接。
+        bool toCombat = playerAnimation == null || !playerAnimation.IsEquipped;
+        playerAnimation?.SetEquipped(toCombat);
+        playerOutfit?.BeginStanceTransition(toCombat);
 
         // Equipment changes affect animation and lock-on availability. The camera stays on one FreeLook rig.
-        isEquipped = playerAnimation != null && playerAnimation.IsEquipped;
+        isEquipped = toCombat;
         this.SendEvent(new EquipmentChangedEvent(isEquipped));
     }
 

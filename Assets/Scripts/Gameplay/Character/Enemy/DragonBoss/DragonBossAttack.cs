@@ -16,6 +16,8 @@ public sealed class DragonBossAttack : EnemyAttackBehaviour
     [SerializeField] private Animator animator;
     // 攻击预警组件。
     [SerializeField] private AttackTelegraph telegraph;
+    // 咬合表现跟随下颚骨骼；未找到时回退到配置的命中区中心。
+    private Transform biteVisualOrigin;
 
     // 撕咬状态短名称哈希值。
     private static readonly int BiteStateHash = Animator.StringToHash("Bite");
@@ -101,14 +103,8 @@ public sealed class DragonBossAttack : EnemyAttackBehaviour
             if (moveQueue.Count == 0)
                 return true;
 
-            bool isPlayingMove = IsPlayingState(moveQueue[0].StateHash);
-            if (isPlayingMove)
-            {
-                attackStateObserved = true;
-                return false;
-            }
-
-            return attackStateObserved || Time.time >= actionStartDeadline;
+            // 连招间隙仍属于本轮攻击，直到 Update 完整消费队列。
+            return false;
         }
     }
 
@@ -120,6 +116,14 @@ public sealed class DragonBossAttack : EnemyAttackBehaviour
             : GetComponentInChildren<DragonBossAnimation>();
         animator = animator != null ? animator : GetComponentInChildren<Animator>();
         telegraph = telegraph != null ? telegraph : GetComponent<AttackTelegraph>();
+        foreach (Transform bone in GetComponentsInChildren<Transform>(true))
+        {
+            if (bone.name == "RigMouthDown")
+            {
+                biteVisualOrigin = bone;
+                break;
+            }
+        }
     }
 
     // 订阅宿主生命事件以检测二阶段。
@@ -171,6 +175,8 @@ public sealed class DragonBossAttack : EnemyAttackBehaviour
         }
 
         // 地火落点判定独立于动画时窗（预警延迟决定时机）。
+        if (IsPlayingState(move.StateHash))
+            attackStateObserved = true;
         PollSpellAoEImpact(move);
         PollDamageWindow(move);
 
@@ -183,6 +189,22 @@ public sealed class DragonBossAttack : EnemyAttackBehaviour
             actionStartDeadline = Time.time + definition.ActionStartTimeout;
             linkDelayRemaining = moveQueue.Count > 0 ? 0.25f : 0f;
         }
+    }
+
+    /// <summary>死亡或硬直时取消连招与尚未落下的地火。</summary>
+    public override void CancelAttack()
+    {
+        base.CancelAttack();
+        attackActive = false;
+        moveQueue.Clear();
+        currentMoveTriggered = false;
+        StopAllCoroutines();
+        if (animator == null)
+            return;
+        animator.ResetTrigger("Bite");
+        animator.ResetTrigger("Fireball");
+        animator.ResetTrigger("SpellAoE");
+        animator.ResetTrigger("FireBreath");
     }
 
     /// <summary>按距离、冷却与阶段选择招式并开始本轮攻击。</summary>
@@ -297,9 +319,13 @@ public sealed class DragonBossAttack : EnemyAttackBehaviour
         switch (move.Type)
         {
             case MoveType.Bite:
+                ShowMeleeCue(transform.TransformPoint(definition.BiteHitOffset), definition.BiteRadius,
+                    GetWindupDuration(animator, "Ground Bite Attack", move.HitWindowStart));
                 animationBehaviour?.PlayBite();
                 break;
             case MoveType.Fireball:
+                telegraph?.Flash(new Color(1f, 0.55f, 0.15f),
+                    GetWindupDuration(animator, "Ground Projectile Attack", move.HitWindowStart));
                 animationBehaviour?.PlayFireball();
                 break;
             case MoveType.SpellAoE:
@@ -308,18 +334,18 @@ public sealed class DragonBossAttack : EnemyAttackBehaviour
                 spellAoETargetPosition = castTarget != null
                     ? castTarget.position
                     : transform.position + transform.forward * 5f;
-                telegraph?.Flash(Color.yellow, definition.SpellAoETelegraphDelay,
+                telegraph?.Flash(Color.yellow,
+                    GetWindupDuration(animator, "Ground Spell Cast", 0.4f) + definition.SpellAoETelegraphDelay,
                     GetGroundPoint(spellAoETargetPosition), definition.SpellAoERadius);
                 animationBehaviour?.PlaySpellAoE();
                 break;
             case MoveType.FireBreath:
                 // 龙息是锥形范围技，用扇形预警标出射程与张角（原来的圆环既对不上形状也对不上距离）。
-                telegraph?.FlashCone(Color.red, 0.9f,
+                telegraph?.FlashCone(Color.red, GetWindupDuration(animator, "FireBreathOnce", move.HitWindowStart),
                     GetGroundPoint(transform.position),
                     transform.forward,
                     definition.FireBreathRange,
                     definition.FireBreathHalfAngle);
-                BreathFireVfx();
                 animationBehaviour?.PlayFireBreath();
                 break;
         }
@@ -388,9 +414,10 @@ public sealed class DragonBossAttack : EnemyAttackBehaviour
     // 地火落地协程：延迟后对落点范围结算，并播放冲击波与烟尘表现。
     private System.Collections.IEnumerator SpellAoEImpactRoutine(QueuedMove move)
     {
+        Vector3 targetPosition = spellAoETargetPosition;
         yield return new WaitForSeconds(definition.SpellAoETelegraphDelay);
 
-        Vector3 center = GetGroundPoint(spellAoETargetPosition);
+        Vector3 center = GetGroundPoint(targetPosition);
         SpawnSpellAoEImpactPresentation(center);
 
         Collider[] hits = Physics.OverlapSphere(
@@ -447,15 +474,15 @@ public sealed class DragonBossAttack : EnemyAttackBehaviour
         switch (move.Type)
         {
             case MoveType.Bite:
+                // 挥空也显示咬合弧线，让玩家能看清攻击已经出手。
+                Vector3 mouth = biteVisualOrigin != null
+                    ? biteVisualOrigin.position + transform.forward * 0.35f
+                    : transform.TransformPoint(definition.BiteHitOffset);
+                SimpleAttackFX.MeleeArc(mouth, transform.forward,
+                    definition.BiteRadius * 0.65f, new Color(1f, 0.55f, 0.2f, 0.8f));
                 if (ApplySphereHit(move, definition.BiteHitOffset, definition.BiteRadius))
                 {
-                    // 命中反馈：嘴前红色斩击弧 + 方块粒子爆。
-                    Vector3 mouth = transform.TransformPoint(definition.BiteHitOffset * 0.7f);
-                    SimpleAttackFX.SlashArc(
-                        mouth,
-                        transform.forward,
-                        definition.BiteRadius * 1.6f,
-                        new Color(1f, 0.2f, 0.15f, 0.9f));
+                    // 只有实际命中才补粒子爆，区分出手和打中。
                     SimpleAttackFX.CubeBurst(
                         mouth + transform.forward * 0.5f,
                         14,
@@ -467,6 +494,7 @@ public sealed class DragonBossAttack : EnemyAttackBehaviour
                 SpawnFireball(move);
                 break;
             case MoveType.FireBreath:
+                BreathFireVfx();
                 ApplyBreathCone(move);
                 break;
         }
@@ -675,10 +703,7 @@ public sealed class DragonBossAttack : EnemyAttackBehaviour
     // 返回指定点的地面高度。
     private Vector3 GetGroundPoint(Vector3 position)
     {
-        Vector3 origin = position + Vector3.up * 2f;
-        if (Physics.Raycast(origin, Vector3.down, out RaycastHit hit, 6f, ~0, QueryTriggerInteraction.Ignore))
-            return hit.point;
-        return position;
+        return GetAttackGroundPoint(position);
     }
 
     // 轮询指定状态的归一化时间。

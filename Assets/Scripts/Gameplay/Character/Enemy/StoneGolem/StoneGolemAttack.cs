@@ -130,15 +130,8 @@ public sealed class StoneGolemAttack : EnemyAttackBehaviour
             if (moveQueue[0].Type == MoveType.Defend && currentMoveTriggered)
                 return !(defend != null && defend.IsActive) && linkDelayRemaining <= 0f;
 
-            bool isPlayingMove = IsPlayingCurrentMoveState();
-            if (isPlayingMove)
-            {
-                attackStateObserved = true;
-                return false;
-            }
-
-            // 未观察到状态进入时按保底截止时间等待。
-            return attackStateObserved || Time.time >= actionStartDeadline;
+            // 由 Update 完整消费队列后再退出，不能在连招间隙提前结束攻击状态。
+            return false;
         }
     }
 
@@ -199,6 +192,9 @@ public sealed class StoneGolemAttack : EnemyAttackBehaviour
         if (move.Type == MoveType.Defend)
             return;
 
+        if (IsPlayingState(move.StateHash))
+            attackStateObserved = true;
+
         PollDamageWindow(move);
 
         // 当前招式状态已播完（或保底超时仍未进入状态）：弹出并准备下一招。
@@ -211,6 +207,22 @@ public sealed class StoneGolemAttack : EnemyAttackBehaviour
             actionStartDeadline = Time.time + definition.ActionStartTimeout;
             linkDelayRemaining = moveQueue.Count > 0 ? definition.ComboLinkDelay : 0f;
         }
+    }
+
+    /// <summary>死亡或硬直时丢弃未完成连招，避免攻击事件继续造成伤害。</summary>
+    public override void CancelAttack()
+    {
+        base.CancelAttack();
+        attackActive = false;
+        moveQueue.Clear();
+        currentMoveTriggered = false;
+        if (animator == null)
+            return;
+        animator.ResetTrigger(PunchTriggerHash);
+        animator.ResetTrigger(DoublePunchTriggerHash);
+        animator.ResetTrigger(SlamTriggerHash);
+        animator.ResetTrigger(ShockwaveTriggerHash);
+        animator.ResetTrigger(JumpTriggerHash);
     }
 
     /// <summary>按距离与状态选择招式序列并开始本轮攻击。</summary>
@@ -372,18 +384,22 @@ public sealed class StoneGolemAttack : EnemyAttackBehaviour
         {
             case MoveType.Punch:
             case MoveType.DoublePunch:
+                bool doublePunch = move.Type == MoveType.DoublePunch;
+                ShowMeleeCue(enemy.AttackOrigin.TransformPoint(definition.MeleeHitOffset),
+                    definition.MeleeHitRadius,
+                    GetWindupDuration(animator, doublePunch ? "DoublePunch" : "Punch", doublePunch ? 2f / 7f : 0.56f));
                 AudioManager.Instance?.PlayStoneGolemAttackWindup(transform.position);
                 animator.SetTrigger(move.Type == MoveType.DoublePunch ? DoublePunchTriggerHash : PunchTriggerHash);
                 break;
             case MoveType.Slam:
-                telegraph?.Flash(Color.yellow, 0.7f,
+                telegraph?.Flash(Color.yellow, GetWindupDuration(animator, "Hit Ground", move.HitWindowStart),
                     GetGroundPoint(transform.TransformPoint(move.HitOffset)), definition.SlamRadius);
                 AudioManager.Instance?.PlayStoneGolemAttackWindup(transform.position);
                 animator.SetTrigger(SlamTriggerHash);
                 break;
             case MoveType.Shockwave:
                 // 震波是贴地弹道：用细长扇形把整条飞行路径标出来，否则玩家只看到一团黄光不知道会飞向哪。
-                telegraph?.FlashCone(Color.yellow, 0.7f,
+                telegraph?.FlashCone(Color.yellow, GetWindupDuration(animator, "Spell Cast", move.HitWindowStart),
                     GetGroundPoint(transform.position),
                     transform.forward,
                     definition.ShockwaveRange,
@@ -392,8 +408,8 @@ public sealed class StoneGolemAttack : EnemyAttackBehaviour
                 animator.SetTrigger(ShockwaveTriggerHash);
                 break;
             case MoveType.JumpSlam:
-                telegraph?.Flash(Color.red, 0.8f,
-                    GetGroundPoint(transform.position + transform.forward * 1.5f), definition.JumpSlamRadius);
+                telegraph?.Flash(Color.red, GetWindupDuration(animator, "Jump W Root", move.HitWindowStart),
+                    GetGroundPoint(enemy.AttackOrigin.TransformPoint(move.HitOffset)), definition.JumpSlamRadius);
                 AudioManager.Instance?.PlayStoneGolemAttackWindup(transform.position);
                 animator.SetTrigger(JumpTriggerHash);
                 break;
@@ -604,14 +620,18 @@ public sealed class StoneGolemAttack : EnemyAttackBehaviour
         QueuedMove move = moveQueue[0];
         if (move.Type != MoveType.Punch && move.Type != MoveType.DoublePunch)
             return;
+
+        // 双拳的两个关键帧均显示挥拳轨迹；伤害仍沿用每招一次的既有结算规则。
+        Transform origin = enemy.AttackOrigin;
+        Vector3 center = origin.TransformPoint(definition.MeleeHitOffset);
+        SimpleAttackFX.MeleeArc(center, transform.forward,
+            definition.MeleeHitRadius, new Color(1f, 0.75f, 0.4f, 0.75f));
         if (move.HitConsumed)
             return;
 
         move.HitConsumed = true;
         AudioManager.Instance?.PlayStoneGolemImpact(transform.position);
 
-        Transform origin = enemy.AttackOrigin;
-        Vector3 center = origin.TransformPoint(definition.MeleeHitOffset);
         int count = Physics.OverlapSphereNonAlloc(
             center,
             definition.MeleeHitRadius,
@@ -692,19 +712,7 @@ public sealed class StoneGolemAttack : EnemyAttackBehaviour
     // 返回指定点的地面高度（射线向下探测），失败时返回原点高度。
     private Vector3 GetGroundPoint(Vector3 position)
     {
-        Vector3 origin = position + Vector3.up * 1.5f;
-        if (Physics.Raycast(origin, Vector3.down, out RaycastHit hit, 4f, ~0,
-            QueryTriggerInteraction.Ignore))
-            return hit.point;
-        return position;
-    }
-
-    // 判断当前 Animator 状态（或过渡目标）是否为队列头部招式的状态。
-    private bool IsPlayingCurrentMoveState()
-    {
-        if (moveQueue.Count == 0)
-            return false;
-        return IsPlayingState(moveQueue[0].StateHash);
+        return GetAttackGroundPoint(position);
     }
 
     // 判断当前状态或正在切入的状态是否为指定短名称，并输出归一化时间。

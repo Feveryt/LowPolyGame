@@ -54,6 +54,13 @@ public sealed class StoneGolemDefend : MonoBehaviour, IIncomingDamageHandler
         EndDefend();
     }
 
+    // 石肤到期时同步解除动画参数与伤害拦截器，避免持续举盾导致下一次攻击无法切入。
+    private void Update()
+    {
+        if (active && Time.time >= defendEndsAt)
+            EndDefend();
+    }
+
     /// <summary>石肤是否已准备好（冷却结束）。</summary>
     public bool IsReady => !IsActive && Time.time >= lastDefendTime + (definition != null ? definition.DefendCooldown : 0f);
 

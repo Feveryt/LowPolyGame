@@ -1879,6 +1879,7 @@ MonoBehaviour:
   playerStats: {fileID: 8891000000000000004}
   playerRoll: {fileID: 8891000000000000006}
   playerGuard: {fileID: 0}
+  playerOutfit: {fileID: 1582994070340515102}
   walkSpeed: 2.5
   runSpeed: 5.5
   runTurnSpeed: 360
@@ -2194,6 +2195,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   weaponHitbox: {fileID: 0}
   defaultWeaponItem: {fileID: 11400000, guid: 8cd7890b54275404792dba935eae384f, type: 2}
+  weaponSheathSocket: {fileID: 431814}
+  sheathLocalPosition: {x: 0, y: 0, z: 0}
+  sheathLocalEuler: {x: 0, y: 0, z: 140}
+  autoAlignSheathToDecoration: 1
+  drawTransitionDuration: 0.8
+  drawSwitchPoint: 0.35
+  sheatheTransitionDuration: 0.867
+  sheatheSwitchPoint: 0.45
 --- !u!114 &7896751979786932330
 MonoBehaviour:
   m_ObjectHideFlags: 0

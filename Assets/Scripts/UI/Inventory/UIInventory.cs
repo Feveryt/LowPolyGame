@@ -595,9 +595,8 @@ public sealed class UIInventory : UIPanel
             !source.IsEmpty &&
             source.Item.IsEquippable &&
             source.Item.EquipmentSlot == slot.SlotType &&
-            PlayerOutfit.Equip(source.Item))
+            EquipAndReturnOld(source.Item, DragPayload.SourceSlotIndex))
         {
-            playerInventory.TryRemoveItem(DragPayload.SourceSlotIndex, 1);
             AudioManager.Instance?.PlayUiConfirm();
         }
 
@@ -681,7 +680,7 @@ public sealed class UIInventory : UIPanel
         playerInventory?.TryMoveItem(sourceIndex, targetIndex);
     }
 
-    // 双击背包格：装备类物品直接穿戴。
+    // 双击背包格：装备类物品直接穿戴（被替换下来的装备退回背包）。
     private void OnSlotDoubleClick(int index)
     {
         if (playerInventory == null || !playerInventory.TryGetItem(index, out InventorySlot slot) || slot.IsEmpty)
@@ -691,13 +690,55 @@ public sealed class UIInventory : UIPanel
             return;
 
         PlayerOutfit = PlayerOutfit != null ? PlayerOutfit : FindFirstObjectByType<PlayerOutfit>();
-        if (PlayerOutfit == null || !PlayerOutfit.Equip(slot.Item))
+        if (PlayerOutfit == null || !EquipAndReturnOld(slot.Item, index))
             return;
 
-        playerInventory.TryRemoveItem(index, 1);
         AudioManager.Instance?.PlayUiConfirm();
         RefreshAll();
         RefreshEquipmentViews();
+    }
+
+    // 把背包第 sourceIndex 格里的物品装备上，并把被替换下来的旧装备退回背包。
+    // 先移除新物品以腾出格子，再放回旧装备，避免背包恰好放满时旧装备被直接吞掉。
+    private bool EquipAndReturnOld(ItemDefinition item, int sourceIndex)
+    {
+        if (playerInventory == null || PlayerOutfit == null || item == null)
+            return false;
+
+        ItemDefinition replacedItem = GetEquippedItem(item.EquipmentSlot);
+
+        if (sourceIndex >= 0)
+            playerInventory.TryRemoveItem(sourceIndex, 1);
+
+        if (!PlayerOutfit.Equip(item))
+        {
+            // 装备失败：把新物品放回背包，保持换装前的状态。
+            if (sourceIndex >= 0)
+                playerInventory.TryAddItem(item, 1);
+            return false;
+        }
+
+        if (replacedItem != null && !playerInventory.TryAddItem(replacedItem, 1))
+            Debug.LogWarning($"[Inventory] 背包已满，被替换下来的「{replacedItem.DisplayName}」未能退回背包。", this);
+
+        return true;
+    }
+
+    // 读取指定槽位当前装备的物品定义。
+    private ItemDefinition GetEquippedItem(EquipmentSlotType slot)
+    {
+        if (PlayerOutfit == null)
+            return null;
+
+        switch (slot)
+        {
+            case EquipmentSlotType.Weapon:
+                return PlayerOutfit.EquippedWeaponItem;
+            case EquipmentSlotType.Shield:
+                return PlayerOutfit.EquippedShieldItem;
+            default:
+                return null;
+        }
     }
 
     // 创建跟随指针的拖影图标（挂在背包面板画布顶层）。

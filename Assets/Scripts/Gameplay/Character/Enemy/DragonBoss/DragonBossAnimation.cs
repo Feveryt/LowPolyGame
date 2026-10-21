@@ -22,7 +22,6 @@ public sealed class DragonBossAnimation : EnemyAnimationBehaviour
     private static readonly int SpellAoETriggerHash = Animator.StringToHash("SpellAoE");
     private static readonly int FireBreathTriggerHash = Animator.StringToHash("FireBreath");
     private static readonly int TakeDamageTriggerHash = Animator.StringToHash("TakeDamage");
-    private static readonly int DieTriggerHash = Animator.StringToHash("Die");
     // 受击与死亡状态短名称哈希值。
     private static readonly int HurtStateHash = Animator.StringToHash("Hurt");
     private static readonly int DieStateHash = Animator.StringToHash("Die");
@@ -93,7 +92,9 @@ public sealed class DragonBossAnimation : EnemyAnimationBehaviour
             return;
 
         ResetMovement();
-        animator.SetTrigger(DieTriggerHash);
+        // 控制器仅 Idle/Hurt 有死亡转移，直接切入以保证攻击途中死亡也立即生效。
+        animator.ResetTrigger(TakeDamageTriggerHash);
+        animator.CrossFadeInFixedTime(DieStateHash, 0.1f, 0);
     }
 
     /// <summary>触发撕咬动画。</summary>
