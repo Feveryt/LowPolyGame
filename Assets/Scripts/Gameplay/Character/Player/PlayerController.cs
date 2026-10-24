@@ -35,7 +35,7 @@ public sealed class PlayerController : MonoBehaviour, IController, ICanSendEvent
     [SerializeField] private PlayerStats playerStats;
     // 管理战斗翻滚状态并提供固定方向位移的组件。
     [SerializeField] private PlayerRoll playerRoll;
-    // 提供防御姿态状态，格挡时降低移动速度并禁用奔跑。
+    // 提供防御姿态与破防状态，期间禁止水平移动。
     [SerializeField] private PlayerGuard playerGuard;
     // 管理武器外观在手上/背部两个挂点间搬运的换装组件。
     [SerializeField] private PlayerOutfit playerOutfit;
@@ -80,11 +80,12 @@ public sealed class PlayerController : MonoBehaviour, IController, ICanSendEvent
     /// <summary>当前是否由翻滚组件接管水平位移。</summary>
     public bool IsRolling => playerRoll != null && playerRoll.IsRolling;
 
-    // 死亡、攻击、受击硬直或破防硬直期间禁止角色移动。
+    // 死亡、攻击、受击、破防及防御动作期间禁止移动；翻滚可取消防御并接管位移。
     private bool CanMove => (playerStats == null || playerStats.IsAlive) &&
         (playerCombat == null || !playerCombat.IsAttacking) &&
-        (playerGuard == null || !playerGuard.IsStunned) &&
-        (playerAnimation == null || !playerAnimation.IsPlayingHurt());
+        (playerGuard == null || (!playerGuard.IsGuarding && !playerGuard.IsStunned)) &&
+        (playerAnimation == null || (!playerAnimation.IsPlayingHurt() &&
+            (IsRolling || !playerAnimation.IsPlayingGuard())));
     // 探索模式下按住奔跑键且存在有效方向输入。
     private bool HasExplorationRunInput => inputEnabled && input != null && input.SprintHeld &&
         input.Move.sqrMagnitude > runForwardThreshold * runForwardThreshold;
@@ -135,8 +136,7 @@ public sealed class PlayerController : MonoBehaviour, IController, ICanSendEvent
         Vector2 moveInput = inputEnabled && input != null ? input.Move : Vector2.zero;
         bool canMove = CanMove;
         bool isRolling = IsRolling;
-        bool isGuarding = playerGuard != null && playerGuard.IsGuarding;
-        bool wantsToRun = !isRolling && !isGuarding && (isEquipped ? HasCombatRunInput : HasExplorationRunInput);
+        bool wantsToRun = !isRolling && (isEquipped ? HasCombatRunInput : HasExplorationRunInput);
         isRunning = canMove && wantsToRun && (playerStats == null || playerStats.CanSprint);
 
         Vector3 horizontalMotion;
@@ -151,8 +151,6 @@ public sealed class PlayerController : MonoBehaviour, IController, ICanSendEvent
         else if (isEquipped)
         {
             horizontalMotion = GetCombatMotion(moveInput, isRunning);
-            if (isGuarding)
-                horizontalMotion *= playerGuard.GuardMoveSpeedMultiplier;
         }
         else
             horizontalMotion = GetExplorationMotion(moveInput, isRunning);

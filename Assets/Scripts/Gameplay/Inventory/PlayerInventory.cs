@@ -90,6 +90,35 @@ public sealed class PlayerInventory : MonoBehaviour
         GoldChanged?.Invoke(gold);
     }
 
+    /// <summary>为旧存档补齐初始武器，每种一件；已有或已装备的武器不重复发放。</summary>
+    public bool TryRestoreInitialWeapons(int equippedWeaponItemId)
+    {
+        EnsureInitialized();
+        if (initialItems == null)
+            return false;
+
+        bool hasInitialWeapons = false;
+        bool complete = true;
+        for (int i = 0; i < initialItems.Length; i++)
+        {
+            InitialItemEntry entry = initialItems[i];
+            ItemDefinition item = entry.Item;
+            if (item == null || entry.Amount <= 0 || !item.IsEquippable || item.EquipmentSlot != EquipmentSlotType.Weapon)
+                continue;
+
+            hasInitialWeapons = true;
+            if (item.Id == equippedWeaponItemId || model.HasItem(item, 1))
+                continue;
+
+            if (!model.TryAddItem(item, 1))
+                complete = false;
+        }
+
+        if (!complete)
+            Debug.LogWarning("[Inventory] 背包空间不足，未能补齐全部初始武器；保留现有物品，腾出空间后再次读档可继续补齐。", this);
+        return hasInitialWeapons && complete;
+    }
+
     /// <summary>尝试添加指定数量的物品。</summary>
     public bool TryAddItem(ItemDefinition item, int amount)
     {

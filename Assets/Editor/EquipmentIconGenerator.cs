@@ -9,7 +9,10 @@ namespace LowPolyGame.EditorTools
     //   1. 为 PolygonDungeon 的武器/盾牌 prefab 渲染 256x256 图标 PNG（临时场景相机拍照）。
     //   2. 为每个装备创建 ItemDefinition 资产（含槽位、挂点参数、图标引用）。
     //   3. 把新物品追加进 ItemDefinitionCatalog。
-    // 幂等：已存在的物品资产只补图标，不重复创建。
+    // 已存在的物品不会重复创建，但会刷新下表配置的物品字段。
+    /// <summary>
+    /// 编辑器装备生成工具：渲染图标、更新物品定义并补充目录引用。
+    /// </summary>
     public static class EquipmentIconGenerator
     {
         const string IconsOutputFolder = "Assets/ArtRes/UI Res/Generated Icons";
@@ -17,28 +20,28 @@ namespace LowPolyGame.EditorTools
         const string CatalogPath = "Assets/Resources/ItemDefinitionCatalog.asset";
 
         // 装备清单：prefab 相对路径 → (物品ID, 中文名, 槽位, 挂点位置, 挂点欧拉, 挂点缩放)。
-        // 挂点参数沿用当前手持水晶剑的实测值（Hand_R 下 scale=100、pos(9,3.6,0)、euler(-90,90,0)）。
+        // 武器参数遵循 Docs/持剑绑定规范与防回退说明.md；不同模型的刃面角度不可统一。
         static readonly (string prefab, int id, string displayName, EquipmentSlotType slot,
             Vector3 pos, Vector3 euler, float scale)[] Equipments =
         {
             ("Assets/ArtRes/PolygonDungeon/Prefabs/Weapons/SM_Wep_Crystal_Ornate_Straightsword_01.prefab",
-                2000, "水晶长剑", EquipmentSlotType.Weapon, new Vector3(9f, 3.6f, 0f), new Vector3(-90f, 90f, 0f), 100f),
+                2000, "水晶长剑", EquipmentSlotType.Weapon, new Vector3(9f, 3.6f, 0f), new Vector3(0f, 90f, -90f), 100f),
             ("Assets/ArtRes/PolygonDungeon/Prefabs/Weapons/SM_Wep_Greatsword_Straight_01.prefab",
-                2001, "巨剑", EquipmentSlotType.Weapon, new Vector3(9f, 3.6f, 0f), new Vector3(-90f, 90f, 0f), 100f),
+                2001, "巨剑", EquipmentSlotType.Weapon, new Vector3(9f, 3.6f, 0f), new Vector3(90f, 0f, 180f), 100f),
             ("Assets/ArtRes/PolygonDungeon/Prefabs/Weapons/SM_Wep_Ornate_Sword_01.prefab",
-                2002, "华丽之剑", EquipmentSlotType.Weapon, new Vector3(9f, 3.6f, 0f), new Vector3(-90f, 90f, 0f), 100f),
+                2002, "华丽之剑", EquipmentSlotType.Weapon, new Vector3(9f, 3.6f, 0f), new Vector3(0f, 90f, -90f), 100f),
             ("Assets/ArtRes/PolygonDungeon/Prefabs/Weapons/SM_Wep_Cutlass_01.prefab",
-                2003, "弯刀", EquipmentSlotType.Weapon, new Vector3(9f, 3.6f, 0f), new Vector3(-90f, 90f, 0f), 100f),
+                2003, "弯刀", EquipmentSlotType.Weapon, new Vector3(9f, 3.6f, 0f), new Vector3(0f, 90f, -90f), 100f),
             ("Assets/ArtRes/PolygonDungeon/Prefabs/Weapons/SM_Wep_HandAxe_01.prefab",
-                2004, "手斧", EquipmentSlotType.Weapon, new Vector3(9f, 3.6f, 0f), new Vector3(-90f, 90f, 0f), 100f),
+                2004, "手斧", EquipmentSlotType.Weapon, new Vector3(9f, 3.6f, 0f), new Vector3(0f, 90f, -90f), 100f),
             ("Assets/ArtRes/PolygonDungeon/Prefabs/Weapons/SM_Wep_Hammer_Small_01.prefab",
-                2005, "短锤", EquipmentSlotType.Weapon, new Vector3(9f, 3.6f, 0f), new Vector3(-90f, 90f, 0f), 100f),
+                2005, "短锤", EquipmentSlotType.Weapon, new Vector3(9f, 3.6f, 0f), new Vector3(-90f, 0f, 0f), 100f),
             ("Assets/ArtRes/PolygonDungeon/Prefabs/Weapons/SM_Wep_Spear_02.prefab",
-                2006, "长矛", EquipmentSlotType.Weapon, new Vector3(9f, 3.6f, 0f), new Vector3(-90f, 90f, 0f), 100f),
+                2006, "长矛", EquipmentSlotType.Weapon, new Vector3(9f, 3.6f, 0f), new Vector3(-90f, 0f, 0f), 100f),
             ("Assets/ArtRes/PolygonDungeon/Prefabs/Weapons/SM_Wep_Staff_Gem_01.prefab",
-                2007, "宝石法杖", EquipmentSlotType.Weapon, new Vector3(9f, 3.6f, 0f), new Vector3(-90f, 90f, 0f), 100f),
+                2007, "宝石法杖", EquipmentSlotType.Weapon, new Vector3(9f, 3.6f, 0f), new Vector3(-90f, 0f, 0f), 100f),
             ("Assets/ArtRes/PolygonDungeon/Prefabs/Weapons/SM_Wep_Greatsword_Curved_01.prefab",
-                2008, "曲刃大剑", EquipmentSlotType.Weapon, new Vector3(9f, 3.6f, 0f), new Vector3(-90f, 90f, 0f), 100f),
+                2008, "曲刃大剑", EquipmentSlotType.Weapon, new Vector3(9f, 3.6f, 0f), new Vector3(0f, 90f, -90f), 100f),
             ("Assets/ArtRes/PolygonDungeon/Prefabs/Weapons/SM_Wep_Shield_Heater_01.prefab",
                 2101, "鸢形盾", EquipmentSlotType.Shield, new Vector3(0f, 0f, 0f), new Vector3(0f, 180f, 0f), 100f),
             ("Assets/ArtRes/PolygonDungeon/Prefabs/Weapons/SM_Wep_Shield_Round_01.prefab",

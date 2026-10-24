@@ -53,7 +53,8 @@ public sealed class QuestWorldReporter : MonoBehaviour
 
         if (targetId == UnsignedGuardianQuestIds.RecordPage)
             AudioManager.Instance?.PlayUiPickupRecordPage();
-        else if (targetId == UnsignedGuardianQuestIds.SealingInscription)
+        else if (targetId == UnsignedGuardianQuestIds.SealingInscription ||
+                 targetId == UnsignedGuardianQuestIds.HalfBurntArchive)
             AudioManager.Instance?.PlayUiPickupInscription();
 
         consumed = true;

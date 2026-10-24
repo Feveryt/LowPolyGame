@@ -58,6 +58,15 @@ MonoBehaviour:
         questId: unsigned_guardian.guardian_testimony
         objectiveId: 
         shop: {fileID: 0}
+    - text: "\u6211\u627E\u5230\u4E86\u6CA1\u70E7\u5B8C\u7684\u90A3\u9875\u3002"
+      targetNodeId: 7
+      requiredQuestId: unsigned_guardian.ember_archive
+      requiredQuestState: 2
+      questActions:
+      - actionType: 2
+        questId: unsigned_guardian.ember_archive
+        objectiveId: 
+        shop: {fileID: 0}
   - nodeId: 2
     speaker: 1
     text: "\u4E0D\u8981\u76F8\u4FE1\u5899\u4E0A\u7684\u5224\u8BCD\u3002\u5B83\u4EEC\u6BD4\u7070\u5C18\u65B0\u3002"
@@ -79,6 +88,47 @@ MonoBehaviour:
   - nodeId: 4
     speaker: 1
     text: "\u5B83\u5B88\u7740\u7684\u4E0D\u662F\u95E8\uFF0C\u662F\u4E00\u4E2A\u4E0D\u8BE5\u88AB\u7559\u4E0B\u7684\u540D\u5B57\u3002"
+    eventId: 
+    requiredQuestId: 
+    requiredQuestState: 0
+    questActions: []
+    nextNodeId: -1
+    choices:
+    - text: "\u6DF1\u5904\u597D\u50CF\u8FD8\u6709\u70DF\u3002"
+      targetNodeId: 5
+      requiredQuestId: unsigned_guardian.ember_archive
+      requiredQuestState: 0
+      questActions: []
+  - nodeId: 5
+    speaker: 1
+    text: "\u70DF\u662F\u4ECA\u5929\u624D\u8D77\u6765\u7684\u3002\u7070\u70EC\u5385\u91CC\u90A3\u6761\u9F99\uFF0C\u70E7\u7684\u4E0D\u662F\u67F4\u3002"
+    eventId: 
+    requiredQuestId: 
+    requiredQuestState: 0
+    questActions: []
+    nextNodeId: -1
+    choices:
+    - text: "\u6211\u53BB\u622A\u4F4F\u5B83\u3002"
+      targetNodeId: 6
+      requiredQuestId: unsigned_guardian.ember_archive
+      requiredQuestState: 0
+      questActions:
+      - actionType: 0
+        questId: unsigned_guardian.ember_archive
+        objectiveId: 
+        shop: {fileID: 0}
+  - nodeId: 6
+    speaker: 1
+    text: "\u522B\u8BA9\u5B83\u628A\u6700\u540E\u534A\u9875\u4E5F\u70E7\u4E86\u3002\u7070\u70EC\u4E0D\u4F1A\u8BF4\u8C0E\uFF0C\u5B57\u4F1A\u3002"
+    eventId: 
+    requiredQuestId: 
+    requiredQuestState: 0
+    questActions: []
+    nextNodeId: -1
+    choices: []
+  - nodeId: 7
+    speaker: 1
+    text: "\u8FD9\u4E0D\u662F\u65E7\u4E8B\u3002\u6709\u4EBA\u8FD8\u5728\u7EE7\u7EED\u62B9\u3002"
     eventId: 
     requiredQuestId: 
     requiredQuestState: 0

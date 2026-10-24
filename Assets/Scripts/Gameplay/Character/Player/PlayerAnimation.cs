@@ -264,6 +264,24 @@ public sealed class PlayerAnimation : MonoBehaviour
         return next.shortNameHash == HurtStateHash || next.fullPathHash == HurtStatePathHash;
     }
 
+    /// <summary>防御起手、保持、格挡反应与收势动画均占用移动，包含混合过渡。</summary>
+    public bool IsPlayingGuard()
+    {
+        if (animator == null)
+            return false;
+
+        return IsGuardState(animator.GetCurrentAnimatorStateInfo(0)) ||
+            (animator.IsInTransition(0) && IsGuardState(animator.GetNextAnimatorStateInfo(0)));
+    }
+
+    // 对应 Player.controller 中的防御动作；破防硬直由 PlayerGuard 单独管理。
+    private static bool IsGuardState(AnimatorStateInfo state)
+    {
+        return state.IsName("Block_Start") || state.IsName("Block_Loop") ||
+            state.IsName("Block_End") || state.IsName("Block_Damage") ||
+            state.IsName("Block_Guard") || state.IsName("Block");
+    }
+
     /// <summary>取消受击动画并回到当前装备状态对应的移动树。</summary>
     public void CancelHurt()
     {

@@ -31,8 +31,6 @@ public sealed class PlayerGuard : MonoBehaviour, IIncomingDamageHandler
     [SerializeField, Min(1f)] private float riposteDamageMultiplier = 1.5f;
     // 破防硬直持续时间，单位为秒。
     [SerializeField, Range(0.5f, 3f)] private float guardBreakStunDuration = 1.2f;
-    // 格挡期间的移动速度倍率。
-    [SerializeField, Range(0.1f, 1f)] private float guardMoveSpeedMultiplier = 0.4f;
     // 精准防御命中特效预制体；为空时跳过特效。
     [SerializeField] private GameObject perfectGuardEffectPrefab;
     // 特效生成位置相对角色的高度偏移，单位为米。
@@ -68,8 +66,6 @@ public sealed class PlayerGuard : MonoBehaviour, IIncomingDamageHandler
     public bool IsGuarding => guarding && !IsStunned;
     /// <summary>当前是否处于破防硬直。</summary>
     public bool IsStunned => Time.time < guardBreakEndsAt;
-    /// <summary>格挡期间传给移动控制器的速度倍率。</summary>
-    public float GuardMoveSpeedMultiplier => guardMoveSpeedMultiplier;
     /// <summary>当前攻击应使用的增伤倍率（精准防御后的惩罚窗口内提升）。</summary>
     public float RiposteDamageMultiplier => Time.time < riposteEndsAt ? riposteDamageMultiplier : 1f;
 

@@ -2066,6 +2066,24 @@ MonoBehaviour:
     Amount: 10
   - Item: {fileID: 11400000, guid: 4d3f6db0a0cf4f08d0d0a4b9c1bae434, type: 2}
     Amount: 1
+  - Item: {fileID: 11400000, guid: 8cd7890b54275404792dba935eae384f, type: 2}
+    Amount: 1
+  - Item: {fileID: 11400000, guid: e7a2c2e2c3a6efe43835b9a403cd46b8, type: 2}
+    Amount: 1
+  - Item: {fileID: 11400000, guid: c7d1c2c22c8b28f4e903dd9554c74d83, type: 2}
+    Amount: 1
+  - Item: {fileID: 11400000, guid: 4cfc735076affd74fbf9cdf0ea55d650, type: 2}
+    Amount: 1
+  - Item: {fileID: 11400000, guid: 0b033b80499be6e45ac37db7827807ee, type: 2}
+    Amount: 1
+  - Item: {fileID: 11400000, guid: 2f9a65f866118724f9fcc3a3cb49ecec, type: 2}
+    Amount: 1
+  - Item: {fileID: 11400000, guid: 52448e7e3d5a59344b1c3ff39aceba69, type: 2}
+    Amount: 1
+  - Item: {fileID: 11400000, guid: cacc2c987427fcb44a90de7a89ec8888, type: 2}
+    Amount: 1
+  - Item: {fileID: 11400000, guid: 4265f299074fa614dbf277d14c40d9dc, type: 2}
+    Amount: 1
   initialGold: 250
 --- !u!114 &2590333773522208440
 MonoBehaviour:
@@ -2085,7 +2103,6 @@ MonoBehaviour:
   riposteWindow: 1
   riposteDamageMultiplier: 1.5
   guardBreakStunDuration: 1.2
-  guardMoveSpeedMultiplier: 0.4
   perfectGuardEffectPrefab: {fileID: 110446, guid: e859383d9fb42a7419df30c9afd4cf64, type: 3}
   effectHeight: 1.2
   perfectGuardWindowFx: {fileID: 7896751979786932330}

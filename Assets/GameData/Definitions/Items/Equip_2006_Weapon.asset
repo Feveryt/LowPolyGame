@@ -26,5 +26,5 @@ MonoBehaviour:
   equipmentSlot: 1
   equipmentPrefab: {fileID: 103552, guid: 04355395e22dfe046a9cacf61b90d732, type: 3}
   equipmentPosition: {x: 9, y: 3.6, z: 0}
-  equipmentEuler: {x: -90, y: 90, z: 0}
+  equipmentEuler: {x: -90, y: 0, z: 0}
   equipmentScale: 100

@@ -36,6 +36,8 @@ public sealed class SaveData
     public int equippedWeaponItemId;
     // 已装备盾牌的物品 ID；0 表示未装备。
     public int equippedShieldItemId;
+    // 初始武器补发版本；旧存档默认为 0，完成后不因出售或丢弃而重复补发。
+    public int initialWeaponGrantVersion;
     // 按固定背包槽位顺序保存的物品数据。
     public InventorySlotSaveData[] inventorySlots;
 

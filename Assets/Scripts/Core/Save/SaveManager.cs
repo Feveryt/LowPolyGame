@@ -15,6 +15,8 @@ public sealed class SaveManager : MonoBehaviour
     private const string SaveKey = "RPG.Save.SingleSlot";
     // 当前可识别的存档结构版本。
     private const int CurrentSchemaVersion = 1;
+    // 初始武器的一次性兼容版本，不改变已有存档的整体结构版本。
+    private const int CurrentInitialWeaponGrantVersion = 1;
     // 运行时自动创建的唯一存档管理器。
     private static SaveManager instance;
 
@@ -106,6 +108,9 @@ public sealed class SaveManager : MonoBehaviour
             return false;
 
         SaveData saveData = CreateSaveData(playerStats, playerInventory);
+        saveData.initialWeaponGrantVersion = HasSaveForActiveScene
+            ? pendingSave.initialWeaponGrantVersion
+            : CurrentInitialWeaponGrantVersion;
         PlayerPrefs.SetString(SaveKey, JsonUtility.ToJson(saveData));
         PlayerPrefs.Save();
         pendingSave = saveData;
@@ -136,6 +141,8 @@ public sealed class SaveManager : MonoBehaviour
         PlayerOutfit outfit = playerInventory.GetComponent<PlayerOutfit>();
         if (outfit != null)
             outfit.RestoreEquipped(pendingSave.equippedWeaponItemId, pendingSave.equippedShieldItemId);
+
+        RestoreInitialWeaponsForLegacySave(playerInventory);
 
         Debug.Log($"[{nameof(SaveManager)}] Game loaded from {pendingSave.sceneName}.", this);
         return true;
@@ -194,11 +201,23 @@ public sealed class SaveManager : MonoBehaviour
         Debug.LogWarning($"[{nameof(SaveManager)}] Timed out waiting for player components while loading save.", this);
     }
 
-    // 根据玩家组件构造当前版本的存档数据。
-    private static SaveData CreateSaveData(PlayerStats playerStats, PlayerInventory playerInventory)
+    // 仅为旧存档补齐配置中的武器，并持久化补发标记；保留位置、任务、金币等原有进度。
+    private void RestoreInitialWeaponsForLegacySave(PlayerInventory playerInventory)
     {
-        Transform playerTransform = playerStats.transform;
-        Vector3 position = playerTransform.position;
+        if (pendingSave.initialWeaponGrantVersion >= CurrentInitialWeaponGrantVersion)
+            return;
+
+        bool complete = playerInventory.TryRestoreInitialWeapons(pendingSave.equippedWeaponItemId);
+        pendingSave.inventorySlots = CaptureInventorySlots(playerInventory);
+        if (complete)
+            pendingSave.initialWeaponGrantVersion = CurrentInitialWeaponGrantVersion;
+        PlayerPrefs.SetString(SaveKey, JsonUtility.ToJson(pendingSave));
+        PlayerPrefs.Save();
+    }
+
+    // 按槽位顺序记录背包，用于正常存档及旧存档补发后的同步。
+    private static InventorySlotSaveData[] CaptureInventorySlots(PlayerInventory playerInventory)
+    {
         IReadOnlyList<InventorySlot> inventorySlots = playerInventory.Slots;
         InventorySlotSaveData[] savedSlots = new InventorySlotSaveData[inventorySlots.Count];
 
@@ -209,6 +228,14 @@ public sealed class SaveManager : MonoBehaviour
                 ? new InventorySlotSaveData(slot.Item.Id, slot.Quantity)
                 : default;
         }
+        return savedSlots;
+    }
+
+    // 根据玩家组件构造当前版本的存档数据。
+    private static SaveData CreateSaveData(PlayerStats playerStats, PlayerInventory playerInventory)
+    {
+        Transform playerTransform = playerStats.transform;
+        Vector3 position = playerTransform.position;
 
         PlayerOutfit outfit = playerInventory.GetComponent<PlayerOutfit>();
         return new SaveData
@@ -226,7 +253,7 @@ public sealed class SaveManager : MonoBehaviour
             gold = playerInventory.Gold,
             equippedWeaponItemId = outfit != null ? outfit.EquippedWeaponItemId : 0,
             equippedShieldItemId = outfit != null ? outfit.EquippedShieldItemId : 0,
-            inventorySlots = savedSlots,
+            inventorySlots = CaptureInventorySlots(playerInventory),
         };
     }
 

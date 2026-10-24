@@ -56,6 +56,22 @@ public sealed class EnemyAI : MonoBehaviour
     // 当前巡逻停顿或选点失败后的下一次选点时间。
     private float patrolNextSelectTime;
 
+    // 每帧刷新一次的感知快照。
+    // 状态转移条件在 Tick 中会被逐条求值，若每次条件都重新取目标、算距离、做法线检测，
+    // 一帧会重复执行 5~8 次同样的计算（距离还要开方）。这里统一在 Tick 前算一次。
+    private bool perceptionHasTarget;
+    private float perceptionDistance;
+    private bool perceptionInDetectionRange;
+    private bool perceptionInAttackRange;
+    private bool perceptionOutOfLoseRange;
+    private bool perceptionHasLineOfSight;
+    private Vector3 perceptionTargetPosition;
+
+    // 无目标时自动查找玩家的最小间隔，避免每帧执行 FindFirstObjectByType。
+    private const float TargetSearchInterval = 0.5f;
+    // 下一次允许自动查找目标的时间。
+    private float nextTargetSearchTime;
+
     /// <summary>当前正在运行的 AI 状态；未初始化时默认 Idle。</summary>
     public EnemyState CurrentState => stateMachine != null && stateMachine.IsInitialized ? stateMachine.CurrentState : EnemyState.Idle;
 
@@ -88,10 +104,73 @@ public sealed class EnemyAI : MonoBehaviour
         stateMachine.Initialize(this);
     }
 
-    // 每帧驱动一次状态转移和当前状态逻辑。
+    // 每帧先刷新感知快照，再驱动一次状态转移和当前状态逻辑。
     private void Update()
     {
-        stateMachine?.Tick(this);
+        if (stateMachine == null)
+            return;
+
+        RefreshPerception();
+        stateMachine.Tick(this);
+    }
+
+    // 每帧刷新一次感知快照：目标有效性、水平距离、各判定半径与视线遮挡。
+    // 转移条件全部改为读取这里的缓存，保证同一帧内多次求值只算一次。
+    private void RefreshPerception()
+    {
+        if (enemy == null || enemy.Config == null)
+        {
+            perceptionHasTarget = false;
+            perceptionDistance = 0f;
+            perceptionInDetectionRange = false;
+            perceptionInAttackRange = false;
+            perceptionOutOfLoseRange = false;
+            perceptionHasLineOfSight = false;
+            perceptionTargetPosition = transform.position;
+            return;
+        }
+
+        ResolveTarget();
+        Transform target = enemy.Target;
+        bool hasTarget = target != null && target.gameObject.activeInHierarchy;
+
+        if (hasTarget)
+        {
+            CharacterStats targetStats = target.GetComponentInParent<CharacterStats>();
+            if (targetStats != null && !targetStats.IsAlive)
+                hasTarget = false;
+        }
+
+        perceptionHasTarget = hasTarget;
+
+        if (!hasTarget)
+        {
+            // 无目标时位置退回自身、距离记为 0，与本类原有的“空目标”语义保持一致。
+            perceptionTargetPosition = transform.position;
+            perceptionDistance = 0f;
+            perceptionInDetectionRange = false;
+            perceptionInAttackRange = false;
+            perceptionOutOfLoseRange = true;
+            perceptionHasLineOfSight = false;
+            return;
+        }
+
+        perceptionTargetPosition = target.position;
+        Vector3 delta = perceptionTargetPosition - transform.position;
+        delta.y = 0f;
+        perceptionDistance = delta.magnitude;
+
+        perceptionInDetectionRange = perceptionDistance <= enemy.Config.DetectionRange;
+        perceptionInAttackRange = perceptionDistance <= enemy.AttackBehaviour.AttackRange;
+        perceptionOutOfLoseRange = perceptionDistance > enemy.Config.LoseTargetRange;
+        perceptionHasLineOfSight = perceptionInDetectionRange && CheckLineOfSight(perceptionTargetPosition);
+    }
+
+    // 判断目标是否已脱离可追击范围（无目标或超出脱战距离）。
+    // 原实现把这条组合条件在 4 条转移里各写了一遍，统一后新增状态不必再复制。
+    private bool ShouldDisengage()
+    {
+        return !perceptionHasTarget || perceptionOutOfLoseRange;
     }
 
     // 禁用时取消订阅并停止导航，避免对象复用后保留路径。
@@ -153,15 +232,15 @@ public sealed class EnemyAI : MonoBehaviour
         stateMachine.AddTransition(EnemyState.Idle, EnemyState.Chase, _ => CanDetectTarget());
         stateMachine.AddTransition(EnemyState.Patrol, EnemyState.Chase, _ => CanDetectTarget());
         stateMachine.AddTransition(EnemyState.Chase, EnemyState.Attack, _ => IsTargetWithinAttackRange());
-        stateMachine.AddTransition(EnemyState.Chase, EnemyState.Return, _ => !HasValidTarget() || IsTargetOutsideLoseRange());
-        stateMachine.AddTransition(EnemyState.Attack, EnemyState.AttackWait, _ => HasValidTarget() && !IsTargetOutsideLoseRange());
-        stateMachine.AddTransition(EnemyState.Attack, EnemyState.Return, _ => !HasValidTarget() || IsTargetOutsideLoseRange());
+        stateMachine.AddTransition(EnemyState.Chase, EnemyState.Return, _ => ShouldDisengage());
+        stateMachine.AddTransition(EnemyState.Attack, EnemyState.AttackWait, _ => !ShouldDisengage());
+        stateMachine.AddTransition(EnemyState.Attack, EnemyState.Return, _ => ShouldDisengage());
         stateMachine.AddTransition(EnemyState.AttackWait, EnemyState.Attack, _ => IsAttackWaitFinished() && IsTargetWithinAttackRange());
-        stateMachine.AddTransition(EnemyState.AttackWait, EnemyState.Chase, _ => HasValidTarget() && !IsTargetOutsideLoseRange() && !IsTargetWithinAttackRange());
-        stateMachine.AddTransition(EnemyState.AttackWait, EnemyState.Return, _ => !HasValidTarget() || IsTargetOutsideLoseRange());
+        stateMachine.AddTransition(EnemyState.AttackWait, EnemyState.Chase, _ => !ShouldDisengage() && !IsTargetWithinAttackRange());
+        stateMachine.AddTransition(EnemyState.AttackWait, EnemyState.Return, _ => ShouldDisengage());
         stateMachine.AddTransition(EnemyState.Return, GetNonCombatState(), _ => HasReturnedHome());
-        stateMachine.AddTransition(EnemyState.Hurt, EnemyState.Chase, _ => HasValidTarget() && !IsTargetOutsideLoseRange());
-        stateMachine.AddTransition(EnemyState.Hurt, EnemyState.Return, _ => !HasValidTarget() || IsTargetOutsideLoseRange());
+        stateMachine.AddTransition(EnemyState.Hurt, EnemyState.Chase, _ => !ShouldDisengage());
+        stateMachine.AddTransition(EnemyState.Hurt, EnemyState.Return, _ => ShouldDisengage());
     }
 
     // 返回当前配置对应的非战斗状态。
@@ -418,6 +497,7 @@ public sealed class EnemyAI : MonoBehaviour
     }
 
     // 解析手动目标、EnemyBase 引用或场景中的玩家数值组件。
+    // 自动查找只在真的没有目标时发生，并做了节流，避免目标缺失期间每帧 FindFirstObjectByType。
     private void ResolveTarget()
     {
         if (targetOverride != null)
@@ -429,6 +509,10 @@ public sealed class EnemyAI : MonoBehaviour
         if (enemy != null && enemy.Target != null)
             return;
 
+        if (Time.time < nextTargetSearchTime)
+            return;
+
+        nextTargetSearchTime = Time.time + TargetSearchInterval;
         PlayerStats playerStats = FindFirstObjectByType<PlayerStats>();
         if (playerStats != null)
             enemy?.SetTarget(playerStats.transform);
@@ -477,34 +561,22 @@ public sealed class EnemyAI : MonoBehaviour
             enemy.Animation.DeathAnimationFinished -= OnDeathAnimationFinished;
     }
 
-    // 判断目标存在、已激活且仍有生命值。
+    // 目标是否存在、已激活且仍有生命值（读取本帧感知快照）。
     private bool HasValidTarget()
     {
-        ResolveTarget();
-        Transform target = enemy != null ? enemy.Target : null;
-        if (target == null || !target.gameObject.activeInHierarchy)
-            return false;
-
-        CharacterStats targetStats = target.GetComponentInParent<CharacterStats>();
-        return targetStats == null || targetStats.IsAlive;
+        return perceptionHasTarget;
     }
 
     // 判断待机或巡逻敌人是否能够发现目标。
     private bool CanDetectTarget()
     {
-        return HasValidTarget() && GetHorizontalDistanceToTarget() <= enemy.Config.DetectionRange && HasLineOfSight();
-    }
-
-    // 判断当前目标是否超过追击允许距离。
-    private bool IsTargetOutsideLoseRange()
-    {
-        return GetHorizontalDistanceToTarget() > enemy.Config.LoseTargetRange;
+        return perceptionHasTarget && perceptionInDetectionRange && perceptionHasLineOfSight;
     }
 
     // 判断有效目标是否位于当前敌人的攻击距离内。
     private bool IsTargetWithinAttackRange()
     {
-        return HasValidTarget() && GetHorizontalDistanceToTarget() <= enemy.AttackBehaviour.AttackRange;
+        return perceptionHasTarget && perceptionInAttackRange;
     }
 
     // 判断攻击后的随机等待时间是否已经结束。
@@ -527,29 +599,21 @@ public sealed class EnemyAI : MonoBehaviour
         return delta.sqrMagnitude <= enemy.Config.ReturnArrivalDistance * enemy.Config.ReturnArrivalDistance;
     }
 
-    // 返回敌人与目标之间的水平距离。
-    private float GetHorizontalDistanceToTarget()
-    {
-        Vector3 delta = GetTargetPosition() - transform.position;
-        delta.y = 0f;
-        return delta.magnitude;
-    }
-
-    // 返回当前目标位置；无目标时使用自身位置避免空引用。
+    // 返回本帧缓存的目标位置；无目标时使用自身位置避免空引用。
     private Vector3 GetTargetPosition()
     {
-        return enemy != null && enemy.Target != null ? enemy.Target.position : transform.position;
+        return perceptionHasTarget ? perceptionTargetPosition : transform.position;
     }
 
-    // 可选地检测敌人与目标之间是否被障碍物阻挡。
-    private bool HasLineOfSight()
+    // 检测敌人与指定目标点之间是否被障碍物阻挡。
+    private bool CheckLineOfSight(Vector3 destination)
     {
         if (!enemy.Config.RequireLineOfSight)
             return true;
 
         Vector3 origin = transform.position + Vector3.up * enemy.Config.SightHeight;
-        Vector3 destination = GetTargetPosition() + Vector3.up * enemy.Config.SightHeight;
-        Vector3 direction = destination - origin;
+        Vector3 target = destination + Vector3.up * enemy.Config.SightHeight;
+        Vector3 direction = target - origin;
         float distance = direction.magnitude;
         return distance <= Mathf.Epsilon || !Physics.Raycast(
             origin,
